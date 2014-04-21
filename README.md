@@ -1,4 +1,7 @@
-Aaa
-===
+This repository contains a static libraries needed to build my other projects, namely FileTest.
+To use them, you need to create a directory structure like this:
 
-Shared libraries for other projects
+Your-Working-Folder
+  Aaa
+  FileTest
+
