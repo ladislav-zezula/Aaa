@@ -470,6 +470,7 @@ int TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
 int TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
 int TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
 int TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
+HWND TabCtrl_GetSelectedPage(HWND hTabCtrl);
 INT_PTR TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Reads line from text file. The file must be opened in text mode
