@@ -114,6 +114,32 @@ typedef struct _UNICODE_STRING
     PWSTR  Buffer;
 } UNICODE_STRING, *PUNICODE_STRING;
 
+//
+// preallocated heap-growable buffers
+//
+
+typedef struct _RTL_BUFFER
+{
+    PUCHAR    Buffer;
+    PUCHAR    StaticBuffer;
+    SIZE_T    Size;
+    SIZE_T    StaticSize;
+    SIZE_T    ReservedForAllocatedSize;     // for future doubling
+    PVOID     ReservedForIMalloc;           // for future pluggable growth
+} RTL_BUFFER, *PRTL_BUFFER;
+
+//
+// A preallocated buffer that is "tied" to a UNICODE_STRING
+//
+
+typedef struct _RTL_UNICODE_STRING_BUFFER
+{
+    UNICODE_STRING String;
+    RTL_BUFFER     ByteBuffer;
+    UCHAR          MinimumStaticBufferForTerminalNul[sizeof(WCHAR)];
+
+} RTL_UNICODE_STRING_BUFFER, *PRTL_UNICODE_STRING_BUFFER;
+
 typedef STRING ANSI_STRING;
 typedef PSTRING PANSI_STRING;
 
@@ -179,17 +205,6 @@ typedef struct _CLIENT_ID
     HANDLE UniqueThread;
 } CLIENT_ID, *PCLIENT_ID;
 #endif // _NTDEF_
-
-
-//
-// CURDIR structure
-//
-
-typedef struct _CURDIR
-{
-    UNICODE_STRING DosPath;
-    HANDLE Handle;
-} CURDIR, *PCURDIR;
 
 
 //------------------------------------------------------------------------------
@@ -406,6 +421,14 @@ RtlCopyUnicodeString(
 
 
 NTSYSAPI
+WCHAR
+NTAPI
+RtlUpcaseUnicodeChar(
+    IN WCHAR SourceCharacter
+    );
+
+
+NTSYSAPI
 NTSTATUS
 NTAPI
 RtlUpcaseUnicodeString(
@@ -424,6 +447,18 @@ RtlDowncaseUnicodeString(
     IN BOOLEAN AllocateDestinationString
     );
 
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlUpcaseUnicodeToMultiByteN(
+    OUT PCH MultiByteString,
+    IN ULONG MaxBytesInMultiByteString,
+    OUT PULONG BytesInMultiByteString OPTIONAL,
+    IN PWCH UnicodeString,
+    IN ULONG BytesInUnicodeString
+    );
+ 
 
 NTSYSAPI
 BOOLEAN
@@ -598,6 +633,50 @@ RtlDecompressBuffer(
     IN  PUCHAR CompressedBuffer,
     IN  ULONG CompressedBufferSize,
     OUT PULONG FinalUncompressedSize 
+    );
+
+//-----------------------------------------------------------------------------
+// 8.3 name support
+
+typedef struct _GENERATE_NAME_CONTEXT
+{
+    //
+    //  The structure is divided into two strings.  The Name, and extension.
+    //  Each part contains the value that was last inserted in the name.
+    //  The length values are in terms of wchars and not bytes.  We also
+    //  store the last index value used in the generation collision algorithm.
+    //
+
+    USHORT Checksum;
+    BOOLEAN ChecksumInserted;
+
+    UCHAR NameLength;                             // not including extension
+    WCHAR NameBuffer[8];                          // e.g., "ntoskrnl"
+
+    ULONG ExtensionLength;                        // including dot
+    WCHAR ExtensionBuffer[4];                     // e.g., ".exe"
+
+    ULONG LastIndexValue;
+
+} GENERATE_NAME_CONTEXT, *PGENERATE_NAME_CONTEXT;
+
+NTSYSAPI
+BOOLEAN
+NTAPI
+RtlIsNameLegalDOS8Dot3(
+    IN PUNICODE_STRING Name,
+    IN OUT POEM_STRING OemName OPTIONAL,
+    OUT PBOOLEAN NameContainsSpaces OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlGenerate8dot3Name (
+    IN PCUNICODE_STRING Name,
+    IN BOOLEAN AllowExtendedCharacters,
+    IN OUT PGENERATE_NAME_CONTEXT Context,
+    IN OUT PUNICODE_STRING Name8dot3
     );
 
 //-----------------------------------------------------------------------------
@@ -1145,7 +1224,7 @@ typedef enum _KEY_INFORMATION_CLASS
 
 typedef enum _KEY_VALUE_INFORMATION_CLASS
 {
-    KeyValueBasicInformation,
+    KeyValueBasicInformation = 0,
     KeyValueFullInformation,
     KeyValuePartialInformation,
     KeyValueFullInformationAlign64,
@@ -1240,6 +1319,53 @@ typedef struct _KEY_VALUE_PARTIAL_INFORMATION
     ULONG DataLength;
     UCHAR Data[1];
 } KEY_VALUE_PARTIAL_INFORMATION, *PKEY_VALUE_PARTIAL_INFORMATION;
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtLoadKey(
+    IN POBJECT_ATTRIBUTES TargetKey,
+    IN POBJECT_ATTRIBUTES SourceFile
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtLoadKey2(
+    IN POBJECT_ATTRIBUTES TargetKey,
+    IN POBJECT_ATTRIBUTES SourceFile,
+    IN ULONG Flags
+    );
+
+// NtLoadKeyEx for Windows 2003 server
+typedef NTSTATUS (NTAPI * NTLOADKEYEX_3790)(
+    IN POBJECT_ATTRIBUTES TargetKey,
+    IN POBJECT_ATTRIBUTES SourceFile,
+    IN ULONG Flags,
+    IN HANDLE TrustClassKey OPTIONAL
+    );
+
+// NtLoadKeyEx for Windows Vista to Windows 8.1
+typedef NTSTATUS (NTAPI * NTLOADKEYEX)(
+    IN POBJECT_ATTRIBUTES TargetKey,
+    IN POBJECT_ATTRIBUTES SourceFile,
+    IN ULONG Flags,
+    IN HANDLE TrustClassKey OPTIONAL,
+    IN PVOID Param5,
+    IN PVOID Param6,
+    IN PVOID Param7,
+    IN PVOID Param8
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtUnloadKey(
+    IN POBJECT_ATTRIBUTES TargetKey
+    );
+
 
 NTSYSAPI
 NTSTATUS
@@ -2450,11 +2576,27 @@ typedef struct _SYSTEM_BOOT_ENVIRONMENT_INFORMATION
     ULONG Unknown;
 } SYSTEM_BOOT_ENVIRONMENT_INFORMATION, *PSYSTEM_BOOT_ENVIRONMENT_INFORMATION;
 
+
 typedef NTSTATUS (NTAPI * NTQUERYSYSTEMINFORMATION)(
     SYSTEM_INFORMATION_CLASS SystemInformationClass,
     PVOID SystemInformation,
     ULONG SystemInformationLength,
     PULONG ReturnLength
+    );
+
+typedef NTSTATUS (NTAPI * RTLGETNATIVESYSTEMINFORMATION)(
+    IN SYSTEM_INFORMATION_CLASS SystemInformationClass,
+    OUT PVOID SystemInformation,
+    IN ULONG SystemInformationLength,
+    OUT PULONG ReturnLength
+    );
+
+typedef BOOLEAN (NTAPI * RTLGETPRODUCTINFO)(
+    IN  ULONG OSMajorVersion,
+    IN  ULONG OSMinorVersion,
+    IN  ULONG SpMajorVersion,
+    IN  ULONG SpMinorVersion,
+    OUT PULONG ReturnedProductType
     );
 
 NTSYSAPI
@@ -2477,7 +2619,6 @@ ZwQuerySystemInformation(
     OUT PULONG ReturnLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -2487,7 +2628,6 @@ NtSetSystemInformation(
     IN ULONG SystemInformationLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -2495,6 +2635,16 @@ ZwSetSystemInformation(
     IN SYSTEM_INFORMATION_CLASS SystemInformationClass,
     IN PVOID SystemInformation,
     IN ULONG SystemInformationLength
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlGetNativeSystemInformation(
+    IN SYSTEM_INFORMATION_CLASS SystemInformationClass,
+    OUT PVOID SystemInformation,
+    IN ULONG SystemInformationLength,
+    OUT PULONG ReturnLength
     );
 
 //------------------------------------------------------------------------------
@@ -2522,7 +2672,7 @@ NtShutdownSystem(
 #ifndef OLD_DOS_VOLID
 #define OLD_DOS_VOLID   0x00000008
 #endif
- 
+
 #ifndef FILE_SUPERSEDE
 #define FILE_SUPERSEDE                  0x00000000
 #define FILE_OPEN                       0x00000001
@@ -2574,6 +2724,20 @@ NtShutdownSystem(
 #define FILE_DOES_NOT_EXIST             0x00000005
 #endif
 
+#ifndef FILE_REMOVABLE_MEDIA
+#define FILE_REMOVABLE_MEDIA                    0x00000001
+#define FILE_READ_ONLY_DEVICE                   0x00000002
+#define FILE_FLOPPY_DISKETTE                    0x00000004
+#define FILE_WRITE_ONCE_MEDIA                   0x00000008
+#define FILE_REMOTE_DEVICE                      0x00000010
+#define FILE_DEVICE_IS_MOUNTED                  0x00000020
+#define FILE_VIRTUAL_VOLUME                     0x00000040
+#define FILE_AUTOGENERATED_DEVICE_NAME          0x00000080
+#define FILE_DEVICE_SECURE_OPEN                 0x00000100
+#define FILE_CHARACTERISTIC_PNP_DEVICE          0x00000800
+#define FILE_CHARACTERISTIC_TS_DEVICE           0x00001000
+#define FILE_CHARACTERISTIC_WEBDAV_DEVICE       0x00002000
+#endif
 
 #ifndef PIO_APC_ROUTINE_DEFINED
 typedef
@@ -3742,16 +3906,59 @@ ZwUnlockFile(
     );
 
 
+//-----------------------------------------------------------------------------
+// DOS <-> NT path functions
+
+// OUT Disposition values for RtlNtPathNameToDosPathName
+#define RTL_NT_PATH_NAME_TO_DOS_PATH_NAME_AMBIGUOUS   (0x00000001)
+#define RTL_NT_PATH_NAME_TO_DOS_PATH_NAME_UNC         (0x00000002)
+#define RTL_NT_PATH_NAME_TO_DOS_PATH_NAME_DRIVE       (0x00000003)
+#define RTL_NT_PATH_NAME_TO_DOS_PATH_NAME_ALREADY_DOS (0x00000004)
+
+// CURDIR structure
+typedef struct _CURDIR
+{
+    UNICODE_STRING DosPath;
+    HANDLE Handle;
+} CURDIR, *PCURDIR;
+
+
 NTSYSAPI
 BOOLEAN
 NTAPI
 RtlDosPathNameToNtPathName_U (
-    IN  PWSTR DosPathName,
+    IN  PCWSTR DosPathName,
     OUT PUNICODE_STRING NtPathName,
     OUT PWSTR * NtFileNamePart OPTIONAL,
     OUT PCURDIR DirectoryInfo OPTIONAL
     );
 
+NTSYSAPI
+ULONG
+NTAPI
+RtlGetFullPathName_U(
+    PCWSTR lpFileName,
+    ULONG nBufferLength,
+    PWSTR lpBuffer,
+    PWSTR *lpFilePart OPTIONAL
+    );
+
+NTSYSAPI
+BOOLEAN
+NTAPI
+RtlDoesFileExists_U(
+    IN PCWSTR FileName
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlNtPathNameToDosPathName(                     // Available in Windows XP or newer
+    IN  ULONG Flags,
+    IN OUT PRTL_UNICODE_STRING_BUFFER Path,
+    OUT PULONG Disposition OPTIONAL,
+    IN OUT PWSTR * FilePart OPTIONAL
+    );
 
 //-----------------------------------------------------------------------------
 // Process functions
@@ -3861,13 +4068,11 @@ typedef struct _SECTION_IMAGE_INFORMATION
 {
     PVOID TransferAddress;
     ULONG ZeroBits;
-    ULONG_PTR MaximumStackSize;
-    ULONG_PTR CommittedStackSize;
+    SIZE_T MaximumStackSize;
+    SIZE_T CommittedStackSize;
     ULONG SubSystemType;
-    union _SECTION_IMAGE_INFORMATION_u0
-    {
-        struct _SECTION_IMAGE_INFORMATION_s0
-        {
+    union {
+        struct {
             USHORT SubSystemMinorVersion;
             USHORT SubSystemMajorVersion;
         };
@@ -3880,8 +4085,8 @@ typedef struct _SECTION_IMAGE_INFORMATION
     BOOLEAN ImageContainsCode;
     BOOLEAN Spare1;
     ULONG LoaderFlags;
-    ULONG Reserved[2];
-
+    ULONG ImageFileSize;                    // Reserved[0] for NT 4.0 and 2000
+    ULONG CheckSum;                         // Reserved[1] until Vista
 } SECTION_IMAGE_INFORMATION, *PSECTION_IMAGE_INFORMATION; 
 
 
@@ -3956,6 +4161,19 @@ typedef struct _PEB_LDR_DATA
 
 } PEB_LDR_DATA, *PPEB_LDR_DATA; 
 
+#define LDRP_STATIC_LINK                0x00000002
+#define LDRP_IMAGE_DLL                  0x00000004
+#define LDRP_LOAD_IN_PROGRESS           0x00001000
+#define LDRP_UNLOAD_IN_PROGRESS         0x00002000
+#define LDRP_ENTRY_PROCESSED            0x00004000
+#define LDRP_ENTRY_INSERTED             0x00008000
+#define LDRP_CURRENT_LOAD               0x00010000
+#define LDRP_FAILED_BUILTIN_LOAD        0x00020000
+#define LDRP_DONT_CALL_FOR_THREADS      0x00040000
+#define LDRP_PROCESS_ATTACH_CALLED      0x00080000
+#define LDRP_DEBUG_SYMBOLS_LOADED       0x00100000
+#define LDRP_IMAGE_NOT_AT_BASE          0x00200000
+#define LDRP_WX86_IGNORE_MACHINETYPE    0x00400000
 
 typedef struct _LDR_DATA_TABLE_ENTRY
 {
@@ -4102,8 +4320,15 @@ typedef struct _PROCESS_BASIC_INFORMATION
 
 } PROCESS_BASIC_INFORMATION,*PPROCESS_BASIC_INFORMATION;
 
+typedef BOOLEAN (*PDLL_INIT_ROUTINE)(
+    IN PVOID DllHandle,
+    IN ULONG Reason,
+    IN PCONTEXT Context OPTIONAL
+    ); 
 
-typedef VOID (NTAPI *PUSER_THREAD_START_ROUTINE)(IN PVOID ApcArgument1);
+typedef VOID (NTAPI *PUSER_THREAD_START_ROUTINE)(
+    IN PVOID ApcArgument1
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -5719,25 +5944,30 @@ RtlCreateSecurityDescriptor (
     IN ULONG Revision
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
-RtlGetDaclSecurityDescriptor(
-    IN PSECURITY_DESCRIPTOR  SecurityDescriptor,
-    OUT PBOOLEAN  DaclPresent,
-    OUT PACL  *Dacl,
-    OUT PBOOLEAN  DaclDefaulted
+RtlAbsoluteToSelfRelativeSD(
+    IN PSECURITY_DESCRIPTOR AbsoluteSecurityDescriptor,
+    IN OUT PSECURITY_DESCRIPTOR SelfRelativeSecurityDescriptor,
+    IN OUT PULONG BufferLength
     );
 
 NTSYSAPI
 NTSTATUS
 NTAPI
-RtlSetDaclSecurityDescriptor(
-    IN PSECURITY_DESCRIPTOR SecurityDescriptor,
-    IN BOOLEAN DaclPresent,
-    IN PACL Dacl OPTIONAL,
-    IN BOOLEAN DaclDefaulted OPTIONAL
+RtlSelfRelativeToAbsoluteSD(
+    IN OUT PSECURITY_DESCRIPTOR SelfRelativeSecurityDescriptor,
+    OUT PSECURITY_DESCRIPTOR AbsoluteSecurityDescriptor,
+    IN OUT PULONG AbsoluteSecurityDescriptorSize,
+    IN OUT PACL Dacl,
+    IN OUT PULONG DaclSize,
+    IN OUT PACL Sacl,
+    IN OUT PULONG SaclSize,
+    IN OUT PSID Owner,
+    IN OUT PULONG OwnerSize,
+    IN OUT PSID PrimaryGroup,
+    IN OUT PULONG PrimaryGroupSize
     );
 
 
@@ -5758,6 +5988,68 @@ RtlSetOwnerSecurityDescriptor(
     IN PSECURITY_DESCRIPTOR SecurityDescriptor,
     IN PSID Owner OPTIONAL,
     IN BOOLEAN OwnerDefaulted OPTIONAL
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlGetGroupSecurityDescriptor(
+    IN PSECURITY_DESCRIPTOR SecurityDescriptor,
+    OUT PSID *Group,
+    OUT PBOOLEAN GroupDefaulted
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlSetGroupSecurityDescriptor(
+    IN OUT PSECURITY_DESCRIPTOR SecurityDescriptor,
+    IN PSID Group OPTIONAL,
+    IN BOOLEAN GroupDefaulted OPTIONAL
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlGetDaclSecurityDescriptor(
+    IN PSECURITY_DESCRIPTOR  SecurityDescriptor,
+    OUT PBOOLEAN  DaclPresent,
+    OUT PACL  *Dacl,
+    OUT PBOOLEAN  DaclDefaulted
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlSetDaclSecurityDescriptor(
+    IN PSECURITY_DESCRIPTOR SecurityDescriptor,
+    IN BOOLEAN DaclPresent,
+    IN PACL Dacl OPTIONAL,
+    IN BOOLEAN DaclDefaulted OPTIONAL
+    );
+
+
+NTSTATUS
+RtlGetSaclSecurityDescriptor(
+    IN PSECURITY_DESCRIPTOR SecurityDescriptor,
+    OUT PBOOLEAN SaclPresent,
+    OUT PACL *Sacl,
+    OUT PBOOLEAN SaclDefaulted
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlSetSaclSecurityDescriptor(
+    IN OUT PSECURITY_DESCRIPTOR SecurityDescriptor,
+    IN BOOLEAN SaclPresent,
+    IN PACL Sacl,
+    IN BOOLEAN SaclDefaulted 
     );
 
 
@@ -5993,6 +6285,26 @@ NtQuerySymbolicLinkObject (
 // Loader functions
 
 NTSYSAPI
+PVOID
+NTAPI
+RtlImageRvaToVa(
+    IN PIMAGE_NT_HEADERS NtHeaders,
+    IN PVOID Base,
+    IN ULONG Rva,
+    IN OUT PIMAGE_SECTION_HEADER *LastRvaSection OPTIONAL
+    );
+
+NTSYSAPI
+PVOID
+NTAPI
+RtlImageDirectoryEntryToData(
+    IN PVOID Base,
+    IN BOOLEAN MappedAsImage,
+    IN USHORT DirectoryEntry,
+    OUT PULONG Size
+    );
+
+NTSYSAPI
 NTSTATUS
 NTAPI
 LdrLoadDll(
@@ -6027,6 +6339,26 @@ LdrGetProcedureAddress(
     IN PANSI_STRING ProcedureName OPTIONAL,
     IN ULONG ProcedureNumber OPTIONAL,
     OUT PVOID *ProcedureAddress
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrFindResource_U(
+    IN PVOID DllHandle,
+    IN PULONG_PTR ResourceIdPath,
+    IN ULONG ResourceIdPathLength,
+    OUT PIMAGE_RESOURCE_DATA_ENTRY *ResourceDataEntry
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrAccessResource(
+    IN PVOID DllHandle,
+    IN PIMAGE_RESOURCE_DATA_ENTRY ResourceDataEntry,
+    OUT PVOID *Address OPTIONAL,
+    OUT PULONG Size OPTIONAL
     );
 
 //-----------------------------------------------------------------------------

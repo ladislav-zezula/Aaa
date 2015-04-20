@@ -117,6 +117,8 @@
 #define IDYESTOALL       (IDCONTINUE+2)
 #define IDNOTOALL        (IDCONTINUE+3)
 
+#define LISTVIEW_LAST_ITEM   0x7FFFFFFF         // The highest item ID
+
 //-----------------------------------------------------------------------------
 // Structure sizes for older Windows
 
@@ -254,7 +256,7 @@ struct TListViewColumns
 
 //-----------------------------------------------------------------------------
 // Global variables
-
+                                                         
 // Must be defined by the application. It is the instance of the
 // module where to load resources from
 extern HINSTANCE g_hInst;
@@ -266,6 +268,14 @@ extern HINSTANCE g_hInst;
 LPTSTR AddBackslash(LPTSTR szPathName);
 LPTSTR RemoveBackslash(LPTSTR szPathName);
 
+// String allocations
+LPTSTR NewStr(LPCSTR szString, size_t nCharsToReserve = 0);
+LPTSTR NewStr(LPCWSTR szString, size_t nCharsToReserve = 0);
+LPTSTR NewStr(LPCSTR szStringBegin, LPCSTR szStringEnd);
+LPTSTR NewStr(LPCWSTR szStringBegin, LPCWSTR szStringEnd);
+LPSTR  NewStrAnsi(LPCSTR szString, size_t nCharsToReserve = 0);
+LPSTR  NewStrAnsi(LPCWSTR szString, size_t nCharsToReserve = 0);
+
 // Creates the full path from a directory and file name
 // Handles directory names with or without ending backslashes
 // Returns the pointer to plain file name
@@ -273,10 +283,10 @@ LPTSTR RemoveBackslash(LPTSTR szPathName);
 LPTSTR CreateFullPath(LPCTSTR szDirectory, LPCTSTR szSubDir, LPCTSTR szPlainName);
 
 // Adds a new string to the existing one. The existing must have been
-// allocated by new, the result must be freed using "DeleteAppendedString", when no longer needed.
+// allocated by new, the result must be freed using "FreeAppendedString", when no longer needed.
 // The "szString" may be NULL.
-LPTSTR AppendString(LPTSTR szString, LPTSTR szAdd, LPCTSTR szSeparator = _T("\r\n"));
-void DeleteAppendedString(LPTSTR szString);
+LPTSTR AppendString(LPTSTR szString, LPCTSTR szAdd, LPCTSTR szSeparator = _T("\r\n"));
+void FreeAppendedString(LPTSTR szString);
 
 // Browses for a file. The initial dir and/or the file may be
 // entered by a string or by a control ID.
@@ -306,7 +316,9 @@ HDROP CreateDropForDirectory(LPCTSTR szDirName, PLARGE_INTEGER pFileSize);
 
 // Multistring support
 LPTSTR AddStringToMultiString(LPTSTR szMultiString, LPCTSTR szString);
-void   FreeMultiString(LPTSTR szMultiString);
+size_t GetMultiStringLength(LPCTSTR szMultiString);
+DWORD GetMultiStringCount(LPCTSTR szMultiString);
+void FreeMultiString(LPTSTR szMultiString);
 
 // In debug version, shows a formatted text on debug output
 #if defined(_DEBUG) || defined(DBG)
@@ -459,8 +471,7 @@ BOOL IsURLButton(HWND hWnd);
 // Functions related to ListView columns and items
 int    ListView_CreateColumns(HWND hList, TListViewColumns * pColumns);
 void   ListView_ResizeColumns(HWND hList, TListViewColumns * pColumns, int nMinColumnWidth = 0);
-void   ListView_ResizeLastColumn(HWND hList, TListViewColumns * pColumns, int nMinColumnWidth = 0);
-int    InsertLVItem(HWND hList, int nIcon, LPTSTR szText, LPARAM lParam);
+int    InsertLVItem(HWND hList, int nIcon, LPCTSTR szText, LPARAM lParam);
 int    ListView_SetSubItem(HWND hList, int nItem, int nSubItem, LPCTSTR szText);
 LPARAM ListView_GetItemParam(HWND hList, int nItem);
 BOOL   ListView_SetItemParam(HWND hList, int nItem, LPARAM lParam);
