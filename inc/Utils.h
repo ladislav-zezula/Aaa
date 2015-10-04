@@ -385,6 +385,9 @@ int GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags
 // and stores them to the "pRect" parameter
 void GetWindowBorders(HWND hWnd, LPRECT pRect);
 
+// Retrieves the Windows version (WinXP = 0x0501, Win7 = 0x0601)
+DWORD GetWindowsVersion();
+
 // Initializes the dialog controls, like combo boxes and list boxes.
 int InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
 
