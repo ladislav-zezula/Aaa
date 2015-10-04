@@ -510,7 +510,7 @@ int ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 int ReplaceFileExt(LPTSTR szFileName, LPTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
-int rsprintf(LPTSTR szBuffer, UINT nIDFormat, ...);
+int rsprintf(LPTSTR szBuffer, int nMaxChars, UINT nIDFormat, ...);
 
 // Recalculates a screen window position (such as retrieved by GetWindowRect)
 // to the client coordinates of the window "hWnd".
