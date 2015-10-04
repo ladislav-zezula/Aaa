@@ -160,6 +160,21 @@
 #endif
 
 //
+// Macro for self-crash dump creation
+//
+
+#define CRASHDUMP_TRY        __try
+#define CRASHDUMP_EXCEPT     __except(WriteDumpFile(NULL, GetExceptionInformation()))
+
+//
+// Macro for aligning value to nearest-upper size of 'a'
+//
+
+#ifndef ALIGN_TO_SIZE
+#define ALIGN_TO_SIZE(x, a)   (((x) + (a)-1) & ~((a)-1))
+#endif
+
+//
 // Macros for handling LIST_ENTRY-based lists
 //
 
@@ -522,5 +537,8 @@ bool FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, bool bSetEnvironmentVar
 void DisableWoW64FsRedirection(PVOID * ppvOldValue);
 void RevertWoW64FsRedirection(PVOID pvOldValue);
 bool IsWow64Process();
+
+// Writes the dump file after crash
+LONG WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);
 
 #endif // __UTILS_H__
