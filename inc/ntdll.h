@@ -2568,6 +2568,15 @@ typedef struct _SYSTEM_MEMORY_LIST_INFORMATION
 } SYSTEM_MEMORY_LIST_INFORMATION, *PSYSTEM_MEMORY_LIST_INFORMATION;
 
 //
+// Class 88
+//
+typedef struct _SYSTEM_PROCESS_ID_INFORMATION
+{
+    HANDLE UniqueProcessId;                         // On input, set this to Process ID
+    UNICODE_STRING ImageName;                       // On input, initialize to an allocated buffer
+} SYSTEM_PROCESS_ID_INFORMATION, *PSYSTEM_PROCESS_ID_INFORMATION;
+
+//
 // Class 90
 //
 typedef struct _SYSTEM_BOOT_ENVIRONMENT_INFORMATION
@@ -6285,13 +6294,10 @@ NtQuerySymbolicLinkObject (
 // Loader functions
 
 NTSYSAPI
-PVOID
+PIMAGE_NT_HEADERS
 NTAPI
-RtlImageRvaToVa(
-    IN PIMAGE_NT_HEADERS NtHeaders,
-    IN PVOID Base,
-    IN ULONG Rva,
-    IN OUT PIMAGE_SECTION_HEADER *LastRvaSection OPTIONAL
+RtlImageNtHeader(
+    IN PVOID Base
     );
 
 NTSYSAPI
@@ -6302,6 +6308,16 @@ RtlImageDirectoryEntryToData(
     IN BOOLEAN MappedAsImage,
     IN USHORT DirectoryEntry,
     OUT PULONG Size
+    );
+
+NTSYSAPI
+PVOID
+NTAPI
+RtlImageRvaToVa(
+    IN PIMAGE_NT_HEADERS NtHeaders,
+    IN PVOID Base,
+    IN ULONG Rva,
+    IN OUT PIMAGE_SECTION_HEADER *LastRvaSection OPTIONAL
     );
 
 NTSYSAPI
@@ -6359,6 +6375,13 @@ LdrAccessResource(
     IN PIMAGE_RESOURCE_DATA_ENTRY ResourceDataEntry,
     OUT PVOID *Address OPTIONAL,
     OUT PULONG Size OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrDisableThreadCalloutsForDll(
+    IN PVOID DllHandle
     );
 
 //-----------------------------------------------------------------------------

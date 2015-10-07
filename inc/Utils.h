@@ -140,11 +140,13 @@
 
 //
 // Macro for getting max. number of characters in a buffer
+// Removed old "_tsize" macro for being confusing
 //
 
-#ifndef _tsize
-#define _tsize(buf)  ((sizeof(buf) / sizeof(TCHAR)) - 1)
-#endif  // _tsize
+#ifndef _maxchars
+#define _maxchars(buff)  ((sizeof(buff) / sizeof(buff[0])) - 1)
+#define _maxchars_remaining(buff, ptr)  (_maxchars(buff) - (ptr - buff) - 1)
+#endif  // _maxchars
 
 //
 // Macro for setting pointer window data, to compensate the improper declaration
@@ -157,6 +159,21 @@
 #undef SetWindowLongPtrW
 #define SetWindowLongPtrA(hwnd, nIndex, value)  SetWindowLongA(hwnd, nIndex, (LONG)(LONG_PTR)value);
 #define SetWindowLongPtrW(hwnd, nIndex, value)  SetWindowLongW(hwnd, nIndex, (LONG)(LONG_PTR)value);
+#endif
+
+//
+// Macro for self-crash dump creation
+//
+
+#define CRASHDUMP_TRY        __try
+#define CRASHDUMP_EXCEPT     __except(WriteDumpFile(NULL, GetExceptionInformation()))
+
+//
+// Macro for aligning value to nearest-upper size of 'a'
+//
+
+#ifndef ALIGN_TO_SIZE
+#define ALIGN_TO_SIZE(x, a)   (((x) + (a)-1) & ~((a)-1))
 #endif
 
 //
@@ -370,6 +387,9 @@ int GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags
 // and stores them to the "pRect" parameter
 void GetWindowBorders(HWND hWnd, LPRECT pRect);
 
+// Retrieves the Windows version (WinXP = 0x0501, Win7 = 0x0601)
+DWORD GetWindowsVersion();
+
 // Initializes the dialog controls, like combo boxes and list boxes.
 int InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
 
@@ -495,7 +515,7 @@ int ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 int ReplaceFileExt(LPTSTR szFileName, LPTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
-int rsprintf(LPTSTR szBuffer, UINT nIDFormat, ...);
+int rsprintf(LPTSTR szBuffer, int nMaxChars, UINT nIDFormat, ...);
 
 // Recalculates a screen window position (such as retrieved by GetWindowRect)
 // to the client coordinates of the window "hWnd".
@@ -522,5 +542,8 @@ bool FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, bool bSetEnvironmentVar
 void DisableWoW64FsRedirection(PVOID * ppvOldValue);
 void RevertWoW64FsRedirection(PVOID pvOldValue);
 bool IsWow64Process();
+
+// Writes the dump file after crash
+LONG WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);
 
 #endif // __UTILS_H__
