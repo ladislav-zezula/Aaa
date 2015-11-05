@@ -3975,9 +3975,14 @@ RtlNtPathNameToDosPathName(                     // Available in Windows XP or ne
 #define GDI_HANDLE_BUFFER_SIZE      34 
 
 // For ProcessExecuteFlags
-#define MEM_EXECUTE_OPTION_DISABLE   0x01
-#define MEM_EXECUTE_OPTION_ENABLE    0x02
-#define MEM_EXECUTE_OPTION_PERMANENT 0x08
+#define MEM_EXECUTE_OPTION_DISABLE                          0x1
+#define MEM_EXECUTE_OPTION_ENABLE                           0x2
+#define MEM_EXECUTE_OPTION_DISABLE_THUNK_EMULATION          0x4
+#define MEM_EXECUTE_OPTION_PERMANENT                        0x8
+#define MEM_EXECUTE_OPTION_EXECUTE_DISPATCH_ENABLE          0x10
+#define MEM_EXECUTE_OPTION_IMAGE_DISPATCH_ENABLE            0x20
+#define MEM_EXECUTE_OPTION_DISABLE_EXCEPTION_CHAIN_VALIDATION	0x40
+#define MEM_EXECUTE_OPTION_VALID_FLAGS                      0x3F
 
 //
 // Process Information Classes
@@ -4167,6 +4172,8 @@ typedef struct _PEB_LDR_DATA
     LIST_ENTRY InMemoryOrderModuleList;             // Points to all modules (EXE and all DLLs)
     LIST_ENTRY InInitializationOrderModuleList;
     PVOID      EntryInProgress;
+    BOOLEAN    ShutdownInProgress;                  // Windows 10
+    HANDLE     ShutdownThreadId;                    // Windows 10
 
 } PEB_LDR_DATA, *PPEB_LDR_DATA; 
 
@@ -4210,15 +4217,32 @@ typedef struct _LDR_DATA_TABLE_ENTRY
 
 } LDR_DATA_TABLE_ENTRY, *PLDR_DATA_TABLE_ENTRY;
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4214)      // warning C4214: nonstandard extension used : bit field types other than int
+#endif
 
 typedef struct _PEB
 {
-    BOOLEAN InheritedAddressSpace;      // These four fields cannot change unless the
-    BOOLEAN ReadImageFileExecOptions;   //
-    BOOLEAN BeingDebugged;              //
-    BOOLEAN SpareBool;                  //
-    HANDLE Mutant;                      // INITIAL_PEB structure is also updated.
-
+    BOOLEAN InheritedAddressSpace;
+    BOOLEAN ReadImageFileExecOptions;
+    BOOLEAN BeingDebugged;
+    union
+    {
+        UCHAR BitField;
+        struct
+        {
+            UCHAR ImageUsesLargePages:1;
+            UCHAR IsProtectedProcess:1;
+            UCHAR IsImageDynamicallyRelocated:1;
+            UCHAR SkipPatchingUser32Forwarders:1;
+            UCHAR IsPackagedProcess:1;
+            UCHAR IsAppContainer:1;
+            UCHAR IsProtectedProcessLight:1;
+            UCHAR SpareBits:1;
+        };
+    };
+    
+    HANDLE Mutant;                      
     PVOID ImageBaseAddress;
     PPEB_LDR_DATA Ldr;
     PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
@@ -4234,7 +4258,7 @@ typedef struct _PEB
     PPEB_FREE_BLOCK FreeList;
     ULONG TlsExpansionCounter;
     PVOID TlsBitmap;
-    ULONG TlsBitmapBits[2];         // relates to TLS_MINIMUM_AVAILABLE
+    ULONG TlsBitmapBits[2];                         // relates to TLS_MINIMUM_AVAILABLE
     PVOID ReadOnlySharedMemoryBase;
     PVOID ReadOnlySharedMemoryHeap;
     PVOID *ReadOnlyStaticServerData;
@@ -5264,13 +5288,10 @@ RtlValidateHeap (
 typedef enum _MEMORY_INFORMATION_CLASS
 {
     MemoryBasicInformation,                 // 0x00 MEMORY_BASIC_INFORMATION
-    MemoryWorkingSetInformation,            // 0x01
-    MemoryMappedFilenameInformation,        // 0x02 UNICODE_STRING
-    MemoryRegionInformation,                // 0x03
-    MemoryWorkingSetExInformation           // 0x04
-
+    MemoryWorkingSetList,
+    MemorySectionName,                      // 0x02 UNICODE_STRING
+    MemoryBasicVlmInformation
 } MEMORY_INFORMATION_CLASS;
-
 
 NTSYSAPI
 NTSTATUS
@@ -6298,6 +6319,17 @@ PIMAGE_NT_HEADERS
 NTAPI
 RtlImageNtHeader(
     IN PVOID Base
+    );
+
+#define RTL_IMAGE_NT_HEADER_EX_FLAG_NO_RANGE_CHECK (0x00000001)
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlImageNtHeaderEx(
+    ULONG Flags,
+    PVOID Base,
+    ULONG64 Size,
+    OUT PIMAGE_NT_HEADERS * OutHeaders
     );
 
 NTSYSAPI
