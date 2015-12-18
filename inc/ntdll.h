@@ -5264,13 +5264,39 @@ RtlValidateHeap (
 typedef enum _MEMORY_INFORMATION_CLASS
 {
     MemoryBasicInformation,                 // 0x00 MEMORY_BASIC_INFORMATION
-    MemoryWorkingSetInformation,            // 0x01
-    MemoryMappedFilenameInformation,        // 0x02 UNICODE_STRING
-    MemoryRegionInformation,                // 0x03
-    MemoryWorkingSetExInformation           // 0x04
+    MemoryMappedFilenameInformation,        // 0x01
+    MemoryRegionInformation,                // 0x02 UNICODE_STRING
+    MemoryWorkingSetExInformation           // 0x03
 
 } MEMORY_INFORMATION_CLASS;
 
+typedef struct _MEMORY_WORKING_SET_EX_BLOCK
+{
+    ULONG_PTR Valid : 1;
+    ULONG_PTR ShareCount : 3;
+    ULONG_PTR Win32Protection : 11;
+    ULONG_PTR Shared : 1;
+    ULONG_PTR Node : 6;
+    ULONG_PTR Locked : 1;
+    ULONG_PTR LargePage : 1;
+    ULONG_PTR Priority : 3;
+    ULONG_PTR Reserved : 5;
+
+#if defined(_WIN64)
+    ULONG_PTR ReservedUlong : 32;
+#endif
+} MEMORY_WORKING_SET_EX_BLOCK, *PMEMORY_WORKING_SET_EX_BLOCK;
+
+typedef struct _MEMORY_WORKING_SET_EX_INFORMATION
+{
+    PVOID VirtualAddress;
+    union
+    {
+        MEMORY_WORKING_SET_EX_BLOCK VirtualAttributes;
+        ULONG_PTR Long;
+    } u1;
+
+} MEMORY_WORKING_SET_EX_INFORMATION, *PMEMORY_WORKING_SET_EX_INFORMATION;
 
 NTSYSAPI
 NTSTATUS
@@ -6298,6 +6324,17 @@ PIMAGE_NT_HEADERS
 NTAPI
 RtlImageNtHeader(
     IN PVOID Base
+    );
+
+#define RTL_IMAGE_NT_HEADER_EX_FLAG_NO_RANGE_CHECK (0x00000001)
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlImageNtHeaderEx(
+    ULONG Flags,
+    PVOID Base,
+    ULONG64 Size,
+    OUT PIMAGE_NT_HEADERS * OutHeaders
     );
 
 NTSYSAPI

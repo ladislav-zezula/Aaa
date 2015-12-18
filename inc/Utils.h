@@ -14,8 +14,8 @@
 
 // In MSVC 8.0, there are some functions declared as deprecated.
 #if _MSC_VER >= 1400
-#define _CRT_SECURE_NO_DEPRECATE
-#define _CRT_NON_CONFORMING_SWPRINTFS
+//#define _CRT_SECURE_NO_DEPRECATE
+//#define _CRT_NON_CONFORMING_SWPRINTFS
 #endif
 
 #include <tchar.h>
@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include <commctrl.h>
+#include <strsafe.h>
 
 //-----------------------------------------------------------------------------
 // Use the appropriate library
@@ -140,11 +141,13 @@
 
 //
 // Macro for getting max. number of characters in a buffer
+// Removed old "_tsize" macro for being confusing
 //
 
-#ifndef _tsize
-#define _tsize(buf)  ((sizeof(buf) / sizeof(TCHAR)) - 1)
-#endif  // _tsize
+#ifndef _maxchars
+#define _maxchars(buff)  ((sizeof(buff) / sizeof(buff[0])) - 1)
+#define _maxchars_remaining(buff, ptr)  (_maxchars(buff) - (ptr - buff) - 1)
+#endif  // _maxchars
 
 //
 // Macro for setting pointer window data, to compensate the improper declaration
@@ -312,7 +315,7 @@ BOOL GetSaveFileNameRc(HWND hWndParent, LPOPENFILENAME pOFN);
 
 // Browses for a folder. The folder is stored into the "nIDEdit"
 // control
-BOOL BrowseForDirectory(HWND hDlg, LPTSTR szDir, UINT nIDTitle);
+BOOL BrowseForDirectory(HWND hDlg, LPTSTR szDir, size_t cchDir, UINT nIDTitle);
 
 // Centers a window by its parent or screen
 void CenterWindow(HWND hWnd);
@@ -330,6 +333,7 @@ HDROP CreateDropForFile(LPCTSTR szFileName);
 HDROP CreateDropForDirectory(LPCTSTR szDirName, PLARGE_INTEGER pFileSize);
 
 // Multistring support
+LPTSTR CreateMultiString(bool bEosSeparator);
 LPTSTR AddStringToMultiString(LPTSTR szMultiString, LPCTSTR szString);
 size_t GetMultiStringLength(LPCTSTR szMultiString);
 DWORD GetMultiStringCount(LPCTSTR szMultiString);
@@ -346,7 +350,7 @@ __inline int DebugPrint(LPCTSTR, ...) { return 0; }
 INT_PTR DontDisplayAgainDialog(HWND hParent, UINT nIDTemplate, int * piLastAnswer);
 
 // Converts a GUID to registry string format (i.e. {XXXXXXXX-XXXX-...})
-int GuidToString(GUID * pGuid, LPTSTR szBuffer);
+int GuidToString(GUID * pGuid, LPTSTR szBuffer, size_t cchBuffer);
 
 // Enables/disables a group of dialog items by their ID.
 // The ID list must end with 0.
@@ -360,7 +364,7 @@ int EnablePrivilege(LPCTSTR szPrivilegeName);
 BOOL GetDialogRect(HWND hParent, UINT nIDDlgTemplate, RECT & rect);
 
 // Get the title of the page from the dialog template
-int GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LPTSTR szTitle);
+int GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LPTSTR szTitle, size_t cchTitle);
 
 // Retrieves the error text. The caller must free the text using
 // delete [] szText;
@@ -386,7 +390,7 @@ int GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags
 void GetWindowBorders(HWND hWnd, LPRECT pRect);
 
 // Retrieves the Windows version (WinXP = 0x0501, Win7 = 0x0601)
-DWORD GetWindowsVersion();
+DWORD GetWindowsVersion(POSVERSIONINFO pOsvi = NULL);
 
 // Initializes the dialog controls, like combo boxes and list boxes.
 int InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
