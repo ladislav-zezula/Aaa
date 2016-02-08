@@ -12,10 +12,8 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-// In MSVC 8.0, there are some functions declared as deprecated.
-#if _MSC_VER >= 1400
-//#define _CRT_SECURE_NO_DEPRECATE
-//#define _CRT_NON_CONFORMING_SWPRINTFS
+#if _MSC_VER == 1400
+#define _WIN32_WINNT 0x0400         // _WIN32_WINNT is not defined in VS 2005
 #endif
 
 #include <tchar.h>
@@ -514,7 +512,7 @@ int ReadLine(FILE * fp, LPTSTR szBuffer, int nMaxChars);
 int ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 
 // Replaces the file extension with another one.
-int ReplaceFileExt(LPTSTR szFileName, LPTSTR szNewExt);
+int ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
 int rsprintf(LPTSTR szBuffer, int nMaxChars, UINT nIDFormat, ...);

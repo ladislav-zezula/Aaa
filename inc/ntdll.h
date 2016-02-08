@@ -420,6 +420,19 @@ RtlCompareUnicodeString(
     );
 
 
+// Windows Vista or newer
+NTSYSAPI
+LONG
+NTAPI
+RtlCompareUnicodeStrings(
+    IN PWCH String1,
+    IN SIZE_T Length1,
+    IN PWCH String2,
+    IN SIZE_T Length2,
+    IN BOOLEAN CaseInSensitive
+    );
+
+
 NTSYSAPI
 VOID
 NTAPI
@@ -565,6 +578,18 @@ DbgPrint(
     );
 
 
+// Since Windows XP
+NTSYSAPI
+ULONG
+__cdecl
+DbgPrintEx(
+    IN ULONG ComponentId,
+    IN ULONG Level,
+    IN PCSTR Format,
+    ...
+    );
+
+
 NTSYSAPI
 ULONG
 NTAPI
@@ -580,6 +605,15 @@ NTSTATUS
 NTAPI
 RtlInitializeCriticalSection(
     IN  PRTL_CRITICAL_SECTION CriticalSection
+    );
+
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlInitializeCriticalSectionAndSpinCount(
+    IN  PRTL_CRITICAL_SECTION CriticalSection,
+    IN  ULONG SpinCount
     );
 
 
@@ -3983,6 +4017,56 @@ RtlNtPathNameToDosPathName(                     // Available in Windows XP or ne
 
 #define GDI_HANDLE_BUFFER_SIZE      34 
 
+// RTL_USER_PROCESS_PARAMETERS::Flags
+#define RTL_USER_PROC_PARAMS_NORMALIZED         0x00000001
+#define RTL_USER_PROC_PROFILE_USER              0x00000002
+#define RTL_USER_PROC_PROFILE_KERNEL            0x00000004
+#define RTL_USER_PROC_PROFILE_SERVER            0x00000008
+#define RTL_USER_PROC_RESERVE_1MB               0x00000020
+#define RTL_USER_PROC_RESERVE_16MB              0x00000040
+#define RTL_USER_PROC_CASE_SENSITIVE            0x00000080
+#define RTL_USER_PROC_DISABLE_HEAP_DECOMMIT     0x00000100 
+#define RTL_USER_PROC_DLL_REDIRECTION_LOCAL     0x00001000
+#define RTL_USER_PROC_APP_MANIFEST_PRESENT      0x00002000
+#define RTL_USER_PROC_IMAGE_KEY_MISSING         0x00004000
+#define RTL_USER_PROC_OPTIN_PROCESS             0x00020000
+#define RTL_USER_PROC_SECURE_PROCESS            0x80000000
+
+// PEB::NtGlobalFlag
+#define FLG_STOP_ON_EXCEPTION                   0x00000001          // (soe) Stop on exception
+#define FLG_SHOW_LDR_SNAPS                      0x00000002          // (sls) Show loader snaps
+#define FLG_DEBUG_INITIAL_COMMAND               0x00000004          // (dic) Debug initial command
+#define FLG_STOP_ON_HUNG_GUI                    0x00000008          // (shg) Stop on hung GUI
+#define FLG_HEAP_ENABLE_TAIL_CHECK              0x00000010          // (htc) Enable heap tail checking
+#define FLG_HEAP_ENABLE_FREE_CHECK              0x00000020          // (hfc) Enable heap free checking
+#define FLG_HEAP_VALIDATE_PARAMETERS            0x00000040          // (hpc) Enable heap parameter checking
+#define FLG_HEAP_VALIDATE_ALL                   0x00000080          // (hvc) Enable heap validation on call
+#define FLG_POOL_ENABLE_TAIL_CHECK              0x00000100          // (vrf) Enable application verifier
+#define FLG_MONITOR_SILENT_PROCESS_EXIT         0x00000200          // (   ) Enable silent process exit monitoring
+#define FLG_POOL_ENABLE_TAGGING                 0x00000400          // (ptg) Enable pool tagging (Windows 2000 and Windows XP only)
+#define FLG_HEAP_ENABLE_TAGGING                 0x00000800          // (htg) Enable heap tagging
+#define FLG_USER_STACK_TRACE_DB                 0x00001000          // (ust) Create user mode stack trace database
+#define FLG_KERNEL_STACK_TRACE_DB               0x00002000          // (kst) Create kernel mode stack trace database
+#define FLG_MAINTAIN_OBJECT_TYPELIST            0x00004000          // (otl) Maintain a list of objects for each type
+#define FLG_HEAP_ENABLE_TAG_BY_DLL              0x00008000          // (htd) Enable heap tagging by DLL
+#define FLG_DISABLE_STACK_EXTENSION             0x00010000          // (dse) Disable stack extension
+#define FLG_ENABLE_CSRDEBUG                     0x00020000          // (d32) Enable debugging of Win32 subsystem
+#define FLG_ENABLE_KDEBUG_SYMBOL_LOAD           0x00040000          // (ksl) Enable loading of kernel debugger symbols
+#define FLG_DISABLE_PAGE_KERNEL_STACKS          0x00080000          // (dps) Disable paging of kernel stacks
+#define FLG_ENABLE_SYSTEM_CRIT_BREAKS           0x00100000          // (scb) Enable system critical breaks
+#define FLG_HEAP_DISABLE_COALESCING             0x00200000          // (dhc) Disable heap coalesce on free
+#define FLG_ENABLE_CLOSE_EXCEPTIONS             0x00400000          // (ece) Enable close exception
+#define FLG_ENABLE_EXCEPTION_LOGGING            0x00800000          // (eel) Enable exception logging
+#define FLG_ENABLE_HANDLE_TYPE_TAGGING          0x01000000          // (eot) Enable object handle type tagging
+#define FLG_HEAP_PAGE_ALLOCS                    0x02000000          // (hpa) Enable page heap
+#define FLG_DEBUG_INITIAL_COMMAND_EX            0x04000000          // (dwl) Debug WinLogon
+#define FLG_DISABLE_DBGPRINT                    0x08000000          // (ddp) Buffer DbgPrint Output
+#define FLG_CRITSEC_EVENT_CREATION              0x10000000          // (cse) Early critical section event creation
+#define FLG_STOP_ON_UNHANDLED_EXCEPTION         0x20000000          // (sue) Stop on unhandled user-mode exception
+#define FLG_ENABLE_HANDLE_EXCEPTIONS            0x40000000          // (bhd) Enable bad handles detection
+#define FLG_DISABLE_PROTDLLS                    0x80000000          // (dpd) Disable protected DLL verification
+#define FLG_VALID_BITS                          0xFFFFFFFF
+
 // For ProcessExecuteFlags
 #define MEM_EXECUTE_OPTION_DISABLE                          0x1
 #define MEM_EXECUTE_OPTION_ENABLE                           0x2
@@ -4157,6 +4241,12 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS
     UNICODE_STRING ShellInfo;
     UNICODE_STRING RuntimeData;
     RTL_DRIVE_LETTER_CURDIR CurrentDirectores[0x20];
+
+    ULONG EnvironmentSize;
+    ULONG EnvironmentVersion;
+    PVOID PackageDependencyData;
+    ULONG ProcessGroupId;
+    ULONG LoaderThreads;
 
 } RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
 
@@ -6194,6 +6284,18 @@ NTAPI
 NtOpenProcessToken(
     IN HANDLE ProcessHandle,
     IN ACCESS_MASK DesiredAccess,
+    OUT PHANDLE TokenHandle
+    );
+
+
+// Windows XP or newer
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtOpenProcessTokenEx(
+    IN HANDLE ProcessHandle,
+    IN ACCESS_MASK DesiredAccess,
+    IN ULONG HandleAttributes,
     OUT PHANDLE TokenHandle
     );
 
