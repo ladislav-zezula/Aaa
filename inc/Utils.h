@@ -292,6 +292,10 @@ LPTSTR NewStr(LPCWSTR szStringBegin, LPCWSTR szStringEnd);
 LPSTR  NewStrAnsi(LPCSTR szString, size_t nCharsToReserve = 0);
 LPSTR  NewStrAnsi(LPCWSTR szString, size_t nCharsToReserve = 0);
 
+// Uses static buffer if enough space, otherwise allocates new
+LPSTR  NewStrWithBuff(LPSTR szStaticBuff, size_t cchStaticBuff, LPCSTR szSrc);
+LPWSTR NewStrWithBuff(LPWSTR szStaticBuff, size_t cchStaticBuff, LPCWSTR szSrc);
+
 // Creates the full path from a directory and file name
 // Handles directory names with or without ending backslashes
 // Returns the pointer to plain file name
