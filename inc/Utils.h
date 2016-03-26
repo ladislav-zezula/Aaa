@@ -352,7 +352,8 @@ __inline int DebugPrint(LPCTSTR, ...) { return 0; }
 INT_PTR DontDisplayAgainDialog(HWND hParent, UINT nIDTemplate, int * piLastAnswer);
 
 // Converts a GUID to registry string format (i.e. {XXXXXXXX-XXXX-...})
-int GuidToString(GUID * pGuid, LPTSTR szBuffer, size_t cchBuffer);
+int  GuidToString(LPGUID pGuid, LPTSTR szBuffer, size_t cchBuffer);
+bool StringToGuid(LPCTSTR szString, LPGUID pGuid);
 
 // Enables/disables a group of dialog items by their ID.
 // The ID list must end with 0.
