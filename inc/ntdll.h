@@ -151,6 +151,10 @@ typedef const UNICODE_STRING *PCUNICODE_STRING;
 
 #define UNICODE_NULL ((WCHAR)0) // winnt
 
+#ifndef RTL_CONSTANT_STRING         // UNICODE_STRING FooStr = RTL_CONSTANT_STRING(L"Foo");
+#define RTL_CONSTANT_STRING(str)    {(USHORT)(sizeof(str) - sizeof(str[0])), (USHORT)(sizeof(str)), str}
+#endif  // RTL_CONSTANT_STRING
+
 //
 // Definitions for Object Creation
 //

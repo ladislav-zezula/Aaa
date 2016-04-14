@@ -176,6 +176,14 @@
 #endif
 
 //
+// Macro for page size in Win32
+//
+
+#ifndef WIN32_PAGE_SIZE
+#define WIN32_PAGE_SIZE 0x1000
+#endif
+
+//
 // Macros for handling LIST_ENTRY-based lists
 //
 
