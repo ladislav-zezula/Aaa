@@ -3,6 +3,18 @@
 /*---------------------------------------------------------------------------*/
 /* Main header file for the Utils library. Include in your project to have   */
 /* access to all utility functions                                           */
+/*                                                                           */
+/*  MSVC++ 14.0 _MSC_VER == 1900 (Visual Studio 2015)                        */
+/*  MSVC++ 12.0 _MSC_VER == 1800 (Visual Studio 2013)                        */
+/*  MSVC++ 11.0 _MSC_VER == 1700 (Visual Studio 2012)                        */
+/*  MSVC++ 10.0 _MSC_VER == 1600 (Visual Studio 2010)                        */
+/*  MSVC++ 9.0  _MSC_VER == 1500 (Visual Studio 2008)                        */
+/*  MSVC++ 8.0  _MSC_VER == 1400 (Visual Studio 2005)                        */
+/*  MSVC++ 7.1  _MSC_VER == 1310 (Visual Studio 2003)                        */
+/*  MSVC++ 7.0  _MSC_VER == 1300                                             */
+/*  MSVC++ 6.0  _MSC_VER == 1200                                             */
+/*  MSVC++ 5.0  _MSC_VER == 1100                                             */
+/*                                                                           */
 /*---------------------------------------------------------------------------*/
 /*   Date    Ver   Who  Comment                                              */
 /* --------  ----  ---  -------                                              */
@@ -12,8 +24,8 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-#if _MSC_VER == 1400
-#define _WIN32_WINNT 0x0400         // _WIN32_WINNT is not defined in VS 2005
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500         // _WIN32_WINNT is not defined in VS 2005
 #endif
 
 #include <tchar.h>
@@ -113,8 +125,8 @@
 //-----------------------------------------------------------------------------
 // Special buttons for "Yes/Yes All/No/Cancel" message boxes
 
-#define IDYESTOALL       (IDCONTINUE+2)
-#define IDNOTOALL        (IDCONTINUE+3)
+#define IDYESTOALL       (IDNO+5)
+#define IDNOTOALL        (IDNO+6)
 
 #define LISTVIEW_LAST_ITEM   0x7FFFFFFF         // The highest item ID
 
@@ -289,125 +301,125 @@ extern HINSTANCE g_hInst;
 // Utility function prototypes
 
 // Adds/removes backslash to/from end of path name
-LPTSTR AddBackslash(LPTSTR szPathName);
-LPTSTR RemoveBackslash(LPTSTR szPathName);
+LPTSTR WINAPI AddBackslash(LPTSTR szPathName);
+LPTSTR WINAPI RemoveBackslash(LPTSTR szPathName);
 
 // String allocations
-LPTSTR NewStr(LPCSTR szString, size_t nCharsToReserve = 0);
-LPTSTR NewStr(LPCWSTR szString, size_t nCharsToReserve = 0);
-LPTSTR NewStr(LPCSTR szStringBegin, LPCSTR szStringEnd);
-LPTSTR NewStr(LPCWSTR szStringBegin, LPCWSTR szStringEnd);
-LPSTR  NewStrAnsi(LPCSTR szString, size_t nCharsToReserve = 0);
-LPSTR  NewStrAnsi(LPCWSTR szString, size_t nCharsToReserve = 0);
+LPTSTR WINAPI NewStr(LPCSTR szString, size_t nCharsToReserve = 0);
+LPTSTR WINAPI NewStr(LPCWSTR szString, size_t nCharsToReserve = 0);
+LPTSTR WINAPI NewStr(LPCSTR szStringBegin, LPCSTR szStringEnd);
+LPTSTR WINAPI NewStr(LPCWSTR szStringBegin, LPCWSTR szStringEnd);
+LPSTR  WINAPI NewStrAnsi(LPCSTR szString, size_t nCharsToReserve = 0);
+LPSTR  WINAPI NewStrAnsi(LPCWSTR szString, size_t nCharsToReserve = 0);
 
 // Uses static buffer if enough space, otherwise allocates new
-LPSTR  NewStrWithBuff(LPSTR szStaticBuff, size_t cchStaticBuff, LPCSTR szSrc);
-LPWSTR NewStrWithBuff(LPWSTR szStaticBuff, size_t cchStaticBuff, LPCWSTR szSrc);
+LPSTR  WINAPI NewStrWithBuff(LPSTR szStaticBuff, size_t cchStaticBuff, LPCSTR szSrc);
+LPWSTR WINAPI NewStrWithBuff(LPWSTR szStaticBuff, size_t cchStaticBuff, LPCWSTR szSrc);
 
 // Creates the full path from a directory and file name
 // Handles directory names with or without ending backslashes
 // Returns the pointer to plain file name
 // The caller needs to free the path using delete []
-LPTSTR CreateFullPath(LPCTSTR szDirectory, LPCTSTR szSubDir, LPCTSTR szPlainName);
+LPTSTR WINAPI CreateFullPath(LPCTSTR szDirectory, LPCTSTR szSubDir, LPCTSTR szPlainName);
 
 // Adds a new string to the existing one. The existing must have been
 // allocated by new, the result must be freed using "FreeAppendedString", when no longer needed.
 // The "szString" may be NULL.
-LPTSTR AppendString(LPTSTR szString, LPCTSTR szAdd, LPCTSTR szSeparator = _T("\r\n"));
-void FreeAppendedString(LPTSTR szString);
+LPTSTR WINAPI AppendString(LPTSTR szString, LPCTSTR szAdd, LPCTSTR szSeparator = _T("\r\n"));
+void   WINAPI FreeAppendedString(LPTSTR szString);
 
 // Browses for a file. The initial dir and/or the file may be
 // entered by a string or by a control ID.
 //BOOL BrowseForFile(HWND hParent, LPTSTR szDir, LPTSTR szFile, UINT nIDTitle, UINT nIDFilters);
-void InitOpenFileName(LPOPENFILENAME pOFN);
-BOOL GetOpenFileNameRc(HWND hWndParent, LPOPENFILENAME pOFN);
-BOOL GetSaveFileNameRc(HWND hWndParent, LPOPENFILENAME pOFN);
+void WINAPI InitOpenFileName(LPOPENFILENAME pOFN);
+BOOL WINAPI GetOpenFileNameRc(HWND hWndParent, LPOPENFILENAME pOFN);
+BOOL WINAPI GetSaveFileNameRc(HWND hWndParent, LPOPENFILENAME pOFN);
 
 // Browses for a folder. The folder is stored into the "nIDEdit"
 // control
-BOOL BrowseForDirectory(HWND hDlg, LPTSTR szDir, size_t cchDir, UINT nIDTitle);
+BOOL WINAPI BrowseForDirectory(HWND hDlg, LPTSTR szDir, size_t cchDir, UINT nIDTitle);
 
 // Centers a window by its parent or screen
-void CenterWindow(HWND hWnd);
-void CenterWindowToParent(HWND hWnd);
+void WINAPI CenterWindow(HWND hWnd);
+void WINAPI CenterWindowToParent(HWND hWnd);
 
 // This function compares a string with a wildcard search string.
 // returns TRUE, when the string matches with the wildcard.
-BOOL CompareStringWildCard(LPCTSTR szString, LPCTSTR szWildCard);
+BOOL WINAPI CompareStringWildCard(LPCTSTR szString, LPCTSTR szWildCard);
 
-BOOL CompareWindowsTexts(HWND hDlg, UINT nID1, UINT nID2, UINT nIDMsg);
+BOOL WINAPI CompareWindowsTexts(HWND hDlg, UINT nID1, UINT nID2, UINT nIDMsg);
 
 // Creates a HDROP structure for the file.
 // The caller must free it using GlobalFree.
-HDROP CreateDropForFile(LPCTSTR szFileName);
-HDROP CreateDropForDirectory(LPCTSTR szDirName, PLARGE_INTEGER pFileSize);
+HDROP WINAPI CreateDropForFile(LPCTSTR szFileName);
+HDROP WINAPI CreateDropForDirectory(LPCTSTR szDirName, PLARGE_INTEGER pFileSize);
 
 // Multistring support
-LPTSTR CreateMultiString(bool bEosSeparator);
-LPTSTR AddStringToMultiString(LPTSTR szMultiString, LPCTSTR szString);
-size_t GetMultiStringLength(LPCTSTR szMultiString);
-DWORD GetMultiStringCount(LPCTSTR szMultiString);
-void FreeMultiString(LPTSTR szMultiString);
+LPTSTR WINAPI CreateMultiString(bool bEosSeparator);
+LPTSTR WINAPI AddStringToMultiString(LPTSTR szMultiString, LPCTSTR szString);
+size_t WINAPI GetMultiStringLength(LPCTSTR szMultiString);
+DWORD WINAPI GetMultiStringCount(LPCTSTR szMultiString);
+void WINAPI FreeMultiString(LPTSTR szMultiString);
 
 // In debug version, shows a formatted text on debug output
 #if defined(_DEBUG) || defined(DBG)
 int DebugPrint(LPCTSTR szFmt, ...);
 #else
-__inline int DebugPrint(LPCTSTR, ...) { return 0; }
+__inline int WINAPI DebugPrint(LPCTSTR, ...) { return 0; }
 #endif
 
 // Shows the message box dialog with "Don't display again" text
-INT_PTR DontDisplayAgainDialog(HWND hParent, UINT nIDTemplate, int * piLastAnswer);
+INT_PTR WINAPI DontDisplayAgainDialog(HWND hParent, UINT nIDTemplate, int * piLastAnswer);
 
 // Converts a GUID to registry string format (i.e. {XXXXXXXX-XXXX-...})
-int  GuidToString(LPGUID pGuid, LPTSTR szBuffer, size_t cchBuffer);
-bool StringToGuid(LPCTSTR szString, LPGUID pGuid);
+int  WINAPI GuidToString(LPGUID pGuid, LPTSTR szBuffer, size_t cchBuffer);
+bool WINAPI StringToGuid(LPCTSTR szString, LPGUID pGuid);
 
 // Enables/disables a group of dialog items by their ID.
 // The ID list must end with 0.
-int ShowDlgItems(HWND hDlg, int nCmdShow, ...);
-int EnableDlgItems(HWND hDlg, BOOL bEnable, ...);
+int WINAPI ShowDlgItems(HWND hDlg, int nCmdShow, ...);
+int WINAPI EnableDlgItems(HWND hDlg, BOOL bEnable, ...);
 
 // Enables a privilege to the current process
-int EnablePrivilege(LPCTSTR szPrivilegeName);
+int WINAPI EnablePrivilege(LPCTSTR szPrivilegeName);
 
 // Gets the rectangle of a dialog's template
-BOOL GetDialogRect(HWND hParent, UINT nIDDlgTemplate, RECT & rect);
+BOOL WINAPI GetDialogRect(HWND hParent, UINT nIDDlgTemplate, RECT & rect);
 
 // Get the title of the page from the dialog template
-int GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LPTSTR szTitle, size_t cchTitle);
+int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LPTSTR szTitle, size_t cchTitle);
 
 // Retrieves the error text. The caller must free the text using
 // delete [] szText;
-LPTSTR GetErrorText(int nError);
+LPTSTR WINAPI GetErrorText(int nError);
 
 // Fills the module version
-int GetModuleVersion(LPCTSTR szModuleName, LARGE_INTEGER * pVersion);
-int GetModuleVersion(HMODULE hModule, LARGE_INTEGER * pVersion);
+int WINAPI GetModuleVersion(LPCTSTR szModuleName, LARGE_INTEGER * pVersion);
+int WINAPI GetModuleVersion(HMODULE hModule, LARGE_INTEGER * pVersion);
 
 // Returns a localized string for a few IDS_XXX strings.
-LPCTSTR GetString(UINT_PTR nIDString);
-bool SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
+LPCTSTR WINAPI GetString(UINT_PTR nIDString);
+bool WINAPI SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
 
 // Returns the language of current Windows installation
 // (Not the value set by the user in Regional Settings)
-USHORT GetSystemLanguage();
+USHORT WINAPI GetSystemLanguage();
 
 // Fills the buffer by the current user's specific directory name
-int GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath);
+int WINAPI GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath);
    
 // Gets the widths of the window borders (non-client area)
 // and stores them to the "pRect" parameter
-void GetWindowBorders(HWND hWnd, LPRECT pRect);
+void WINAPI GetWindowBorders(HWND hWnd, LPRECT pRect);
 
 // Retrieves the Windows version (WinXP = 0x0501, Win7 = 0x0601)
-DWORD GetWindowsVersion(POSVERSIONINFO pOsvi = NULL);
+DWORD WINAPI GetWindowsVersion(POSVERSIONINFO pOsvi = NULL);
 
 // Initializes the dialog controls, like combo boxes and list boxes.
-int InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
+int WINAPI InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
 
 // Returns true if the user runs as administrator (or elevated in Vista)
-BOOL IsAdministrator();
+BOOL WINAPI IsAdministrator();
 
 // REMOVED:
 // This function decodes the WM_COMMAND message. If another message, this function
@@ -418,20 +430,17 @@ BOOL IsAdministrator();
 #define WMC_CTRLID(wParam)  LOWORD(wParam)
 
 // Checks of the directory is accessible at least for listin files
-BOOL IsDirectoryAccessible(const LPTSTR szDirectory);
-
-// Verifies the presence of SAG.sys in memory.
-BOOL IsSagInMemoryAndEnabled();
+BOOL WINAPI IsDirectoryAccessible(const LPTSTR szDirectory);
 
 // Shows a message box using resource strings
-int MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
+int WINAPI MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
 
 // Shows a message box with appended error code text
 // "Failed to open the file %s\nAccess denied"
-int MessageBoxError(HWND hParent, UINT_PTR nIDText, int nError = ERROR_SUCCESS, ...);
+int WINAPI MessageBoxError(HWND hParent, UINT_PTR nIDText, int nError = ERROR_SUCCESS, ...);
 
 // Shows a message box that also includes check box
-int MessageBoxWithCheckBox(
+int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
     LPCTSTR szText,
     LPCTSTR szTitle,
@@ -441,7 +450,7 @@ int MessageBoxWithCheckBox(
 
 // Shows a message box that also includes check box.
 // This one uses string resource IDs rather than texts.
-int MessageBoxWithCheckBox(
+int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
     UINT nIDText,
     UINT nIDTitle,
@@ -450,113 +459,113 @@ int MessageBoxWithCheckBox(
     UINT uType);
 
 // Shows a question message box with "Yes - Yes All - No - Cancel" buttons
-int MessageBoxYANC(
+int WINAPI MessageBoxYANC(
     HWND hWndParent,
     UINT_PTR nIDTitle,
     UINT_PTR nIDTextFmt,
     ...);
 
 // Sets an icon to the dialog
-void SetDialogIcon(HWND hDlg, UINT nIDIcon);
+void WINAPI SetDialogIcon(HWND hDlg, UINT nIDIcon);
 
 // Searches all available processes by given name.
 // If the name is found, the function returns the process ID.
 #define INVALID_PROCESS_ID ((DWORD)-1)
-DWORD FindProcessByName(LPCTSTR szExeName);
+DWORD WINAPI FindProcessByName(LPCTSTR szExeName);
 
 // Ensures that the path exists.
-int ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
+int WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
 
 // Returns the domain name for currently logged on user
-int GetDomainName(LPTSTR szText, LPDWORD pdwSize);
+int WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
 
 // Retrieves the pointer to plain name and extension
-LPSTR GetPlainName(LPCSTR szFileName);
-LPWSTR GetPlainName(LPCWSTR szFileName);
-LPSTR GetFileExtension(LPCSTR szFileName);
-LPWSTR GetFileExtension(LPCWSTR szFileName);
+LPSTR WINAPI GetPlainName(LPCSTR szFileName);
+LPWSTR WINAPI GetPlainName(LPCWSTR szFileName);
+LPSTR WINAPI GetFileExtension(LPCSTR szFileName);
+LPWSTR WINAPI GetFileExtension(LPCWSTR szFileName);
 
 // RadioButton functions
-DWORD GetRadioValue(HWND hDlg, UINT nIDFirst);
-void  SetRadioValue(HWND hDlg, UINT nIDFirst, UINT nValue);
+DWORD WINAPI GetRadioValue(HWND hDlg, UINT nIDFirst);
+void  WINAPI SetRadioValue(HWND hDlg, UINT nIDFirst, UINT nValue);
 
 // CheckBox functions
-DWORD GetCheckBoxMask(HWND hDlg, UINT nIDFirst);
-void  SetCheckBoxMask(HWND hDlg, UINT nIDFirst, DWORD dwMask, DWORD dwEnabled);
+DWORD WINAPI GetCheckBoxMask(HWND hDlg, UINT nIDFirst);
+void  WINAPI SetCheckBoxMask(HWND hDlg, UINT nIDFirst, DWORD dwMask, DWORD dwEnabled);
 
 // Edit functions
-BOOL SetEditCueBanner(HWND hEdit, LPCTSTR szText);
-BOOL SetEditCueBanner(HWND hEdit, UINT nIDText);
-BOOL SetEditCueBanner(HWND hDlg, UINT nIDEdit, LPCTSTR szText);
-BOOL SetEditCueBanner(HWND hDlg, UINT nIDEdit, UINT nIDText);
+BOOL WINAPI SetEditCueBanner(HWND hEdit, LPCTSTR szText);
+BOOL WINAPI SetEditCueBanner(HWND hEdit, UINT nIDText);
+BOOL WINAPI SetEditCueBanner(HWND hDlg, UINT nIDEdit, LPCTSTR szText);
+BOOL WINAPI SetEditCueBanner(HWND hDlg, UINT nIDEdit, UINT nIDText);
 
 // URL cursor functions
-HCURSOR CreateUrlPointCursor();
-HCURSOR CreateUrlWaitCursor();
+HCURSOR WINAPI CreateUrlPointCursor();
+HCURSOR WINAPI CreateUrlWaitCursor();
 
 // URL Buttons functions
-BOOL ClickURLButton(HWND hButton);
-BOOL DrawURLButton(HWND hDlg, LPDRAWITEMSTRUCT dis, BOOL bCentered = FALSE);
-int  InitURLButton(HWND hDlg, UINT nIDCtrl, BOOL bBigFont);
-int  InitURLButtons(HWND hDlg);
-BOOL IsURLButton(HWND hWnd);
+BOOL WINAPI ClickURLButton(HWND hButton);
+BOOL WINAPI DrawURLButton(HWND hDlg, LPDRAWITEMSTRUCT dis);
+int  WINAPI InitURLButton(HWND hDlg, UINT nIDCtrl, BOOL bBigFont);
+int  WINAPI InitURLButtons(HWND hDlg);
+BOOL WINAPI IsURLButton(HWND hWnd);
 
 // Functions related to ListView columns and items
-int    ListView_CreateColumns(HWND hList, TListViewColumns * pColumns);
-void   ListView_ResizeColumns(HWND hList, TListViewColumns * pColumns, int nMinColumnWidth = 0);
-int    InsertLVItem(HWND hList, int nIcon, LPCTSTR szText, LPARAM lParam);
-int    ListView_SetSubItem(HWND hList, int nItem, int nSubItem, LPCTSTR szText);
-LPARAM ListView_GetItemParam(HWND hList, int nItem);
-BOOL   ListView_SetItemParam(HWND hList, int nItem, LPARAM lParam);
+int    WINAPI ListView_CreateColumns(HWND hList, TListViewColumns * pColumns);
+void   WINAPI ListView_ResizeColumns(HWND hList, TListViewColumns * pColumns, int nMinColumnWidth = 0);
+int    WINAPI InsertLVItem(HWND hList, int nIcon, LPCTSTR szText, LPARAM lParam);
+int    WINAPI ListView_SetSubItem(HWND hList, int nItem, int nSubItem, LPCTSTR szText);
+LPARAM WINAPI ListView_GetItemParam(HWND hList, int nItem);
+BOOL   WINAPI ListView_SetItemParam(HWND hList, int nItem, LPARAM lParam);
 
 // TabControl support
-int TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
-int TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
-int TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
-int TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
-HWND TabCtrl_GetSelectedPage(HWND hTabCtrl);
-INT_PTR TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam, LPARAM lParam);
+int WINAPI TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
+int WINAPI TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
+int WINAPI TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
+int WINAPI TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
+HWND WINAPI TabCtrl_GetSelectedPage(HWND hTabCtrl);
+INT_PTR WINAPI TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Reads line from text file. The file must be opened in text mode
 // Returns -1 if end of file, otherwise number of characters read
-int ReadLine(FILE * fp, LPTSTR szBuffer, int nMaxChars);
+int WINAPI ReadLine(FILE * fp, LPTSTR szBuffer, int nMaxChars);
 
 // Replaces the file name with the another one
-int ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
+int WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 
 // Replaces the file extension with another one.
-int ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
+int WINAPI ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
-int rsprintf(LPTSTR szBuffer, int nMaxChars, UINT nIDFormat, ...);
+int WINAPI rsprintf(LPTSTR szBuffer, int nMaxChars, UINT nIDFormat, ...);
 
 // Recalculates a screen window position (such as retrieved by GetWindowRect)
 // to the client coordinates of the window "hWnd".
-void ScreenRectToClientRect(HWND hWnd, LPRECT pRect);
-void ClientRectToScreenRect(HWND hWnd, LPRECT pRect);
+void WINAPI ScreenRectToClientRect(HWND hWnd, LPRECT pRect);
+void WINAPI ClientRectToScreenRect(HWND hWnd, LPRECT pRect);
 
 // Sets a bold font for a dialog control
-int SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
+int WINAPI SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
 
 // Sets a window text from resource
-int SetWindowTextRc(HWND hWnd, UINT nIDText, ...);
+int WINAPI SetWindowTextRc(HWND hWnd, UINT nIDText, ...);
 
 // Shows a systray baloon or a timed messagebox
-int ShowSystrayBaloon(HWND hDlg, UINT nIDIcon, UINT nIDTitle, UINT nIDText, ...);
+int WINAPI ShowSystrayBaloon(HWND hDlg, UINT nIDIcon, UINT nIDTitle, UINT nIDText, ...);
 
 // Verifies if the user's password is valid.
-BOOL VerifyUserPassword(LPTSTR szUserName, LPTSTR szDomain, LPTSTR szPassword);
+BOOL WINAPI VerifyUserPassword(LPTSTR szUserName, LPTSTR szDomain, LPTSTR szPassword);
 
 // Finds a path to WinDbg debugger
 // Optionally sets the WINDBG_DIR environment variable
-bool FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, bool bSetEnvironmentVariable);
+bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, bool bSetEnvironmentVariable);
 
 // Works with FS redirection
-void DisableWoW64FsRedirection(PVOID * ppvOldValue);
-void RevertWoW64FsRedirection(PVOID pvOldValue);
-bool IsWow64Process();
+void WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);
+void WINAPI RevertWoW64FsRedirection(PVOID pvOldValue);
+bool WINAPI IsWow64Process();
 
 // Writes the dump file after crash
-LONG WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);
+LONG WINAPI WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);
 
 #endif // __UTILS_H__

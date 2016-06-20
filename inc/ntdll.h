@@ -115,6 +115,16 @@ typedef struct _UNICODE_STRING
 } UNICODE_STRING, *PUNICODE_STRING;
 
 //
+// bitmap type
+//
+
+typedef struct _RTL_BITMAP
+{
+    ULONG SizeOfBitmap;
+    PULONG Buffer;
+} RTL_BITMAP, *PRTL_BITMAP;
+
+//
 // preallocated heap-growable buffers
 //
 
@@ -298,6 +308,26 @@ RemoveEntryList(
     return (BOOLEAN)(Flink == Blink);
 }
 #endif  // #if !defined(_WDMDDK_) && !defined(_LIST_ENTRY_MACROS_DEFINED_)
+
+//-----------------------------------------------------------------------------
+// Bitmap functions
+
+NTSYSAPI
+VOID
+NTAPI
+RtlSetBit(
+    PRTL_BITMAP BitMapHeader,
+    ULONG BitNumber
+    );
+
+NTSYSAPI
+VOID
+NTAPI
+RtlSetBits(
+    PRTL_BITMAP BitMapHeader,
+    ULONG StartingIndex,
+    ULONG NumberToSet
+    );
 
 //-----------------------------------------------------------------------------
 // Unicode string functions
@@ -3971,6 +4001,18 @@ ZwUnlockFile(
 #define RTL_NT_PATH_NAME_TO_DOS_PATH_NAME_DRIVE       (0x00000003)
 #define RTL_NT_PATH_NAME_TO_DOS_PATH_NAME_ALREADY_DOS (0x00000004)
 
+typedef enum _RTL_PATH_TYPE
+{
+    RtlPathTypeUnknown,         // 0
+    RtlPathTypeUncAbsolute,     // 1
+    RtlPathTypeDriveAbsolute,   // 2
+    RtlPathTypeDriveRelative,   // 3
+    RtlPathTypeRooted,          // 4
+    RtlPathTypeRelative,        // 5
+    RtlPathTypeLocalDevice,     // 6
+    RtlPathTypeRootLocalDevice  // 7
+} RTL_PATH_TYPE, *PRTL_PATH_TYPE;
+
 // CURDIR structure
 typedef struct _CURDIR
 {
@@ -3978,6 +4020,12 @@ typedef struct _CURDIR
     HANDLE Handle;
 } CURDIR, *PCURDIR;
 
+NTSYSAPI
+ULONG
+NTAPI
+RtlIsDosDeviceName_U(
+    IN PWSTR DosFileName
+    );
 
 NTSYSAPI
 BOOLEAN
