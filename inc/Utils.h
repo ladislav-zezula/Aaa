@@ -499,6 +499,12 @@ BOOL WINAPI SetEditCueBanner(HWND hEdit, UINT nIDText);
 BOOL WINAPI SetEditCueBanner(HWND hDlg, UINT nIDEdit, LPCTSTR szText);
 BOOL WINAPI SetEditCueBanner(HWND hDlg, UINT nIDEdit, UINT nIDText);
 
+// ComboBox functions
+BOOL WINAPI SetComboBoxCueBanner(HWND hCombo, LPCTSTR szText);
+BOOL WINAPI SetComboBoxCueBanner(HWND hCombo, UINT nIDText);
+BOOL WINAPI SetComboBoxCueBanner(HWND hDlg, UINT nIDCombo, LPCTSTR szText);
+BOOL WINAPI SetComboBoxCueBanner(HWND hDlg, UINT nIDCombo, UINT nIDText);
+
 // URL cursor functions
 HCURSOR WINAPI CreateUrlPointCursor();
 HCURSOR WINAPI CreateUrlWaitCursor();
