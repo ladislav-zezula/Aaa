@@ -125,8 +125,8 @@
 //-----------------------------------------------------------------------------
 // Special buttons for "Yes/Yes All/No/Cancel" message boxes
 
-#define IDYESTOALL       (IDNO+5)
-#define IDNOTOALL        (IDNO+6)
+#define IDYESTOALL       (IDNO+(IDS_BTN_YESALL-IDS_BTN_NO))
+#define IDNOTOALL        (IDNO+(IDS_BTN_NOALL-IDS_BTN_NO))
 
 #define LISTVIEW_LAST_ITEM   0x7FFFFFFF         // The highest item ID
 
