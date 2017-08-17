@@ -5484,7 +5484,7 @@ NTAPI
 NtAllocateVirtualMemory (
     IN HANDLE ProcessHandle,
     IN OUT PVOID *BaseAddress,
-    IN ULONG ZeroBits,
+    IN ULONG_PTR ZeroBits,
     IN OUT PSIZE_T RegionSize,
     IN ULONG AllocationType,
     IN ULONG Protect
@@ -5497,7 +5497,7 @@ NTAPI
 ZwAllocateVirtualMemory (
     IN HANDLE ProcessHandle,
     IN OUT PVOID *BaseAddress,
-    IN ULONG ZeroBits,
+    IN ULONG_PTR ZeroBits,
     IN OUT PSIZE_T RegionSize,
     IN ULONG AllocationType,
     IN ULONG Protect
@@ -5796,7 +5796,7 @@ ZwMapViewOfSection (
     IN HANDLE SectionHandle,
     IN HANDLE ProcessHandle,
     IN OUT PVOID *BaseAddress,
-    IN ULONG ZeroBits,
+    IN ULONG_PTR ZeroBits,
     IN ULONG CommitSize,
     IN OUT PLARGE_INTEGER SectionOffset OPTIONAL,
     IN OUT PULONG ViewSize,
@@ -6098,6 +6098,14 @@ NtOpenMutant(
     OUT PHANDLE MutantHandle,
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtReleaseMutant(
+    IN HANDLE MutantHandle,
+    IN PLONG PreviousCount OPTIONAL
     );
 
 //-----------------------------------------------------------------------------

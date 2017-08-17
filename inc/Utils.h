@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include <commctrl.h>
+#include <shlobj.h>
 #include <strsafe.h>
 
 //-----------------------------------------------------------------------------
@@ -343,10 +344,6 @@ BOOL WINAPI BrowseForDirectory(HWND hDlg, LPTSTR szDir, size_t cchDir, UINT nIDT
 void WINAPI CenterWindow(HWND hWnd);
 void WINAPI CenterWindowToParent(HWND hWnd);
 
-// This function compares a string with a wildcard search string.
-// returns TRUE, when the string matches with the wildcard.
-BOOL WINAPI CompareStringWildCard(LPCTSTR szString, LPCTSTR szWildCard);
-
 BOOL WINAPI CompareWindowsTexts(HWND hDlg, UINT nID1, UINT nID2, UINT nIDMsg);
 
 // Creates a HDROP structure for the file.
@@ -480,10 +477,99 @@ int WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
 int WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
 
 // Retrieves the pointer to plain name and extension
-LPSTR WINAPI GetPlainName(LPCSTR szFileName);
-LPWSTR WINAPI GetPlainName(LPCWSTR szFileName);
-LPSTR WINAPI GetFileExtension(LPCSTR szFileName);
-LPWSTR WINAPI GetFileExtension(LPCWSTR szFileName);
+template <typename XCHAR>
+XCHAR * WINAPI GetPlainName(const XCHAR * szFileName)
+{
+    const XCHAR * szPlainName = szFileName;
+
+    while(szFileName[0] != 0)
+    {
+        if(szFileName[0] == '\\' || szFileName[0] == '/')
+            szPlainName = szFileName + 1;
+        szFileName++;
+    }
+
+    return (XCHAR *)szPlainName;
+}
+
+template <typename XCHAR>
+XCHAR * WINAPI GetFileExtension(const XCHAR * szFileName)
+{
+    const XCHAR * szExtension = NULL;
+
+    // We need to start searching from the plain name
+    // Avoid: C:\$RECYCLE.BIN\File.ext
+    szFileName = GetPlainName(szFileName);
+    
+    // Find the last dot in the plain file name
+    while(szFileName[0] != 0)
+    {
+        if(szFileName[0] == '.')
+            szExtension = szFileName;
+        szFileName++;
+    }
+
+    // If not found, return the end of the file name
+    return (XCHAR *)((szExtension != NULL) ? szExtension : szFileName);
+}
+
+// This function compares a string with a wildcard search string.
+// returns TRUE, when the string matches with the wildcard.
+template <typename XCHAR>
+BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCard)
+{
+    const XCHAR * szWildCardPtr;
+
+    for(;;)
+    {
+        // If there is '?' in the wildcard, we skip one char
+        while(szWildCard[0] == '?')
+        {
+            if(szString[0] == 0)
+                return FALSE;
+
+            szWildCard++;
+            szString++;
+        }
+
+        // Handle '*'
+        szWildCardPtr = szWildCard;
+        if(szWildCardPtr[0] != 0)
+        {
+            if(szWildCardPtr[0] == '*')
+            {
+                szWildCardPtr++;
+
+                if(szWildCardPtr[0] == '*')
+                    continue;
+
+                if(szWildCardPtr[0] == 0)
+                    return TRUE;
+
+                if(toupper(szWildCardPtr[0]) == toupper(szString[0]))
+                {
+                    if(CompareStringWildCard(szString, szWildCardPtr))
+                        return TRUE;
+                }
+            }
+            else
+            {
+                if(toupper(szWildCardPtr[0]) != toupper(szString[0]))
+                    return FALSE;
+
+                szWildCard = szWildCardPtr + 1;
+            }
+
+            if(szString[0] == 0)
+                return FALSE;
+            szString++;
+        }
+        else
+        {
+            return (szString[0] == 0) ? TRUE : FALSE;
+        }
+    }
+}
 
 // RadioButton functions
 DWORD WINAPI GetRadioValue(HWND hDlg, UINT nIDFirst);
@@ -517,6 +603,10 @@ int  WINAPI InitURLButtons(HWND hDlg);
 BOOL WINAPI IsURLButton(HWND hWnd);
 
 // Functions related to ListView columns and items
+#define ListView_GetItemA(hwnd, pitem)      (BOOL)SNDMSG((hwnd), LVM_GETITEMA, 0, (LPARAM)(LV_ITEMA *)(pitem))
+#define ListView_SetItemA(hwnd, pitem)      (BOOL)SNDMSG((hwnd), LVM_SETITEMA, 0, (LPARAM)(const LV_ITEMA *)(pitem))
+#define ListView_InsertItemA(hwnd, pitem)   (int)SNDMSG((hwnd), LVM_INSERTITEMA, 0, (LPARAM)(const LV_ITEMA *)(pitem))
+
 int    WINAPI ListView_CreateColumns(HWND hList, TListViewColumns * pColumns);
 void   WINAPI ListView_ResizeColumns(HWND hList, TListViewColumns * pColumns, int nMinColumnWidth = 0);
 int    WINAPI InsertLVItem(HWND hList, int nIcon, LPCTSTR szText, LPARAM lParam);
