@@ -391,8 +391,8 @@ int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LP
 LPTSTR WINAPI GetErrorText(int nError);
 
 // Fills the module version
-int WINAPI GetModuleVersion(LPCTSTR szModuleName, LARGE_INTEGER * pVersion);
-int WINAPI GetModuleVersion(HMODULE hModule, LARGE_INTEGER * pVersion);
+int WINAPI GetModuleVersion(LPCTSTR szModuleName, ULARGE_INTEGER * pVersion);
+int WINAPI GetModuleVersion(HMODULE hModule, ULARGE_INTEGER * pVersion);
 
 // Returns a localized string for a few IDS_XXX strings.
 LPCTSTR WINAPI GetString(UINT_PTR nIDString);
