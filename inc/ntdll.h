@@ -2903,13 +2903,6 @@ typedef enum _FILE_INFORMATION_CLASS
     FileIdExtdDirectoryInformation,          // 60
     FileReplaceCompletionInformation,        // 61
     FileHardLinkFullIdInformation,           // 62
-	FileIdExtdBothDirectoryInformation,      // 63
-	FileDispositionInformationEx,            // 64
-	FileRenameInformationEx,                 // 65
-	FileRenameInformationExBypassAccessCheck, // 66
-	FileDesiredStorageClassInformation,      // 67
-	FileStatInformation,                     // 68
-	
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -3480,16 +3473,6 @@ typedef struct _FILE_FS_SECTOR_SIZE_INFORMATION {
     ULONG ByteOffsetForSectorAlignment;
     ULONG ByteOffsetForPartitionAlignment;
 } FILE_FS_SECTOR_SIZE_INFORMATION, *PFILE_FS_SECTOR_SIZE_INFORMATION;
-
-#define FILE_DISPOSITION_DO_NOT_DELETE              0x00000000
-#define FILE_DISPOSITION_DELETE                     0x00000001
-#define FILE_DISPOSITION_POSIX_SEMANTICS            0x00000002
-#define FILE_DISPOSITION_FORCE_IMAGE_SECTION_CHECK  0x00000004
-#define FILE_DISPOSITION_ON_CLOSE                   0x00000008
-
-typedef struct _FILE_DISPOSITION_INFORMATION_EX {
-	ULONG Flags;
-} FILE_DISPOSITION_INFORMATION_EX, *PFILE_DISPOSITION_INFORMATION_EX;
 
 NTSYSAPI
 NTSTATUS
