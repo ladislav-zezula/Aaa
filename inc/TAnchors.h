@@ -36,7 +36,7 @@
 
 struct TAnchor
 {
-    TAnchor * pNext;                    // Pointer to the next anchor (or NULL if none)
+    LIST_ENTRY Entry;                   // Links to other anchors
     HWND   hWnd;                        // Handle to the child (anchored) window
 
     int    nLeftRel;                    // Here are the anchor points. The nXXXRel means relative position
@@ -58,11 +58,14 @@ class TAnchors
     ~TAnchors();
 
     // Adding anchors
-    BOOL AddAnchor(HWND hWnd, DWORD dwAnchors);
-    BOOL AddAnchor(HWND hDlg, UINT nIDCtrl, DWORD dwAnchors);
+    TAnchor * AddAnchor(HWND hWnd, DWORD dwAnchors);
+    TAnchor * AddAnchor(HWND hDlg, UINT nIDCtrl, DWORD dwAnchors);
 
-    BOOL AddAnchorEx(HWND hWnd, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
-    BOOL AddAnchorEx(HWND hDlg, UINT nIDCtrl, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
+    TAnchor * AddAnchorEx(HWND hWnd, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
+    TAnchor * AddAnchorEx(HWND hDlg, UINT nIDCtrl, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
+
+    // Removes the anchor from the list. Note that this does NOT destroy the window.
+    bool RemoveAnchor(TAnchor * pAnchor);
 
     // Sets the size of the parent window manually
     void SetParentRectManual(RECT & rectParent);
@@ -79,7 +82,7 @@ class TAnchors
 
   protected:
 
-    void InsertAnchor(TAnchor * pNewAnchor);
+    TAnchor * InsertAnchor(TAnchor * pAnchor);
     void GetParentWindowRect(HWND hParent, RECT & rect);
     void SaveParentWindowInfo(HWND hParent);
     void SaveChildWindowInfo(HWND hWnd, TAnchor * pAnchor);
@@ -101,8 +104,7 @@ class TAnchors
 
     static BOOL WindowIsGroupBox(HWND hWnd);
 
-    TAnchor * m_pFirstAnchor;
-    TAnchor * m_pLastAnchor;
+    LIST_ENTRY m_AnchorLinks;
     RECT      m_rectParent;             // Parent rectangle (initialized in SetParentRectManual)
     HWND      m_hWndParent;             // Parent window of the anchored controls
     BOOL      m_bHasGroupBox;           // TRUE if one of the windows is a group box

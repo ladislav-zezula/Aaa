@@ -2903,6 +2903,15 @@ typedef enum _FILE_INFORMATION_CLASS
     FileIdExtdDirectoryInformation,          // 60
     FileReplaceCompletionInformation,        // 61
     FileHardLinkFullIdInformation,           // 62
+
+    // Windows 10+ RS2
+    FileIdExtdBothDirectoryInformation,      // 63
+    FileDispositionInformationEx,            // 64
+    FileRenameInformationEx,                 // 65
+    FileRenameInformationExBypassAccessCheck,// 66
+    FileDesiredStorageClassInformation,      // 67
+    FileStatInformation,                     // 68
+ 
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -3353,6 +3362,86 @@ typedef struct _FILE_IS_REMOTE_DEVICE_INFORMATION
 typedef struct _FILE_NUMA_NODE_INFORMATION {
     USHORT NodeNumber;
 } FILE_NUMA_NODE_INFORMATION, *PFILE_NUMA_NODE_INFORMATION;
+
+typedef struct _FILE_VOLUME_NAME_INFORMATION
+{
+    ULONG DeviceNameLength;
+    WCHAR DeviceName[1];
+} FILE_VOLUME_NAME_INFORMATION, *PFILE_VOLUME_NAME_INFORMATION;
+
+typedef struct _FILE_ID_128
+{
+    BYTE Identifier[16];
+} FILE_ID_128, *PFILE_ID_128;
+
+typedef struct _FILE_ID_INFORMATION
+{
+    ULONGLONG VolumeSerialNumber;
+    FILE_ID_128 FileId;
+} FILE_ID_INFORMATION, *PFILE_ID_INFORMATION;
+
+typedef struct _FILE_ID_EXTD_DIR_INFORMATION
+{
+    ULONG NextEntryOffset;
+    ULONG FileIndex;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER EndOfFile;
+    LARGE_INTEGER AllocationSize;
+    ULONG FileAttributes;
+    ULONG FileNameLength;
+    ULONG EaSize;
+    ULONG ReparsePointTag;
+    FILE_ID_128 FileId;
+    WCHAR FileName[1];
+} FILE_ID_EXTD_DIR_INFORMATION, *PFILE_ID_EXTD_DIR_INFORMATION;
+
+typedef struct _FILE_ID_EXTD_BOTH_DIR_INFORMATION
+{
+    ULONG NextEntryOffset;
+    ULONG FileIndex;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER EndOfFile;
+    LARGE_INTEGER AllocationSize;
+    ULONG FileAttributes;
+    ULONG FileNameLength;
+    ULONG EaSize;
+    ULONG ReparsePointTag;
+    FILE_ID_128 FileId;
+    CCHAR ShortNameLength;
+    WCHAR ShortName[12];
+    WCHAR FileName[1];
+} FILE_ID_EXTD_BOTH_DIR_INFORMATION, *PFILE_ID_EXTD_BOTH_DIR_INFORMATION;
+
+#define FILE_DISPOSITION_DO_NOT_DELETE              0x00000000
+#define FILE_DISPOSITION_DELETE                     0x00000001
+#define FILE_DISPOSITION_POSIX_SEMANTICS            0x00000002
+#define FILE_DISPOSITION_FORCE_IMAGE_SECTION_CHECK  0x00000004
+#define FILE_DISPOSITION_ON_CLOSE                   0x00000008
+
+typedef struct _FILE_DISPOSITION_INFORMATION_EX {
+    ULONG Flags;
+} FILE_DISPOSITION_INFORMATION_EX, *PFILE_DISPOSITION_INFORMATION_EX;
+
+typedef struct _FILE_STAT_INFORMATION
+{
+    LARGE_INTEGER FileId;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG FileAttributes;
+    ULONG ReparseTag;
+    ULONG NumberOfLinks;
+    ULONG EffectiveAccess;
+} FILE_STAT_INFORMATION, *PFILE_STAT_INFORMATION;
 
 /*
 typedef struct _FILE_REMOTE_PROTOCOL_INFO
