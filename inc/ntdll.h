@@ -2888,6 +2888,8 @@ typedef enum _FILE_INFORMATION_CLASS
     FileProcessIdsUsingFileInformation,      // 47
     FileNormalizedNameInformation,           // 48
     FileNetworkPhysicalNameInformation,      // 49
+    
+    // Windows 7+
     FileIdGlobalTxDirectoryInformation,      // 50
     FileIsRemoteDeviceInformation,           // 51
     FileAttributeCacheInformation,           // 52
@@ -2895,20 +2897,24 @@ typedef enum _FILE_INFORMATION_CLASS
     FileStandardLinkInformation,             // 54
     FileRemoteProtocolInformation,           // 55
                                              
-    // Windows 8+, kernel mode only
-    FileRenameInformationBypassAccessCheck,  // 56
-    FileLinkInformationBypassAccessCheck,    // 57
+    // Windows 8+
+    FileRenameInformationBypassAccessCheck,  // 56 (kernel-mode only)
+    FileLinkInformationBypassAccessCheck,    // 57 (kernel-mode only)
     FileVolumeNameInformation,               // 58
     FileIdInformation,                       // 59
     FileIdExtdDirectoryInformation,          // 60
+
+    // WinBlue+
     FileReplaceCompletionInformation,        // 61
     FileHardLinkFullIdInformation,           // 62
 
-    // Windows 10+ RS2
+    // Windows 10 THRESHOLD+
     FileIdExtdBothDirectoryInformation,      // 63
     FileDispositionInformationEx,            // 64
     FileRenameInformationEx,                 // 65
-    FileRenameInformationExBypassAccessCheck,// 66
+    FileRenameInformationExBypassAccessCheck,// 66 (kernel-mode only)
+    
+    // Windows 10 REDSTONE+
     FileDesiredStorageClassInformation,      // 67
     FileStatInformation,                     // 68
  
@@ -3011,6 +3017,16 @@ typedef struct _FILE_RENAME_INFORMATION {
     WCHAR FileName[1];
 } FILE_RENAME_INFORMATION, *PFILE_RENAME_INFORMATION;
 
+#define FILE_RENAME_REPLACE_IF_EXISTS              0x00000001
+#define FILE_RENAME_POSIX_SEMANTICS                0x00000002
+
+// Renamed from original FILE_RENAME_INFORMATION in RS1+
+typedef struct _FILE_RENAME_INFORMATION_EX {
+    ULONG Flags;
+    HANDLE RootDirectory;
+    ULONG FileNameLength;
+    WCHAR FileName[1];
+} FILE_RENAME_INFORMATION_EX, *PFILE_RENAME_INFORMATION_EX;
 
 typedef struct _FILE_NAMES_INFORMATION {
     ULONG NextEntryOffset;
@@ -3369,10 +3385,12 @@ typedef struct _FILE_VOLUME_NAME_INFORMATION
     WCHAR DeviceName[1];
 } FILE_VOLUME_NAME_INFORMATION, *PFILE_VOLUME_NAME_INFORMATION;
 
+#ifndef WINAPI_FAMILY_PC_APP    // In newer SDKs only
 typedef struct _FILE_ID_128
 {
     BYTE Identifier[16];
 } FILE_ID_128, *PFILE_ID_128;
+#endif
 
 typedef struct _FILE_ID_INFORMATION
 {
