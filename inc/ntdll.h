@@ -3011,6 +3011,16 @@ typedef struct _FILE_RENAME_INFORMATION {
     WCHAR FileName[1];
 } FILE_RENAME_INFORMATION, *PFILE_RENAME_INFORMATION;
 
+#define FILE_RENAME_REPLACE_IF_EXISTS              0x00000001
+#define FILE_RENAME_POSIX_SEMANTICS                0x00000002
+
+// Renamed from original FILE_RENAME_INFORMATION in RS1+
+typedef struct _FILE_RENAME_INFORMATION_EX {
+    ULONG Flags;
+    HANDLE RootDirectory;
+    ULONG FileNameLength;
+    WCHAR FileName[1];
+} FILE_RENAME_INFORMATION_EX, *PFILE_RENAME_INFORMATION_EX;
 
 typedef struct _FILE_NAMES_INFORMATION {
     ULONG NextEntryOffset;
