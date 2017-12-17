@@ -654,7 +654,10 @@ BOOL WINAPI VerifyUserPassword(LPTSTR szUserName, LPTSTR szDomain, LPTSTR szPass
 
 // Finds a path to WinDbg debugger
 // Optionally sets the WINDBG_DIR environment variable
-bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, bool bSetEnvironmentVariable);
+#define WDBG_PATH_SET_VARIABLE      0x0001
+#define WDBG_PATH_INCLUDE_FILENAME  0x0002
+#define WDBG_PATH_CHECK_WINDBGX     0x0004
+bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, DWORD dwFlags);
 
 // Works with FS redirection
 void WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);

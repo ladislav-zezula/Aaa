@@ -1627,15 +1627,15 @@ NtFlushKey(
 // Path parameter to RtlQueryRegistryValues is relative to.
 //
 
-#define RTL_REGISTRY_ABSOLUTE     0             // Path is a full path
-#define RTL_REGISTRY_SERVICES     1             // \Registry\Machine\System\CurrentControlSet\Services
-#define RTL_REGISTRY_CONTROL      2             // \Registry\Machine\System\CurrentControlSet\Control
-#define RTL_REGISTRY_WINDOWS_NT   3             // \Registry\Machine\Software\Microsoft\Windows NT\CurrentVersion
-#define RTL_REGISTRY_DEVICEMAP    4             // \Registry\Machine\Hardware\DeviceMap
-#define RTL_REGISTRY_USER         5             // \Registry\User\CurrentUser
+#define RTL_REGISTRY_ABSOLUTE     0             // Path is an absolute registry path.
+#define RTL_REGISTRY_SERVICES     1             // Path is relative to \Registry\Machine\System\CurrentControlSet\Services
+#define RTL_REGISTRY_CONTROL      2             // Path is relative to \Registry\Machine\System\CurrentControlSet\Control
+#define RTL_REGISTRY_WINDOWS_NT   3             // Path is relative to \Registry\Machine\Software\Microsoft\Windows NT\CurrentVersion
+#define RTL_REGISTRY_DEVICEMAP    4             // Path is relative to \Registry\Machine\Hardware\DeviceMap
+#define RTL_REGISTRY_USER         5             // Path is relative to \Registry\User\CurrentUser. (For a system process, this is \User\.Default)
 #define RTL_REGISTRY_MAXIMUM      6
-#define RTL_REGISTRY_HANDLE       0x40000000    // Low order bits are registry handle
-#define RTL_REGISTRY_OPTIONAL     0x80000000    // Indicates the key node is optional
+#define RTL_REGISTRY_HANDLE       0x40000000    // Specifies that the Path parameter is actually a registry handle to use
+#define RTL_REGISTRY_OPTIONAL     0x80000000    // Specifies that the key referenced by this parameter and the Path parameter are optional
 
 
 typedef NTSTATUS (NTAPI * PRTL_QUERY_REGISTRY_ROUTINE)(
@@ -4933,6 +4933,7 @@ ZwTerminateProcess(
 #define ALPC_REQUEST            0x2000 | LPC_REQUEST
 #define ALPC_CONNECTION_REQUEST 0x2000 | LPC_CONNECTION_REQUEST
 
+#define LPC_MESSAGE_BASE_SIZE	24
 
 //
 // Define header for Port Message
@@ -4974,7 +4975,7 @@ typedef struct _PORT_MESSAGE
         ULONG  CallbackId;              // 
     };
 
-} PORT_MESSAGE, *PPORT_MESSAGE;
+} PORT_MESSAGE, *PPORT_MESSAGE, LPC_MESSAGE, *PLPC_MESSAGE;
 
 //
 // Define structure for initializing shared memory on the caller's side of the port
@@ -5663,8 +5664,8 @@ NtReadVirtualMemory(
     IN HANDLE ProcessHandle,
     IN PVOID BaseAddress,
     OUT PVOID Buffer,
-    IN ULONG BufferSize,
-    OUT PULONG NumberOfBytesRead OPTIONAL
+    IN SIZE_T BufferSize,
+    OUT PSIZE_T NumberOfBytesRead OPTIONAL
     );
 
 NTSYSAPI
@@ -5674,8 +5675,8 @@ ZwReadVirtualMemory(
     IN HANDLE ProcessHandle,
     IN PVOID BaseAddress,
     OUT PVOID Buffer,
-    IN ULONG BufferSize,
-    OUT PULONG NumberOfBytesRead OPTIONAL
+    IN SIZE_T BufferSize,
+    OUT PSIZE_T NumberOfBytesRead OPTIONAL
     );
 
 
@@ -5686,8 +5687,8 @@ NtWriteVirtualMemory(
     IN HANDLE ProcessHandle,
     IN PVOID BaseAddress,
     IN PVOID Buffer,
-    IN ULONG BufferSize,
-    OUT PULONG NumberOfBytesWritten OPTIONAL
+    IN SIZE_T BufferSize,
+    OUT PSIZE_T NumberOfBytesWritten OPTIONAL
     );
 
 
@@ -5698,8 +5699,8 @@ ZwWriteVirtualMemory(
     IN HANDLE ProcessHandle,
     IN PVOID BaseAddress,
     IN PVOID Buffer,
-    IN ULONG BufferSize,
-    OUT PULONG NumberOfBytesWritten OPTIONAL
+    IN SIZE_T BufferSize,
+    OUT PSIZE_T NumberOfBytesWritten OPTIONAL
     );
 
 
@@ -5956,8 +5957,8 @@ NtQuerySection (
     IN HANDLE SectionHandle,
     IN SECTION_INFORMATION_CLASS SectionInformationClass,
     OUT PVOID SectionInformation,
-    IN ULONG Length,
-    OUT PULONG ResultLength OPTIONAL
+    IN SIZE_T Length,
+    OUT PSIZE_T ResultLength OPTIONAL
     );
 
 
@@ -5968,8 +5969,8 @@ ZwQuerySection (
     IN HANDLE SectionHandle,
     IN SECTION_INFORMATION_CLASS SectionInformationClass,
     OUT PVOID SectionInformation,
-    IN ULONG Length,
-    OUT PULONG ResultLength OPTIONAL
+    IN SIZE_T Length,
+    OUT PSIZE_T ResultLength OPTIONAL
     );
 
 
