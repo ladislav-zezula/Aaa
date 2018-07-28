@@ -219,7 +219,13 @@ typedef struct _CLIENT_ID
     HANDLE UniqueThread;
 } CLIENT_ID, *PCLIENT_ID;
 #endif // _NTDEF_
-
+/*
+typedef struct _IMAGE_RELOC
+{
+    WORD offset : 12;
+    WORD type : 4;
+} IMAGE_RELOC, *PIMAGE_RELOC;
+*/
 
 //------------------------------------------------------------------------------
 // Macros
@@ -340,7 +346,6 @@ RtlInitString(
     PCSTR SourceString
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
@@ -348,7 +353,6 @@ RtlInitUnicodeString(
     PUNICODE_STRING DestinationString,
     PCWSTR SourceString
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -358,7 +362,6 @@ RtlInitUnicodeStringEx(
     PCWSTR SourceString
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -367,7 +370,6 @@ RtlCreateUnicodeString(
     IN PCWSTR SourceString
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -375,7 +377,6 @@ RtlCreateUnicodeStringFromAsciiz(
     OUT PUNICODE_STRING Destination,
     IN PCSTR Source
     );
-
 
 NTSYSAPI
 BOOLEAN
@@ -386,7 +387,6 @@ RtlPrefixUnicodeString(
     IN BOOLEAN CaseInSensitive
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -396,7 +396,6 @@ RtlDuplicateUnicodeString(
     OUT PUNICODE_STRING TargetString
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -405,7 +404,6 @@ RtlAppendUnicodeToString(
     PCWSTR Source
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -413,7 +411,6 @@ RtlAppendUnicodeStringToString(
     IN OUT PUNICODE_STRING Destination,
     IN PUNICODE_STRING Source
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -424,7 +421,6 @@ RtlUnicodeStringToInteger(
     OUT PULONG Value
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -434,7 +430,6 @@ RtlIntegerToUnicodeString(
     IN OUT PUNICODE_STRING String
     );
 
-
 NTSYSAPI
 NTSTATUS 
 NTAPI
@@ -442,7 +437,6 @@ RtlGUIDFromString(
     IN PUNICODE_STRING GuidString, 
     OUT GUID *Guid 
     );
-
 
 NTSYSAPI
 LONG
@@ -452,7 +446,6 @@ RtlCompareUnicodeString(
     IN PUNICODE_STRING String2,
     IN BOOLEAN CaseInSensitive
     );
-
 
 // Windows Vista or newer
 NTSYSAPI
@@ -466,7 +459,6 @@ RtlCompareUnicodeStrings(
     IN BOOLEAN CaseInSensitive
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
@@ -475,14 +467,12 @@ RtlCopyUnicodeString(
     IN PUNICODE_STRING SourceString
     );
 
-
 NTSYSAPI
 WCHAR
 NTAPI
 RtlUpcaseUnicodeChar(
     IN WCHAR SourceCharacter
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -493,7 +483,6 @@ RtlUpcaseUnicodeString(
     IN BOOLEAN AllocateDestinationString
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -502,7 +491,6 @@ RtlDowncaseUnicodeString(
     IN PUNICODE_STRING SourceString,
     IN BOOLEAN AllocateDestinationString
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -515,7 +503,6 @@ RtlUpcaseUnicodeToMultiByteN(
     IN ULONG BytesInUnicodeString
     );
  
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -525,7 +512,6 @@ RtlEqualUnicodeString(
     IN BOOLEAN CaseInSensitive
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
@@ -533,14 +519,12 @@ RtlFreeUnicodeString(
     IN  PUNICODE_STRING UnicodeString
     );
 
-
 NTSYSAPI
 WCHAR
 NTAPI
 RtlAnsiCharToUnicodeChar(
     IN OUT PUCHAR * SourceCharacter
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -551,7 +535,6 @@ RtlAnsiStringToUnicodeString(
     IN BOOLEAN AllocateDestinationString
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -561,7 +544,6 @@ RtlUnicodeStringToAnsiString(
     IN BOOLEAN AllocateDestinationString
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
@@ -570,14 +552,12 @@ RtlInitAnsiString(
     IN PCHAR SourceString
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
 RtlFreeAnsiString(
     IN PANSI_STRING AnsiString
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -586,14 +566,12 @@ RtlFormatCurrentUserKeyPath(
     OUT PUNICODE_STRING CurrentUserKeyPath
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
 RtlRaiseStatus(
     IN NTSTATUS Status
     );
-
 
 NTSYSAPI
 VOID
@@ -602,7 +580,6 @@ DbgBreakPoint(
     VOID
     );
 
-
 NTSYSAPI
 ULONG
 _cdecl
@@ -610,7 +587,6 @@ DbgPrint(
     PCH Format,
     ...
     );
-
 
 // Since Windows XP
 NTSYSAPI
@@ -622,7 +598,6 @@ DbgPrintEx(
     IN PCSTR Format,
     ...
     );
-
 
 NTSYSAPI
 ULONG
@@ -641,7 +616,6 @@ RtlInitializeCriticalSection(
     IN  PRTL_CRITICAL_SECTION CriticalSection
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -650,14 +624,12 @@ RtlInitializeCriticalSectionAndSpinCount(
     IN  ULONG SpinCount
     );
 
-
 NTSYSAPI
 BOOL
 NTAPI
 RtlTryEnterCriticalSection(
     IN PRTL_CRITICAL_SECTION CriticalSection
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -666,14 +638,12 @@ RtlEnterCriticalSection(
     IN PRTL_CRITICAL_SECTION CriticalSection
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 RtlLeaveCriticalSection(
     IN PRTL_CRITICAL_SECTION CriticalSection
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -698,7 +668,6 @@ RtlCompressBuffer(
     OUT PULONG FinalCompressedSize,
     IN  PVOID WorkSpace
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -891,7 +860,6 @@ typedef struct _OBJECT_DIRECTORY_INFORMATION
     UNICODE_STRING TypeName;
 } OBJECT_DIRECTORY_INFORMATION, *POBJECT_DIRECTORY_INFORMATION;
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -901,7 +869,6 @@ NtCreateDirectoryObject(
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -910,7 +877,6 @@ NtOpenDirectoryObject(
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -925,7 +891,6 @@ NtQueryDirectoryObject(
     OUT PULONG ReturnLength OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -937,7 +902,6 @@ NtQueryObject (
     OUT PULONG ResultLength OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -947,7 +911,6 @@ NtSetInformationObject (
     IN PVOID ObjectInformation,
     IN ULONG Length
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -962,7 +925,6 @@ NtDuplicateObject (
     IN ULONG Options
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -973,7 +935,6 @@ NtQuerySecurityObject (
     IN ULONG DescriptorLength,
     OUT PULONG ReturnLength
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -986,7 +947,6 @@ ZwQuerySecurityObject (
     OUT PULONG ReturnLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -995,7 +955,6 @@ NtSetSecurityObject (
     IN SECURITY_INFORMATION SecurityInformation,
     IN PSECURITY_DESCRIPTOR SecurityDescriptor
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1006,14 +965,12 @@ ZwSetSecurityObject (
     IN PSECURITY_DESCRIPTOR SecurityDescriptor
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 NtMakeTemporaryObject(
     IN HANDLE ObjectHandle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1102,7 +1059,6 @@ typedef struct _RTL_HANDLE_TABLE
     PRTL_HANDLE_TABLE_ENTRY MaxReservedHandles;
 } RTL_HANDLE_TABLE, *PRTL_HANDLE_TABLE;
 
-
 NTSYSAPI
 VOID
 NTAPI
@@ -1114,7 +1070,6 @@ RtlInitializeGenericTable (
     IN PVOID TableContext
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
@@ -1124,7 +1079,6 @@ RtlInitializeHandleTable(
     OUT PRTL_HANDLE_TABLE HandleTable
     );
 
-
 NTSYSAPI
 PRTL_HANDLE_TABLE_ENTRY
 NTAPI
@@ -1132,7 +1086,6 @@ RtlAllocateHandle(
     IN PRTL_HANDLE_TABLE HandleTable,
     OUT PULONG HandleIndex OPTIONAL
     );
-
 
 NTSYSAPI
 BOOLEAN
@@ -1142,7 +1095,6 @@ RtlFreeHandle(
     IN PRTL_HANDLE_TABLE_ENTRY Handle
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -1151,7 +1103,6 @@ RtlIsValidIndexHandle(
     IN ULONG HandleIndex,
     OUT PRTL_HANDLE_TABLE_ENTRY *Handle
     );
-
 
 NTSYSAPI
 PVOID
@@ -1163,14 +1114,12 @@ RtlInsertElementGenericTable (
     OUT PBOOLEAN NewElement OPTIONAL
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
 RtlIsGenericTableEmpty (
     IN PRTL_GENERIC_TABLE Table
     );
-
 
 NTSYSAPI
 BOOLEAN
@@ -1179,7 +1128,6 @@ RtlIsGenericTableEmpty (
     IN PRTL_GENERIC_TABLE Table
     );
  
-
 NTSYSAPI
 PVOID
 NTAPI
@@ -1187,7 +1135,6 @@ RtlLookupElementGenericTable (
     IN PRTL_GENERIC_TABLE Table,
     IN PVOID Buffer
     );
-
 
 NTSYSAPI
 PVOID
@@ -1197,14 +1144,12 @@ RtlEnumerateGenericTableWithoutSplaying(
     IN  PVOID *RestartKey
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 NtClose(
     IN  HANDLE Handle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1224,7 +1169,6 @@ RtlOpenCurrentUser(
     OUT PHANDLE CurrentUserKey
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1232,7 +1176,6 @@ RtlCreateEnvironment(
     BOOLEAN CloneCurrentEnvironment,
     PVOID *Environment
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1244,7 +1187,6 @@ RtlExpandEnvironmentStrings_U(
     OUT PULONG ReturnedLength OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1253,7 +1195,6 @@ RtlQueryEnvironmentVariable_U(
     IN PUNICODE_STRING Name,
     OUT PUNICODE_STRING Value
     );
-
 
 NTSYSAPI
 ULONG
@@ -1267,7 +1208,6 @@ RtlDosSearchPath_U(
     OUT PWSTR *lpFilePart
     );
  
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1276,7 +1216,6 @@ RtlSetEnvironmentVariable(
     PUNICODE_STRING Name,
     PUNICODE_STRING Value
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1397,7 +1336,6 @@ typedef struct _KEY_VALUE_PARTIAL_INFORMATION
     UCHAR Data[1];
 } KEY_VALUE_PARTIAL_INFORMATION, *PKEY_VALUE_PARTIAL_INFORMATION;
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1405,7 +1343,6 @@ NtLoadKey(
     IN POBJECT_ATTRIBUTES TargetKey,
     IN POBJECT_ATTRIBUTES SourceFile
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1443,7 +1380,6 @@ NtUnloadKey(
     IN POBJECT_ATTRIBUTES TargetKey
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1457,7 +1393,6 @@ NtCreateKey(
     OUT PULONG Disposition OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1466,7 +1401,6 @@ NtOpenKey(
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1480,7 +1414,6 @@ NtEnumerateKey(
     IN PULONG ResultLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1492,7 +1425,6 @@ ZwEnumerateKey(
     IN ULONG Length,
     IN PULONG ResultLength
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1506,7 +1438,6 @@ NtEnumerateValueKey(
     OUT PULONG  ResultLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1519,14 +1450,12 @@ ZwEnumerateValueKey(
     OUT PULONG  ResultLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 NtDeleteKey(
     IN HANDLE KeyHandle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1538,7 +1467,6 @@ NtQueryKey(
     IN  ULONG Length,
     OUT PULONG ResultLength    
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1552,7 +1480,6 @@ NtQueryValueKey(
     OUT PULONG ResultLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1565,7 +1492,6 @@ NtSetValueKey(
     IN ULONG DataSize
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1573,7 +1499,6 @@ NtDeleteValueKey(
     IN HANDLE KeyHandle,
     IN PUNICODE_STRING ValueName
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -1658,7 +1583,6 @@ typedef struct _RTL_QUERY_REGISTRY_TABLE
     ULONG DefaultLength;
 } RTL_QUERY_REGISTRY_TABLE, *PRTL_QUERY_REGISTRY_TABLE;
 
-
 NTSYSAPI
 NTSTATUS 
 NTAPI
@@ -1676,51 +1600,51 @@ RtlQueryRegistryValues(
 
 typedef enum _SYSTEM_INFORMATION_CLASS
 {
-    SystemBasicInformation,
-    SystemProcessorInformation,
-    SystemPerformanceInformation,
-    SystemTimeOfDayInformation,
-    SystemPathInformation, /// Obsolete: Use KUSER_SHARED_DATA
-    SystemProcessInformation,
-    SystemCallCountInformation,
-    SystemDeviceInformation,
-    SystemProcessorPerformanceInformation,
-    SystemFlagsInformation,
-    SystemCallTimeInformation,
-    SystemModuleInformation,
-    SystemLocksInformation,
-    SystemStackTraceInformation,
-    SystemPagedPoolInformation,
-    SystemNonPagedPoolInformation,
-    SystemHandleInformation,
-    SystemObjectInformation,
-    SystemPageFileInformation,
-    SystemVdmInstemulInformation,
-    SystemVdmBopInformation,
-    SystemFileCacheInformation,
-    SystemPoolTagInformation,
-    SystemInterruptInformation,
-    SystemDpcBehaviorInformation,
-    SystemFullMemoryInformation,
-    SystemLoadGdiDriverInformation,
-    SystemUnloadGdiDriverInformation,
-    SystemTimeAdjustmentInformation,
-    SystemSummaryMemoryInformation,
-    SystemMirrorMemoryInformation,
-    SystemPerformanceTraceInformation,
-    SystemObsolete0,
-    SystemExceptionInformation,
-    SystemCrashDumpStateInformation,
-    SystemKernelDebuggerInformation,
-    SystemContextSwitchInformation,
-    SystemRegistryQuotaInformation,
-    SystemExtendServiceTableInformation,
-    SystemPrioritySeperation,
-    SystemPlugPlayBusInformation,
-    SystemDockInformation,
-    SystemPowerInformationNative,
-    SystemProcessorSpeedInformation,
-    SystemCurrentTimeZoneInformation,
+    SystemBasicInformation,                     // 0x00
+    SystemProcessorInformation,                 // 0x01
+    SystemPerformanceInformation,               // 0x02
+    SystemTimeOfDayInformation,                 // 0x03
+    SystemPathInformation,                      // 0x04 (Obsolete: Use KUSER_SHARED_DATA)
+    SystemProcessInformation,                   // 0x05
+    SystemCallCountInformation,                 // 0x06
+    SystemDeviceInformation,                    // 0x07
+    SystemProcessorPerformanceInformation,      // 0x08
+    SystemFlagsInformation,                     // 0x09
+    SystemCallTimeInformation,                  // 0x0a
+    SystemModuleInformation,                    // 0x0b
+    SystemLocksInformation,                     // 0x0c
+    SystemStackTraceInformation,                // 0x0d
+    SystemPagedPoolInformation,                 // 0x0e
+    SystemNonPagedPoolInformation,              // 0x0f
+    SystemHandleInformation,                    // 0x10
+    SystemObjectInformation,                    // 0x11
+    SystemPageFileInformation,                  // 0x12
+    SystemVdmInstemulInformation,               // 0x13
+    SystemVdmBopInformation,                    // 0x14
+    SystemFileCacheInformation,                 // 0x15
+    SystemPoolTagInformation,                   // 0x16
+    SystemInterruptInformation,                 // 0x17
+    SystemDpcBehaviorInformation,               // 0x18
+    SystemFullMemoryInformation,                // 0x19
+    SystemLoadGdiDriverInformation,             // 0x1a
+    SystemUnloadGdiDriverInformation,           // 0x1b
+    SystemTimeAdjustmentInformation,            // 0x1c
+    SystemSummaryMemoryInformation,             // 0x1d
+    SystemMirrorMemoryInformation,              // 0x1e
+    SystemPerformanceTraceInformation,          // 0x1f
+    SystemObsolete0,                            // 0x20
+    SystemExceptionInformation,                 // 0x21
+    SystemCrashDumpStateInformation,            // 0x22
+    SystemKernelDebuggerInformation,            // 0x23
+    SystemContextSwitchInformation,             // 0x24
+    SystemRegistryQuotaInformation,             // 0x25
+    SystemExtendServiceTableInformation,        // 0x26
+    SystemPrioritySeperation,                   // 0x27
+    SystemPlugPlayBusInformation,               // 0x28
+    SystemDockInformation,                      // 0x29
+    SystemPowerInformationNative,               // 0x2a
+    SystemProcessorSpeedInformation,            // 0x2b
+    SystemCurrentTimeZoneInformation,           // 0x2c
     SystemLookasideInformation,
     SystemTimeSlipNotification,
     SystemSessionCreate,
@@ -2744,7 +2668,6 @@ typedef enum _SHUTDOWN_ACTION
 
 } SHUTDOWN_ACTION, *PSHUTDOWN_ACTION;
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -2988,6 +2911,16 @@ typedef struct _FILE_STANDARD_INFORMATION {
     BOOLEAN Directory;                                      
 } FILE_STANDARD_INFORMATION, *PFILE_STANDARD_INFORMATION;   
 
+// Windows 10 THRESHOLD+
+typedef struct _FILE_STANDARD_INFORMATION_EX {
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG NumberOfLinks;
+    BOOLEAN DeletePending;
+    BOOLEAN Directory;
+    BOOLEAN AlternateStream;
+    BOOLEAN MetadataAttribute;
+} FILE_STANDARD_INFORMATION_EX, *PFILE_STANDARD_INFORMATION_EX;
 
 typedef struct _FILE_INTERNAL_INFORMATION {
     LARGE_INTEGER IndexNumber;
@@ -3597,7 +3530,6 @@ NtCreateFile(
     IN  PVOID EaBuffer,
     IN  ULONG EaLength);
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3614,7 +3546,6 @@ ZwCreateFile(
     IN  PVOID EaBuffer,
     IN  ULONG EaLength);
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3626,7 +3557,6 @@ NtOpenFile(
     IN ULONG ShareAccess,
     IN ULONG OpenOptions
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3640,7 +3570,6 @@ ZwOpenFile(
     IN ULONG OpenOptions
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3649,7 +3578,6 @@ NtQueryAttributesFile(
     OUT PFILE_BASIC_INFORMATION FileInformation
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3657,7 +3585,6 @@ ZwQueryAttributesFile(
     IN POBJECT_ATTRIBUTES ObjectAttributes,
     OUT PFILE_BASIC_INFORMATION FileInformation
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3670,7 +3597,6 @@ NtQueryInformationFile(
     IN FILE_INFORMATION_CLASS FileInformationClass
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3681,7 +3607,6 @@ ZwQueryInformationFile(
     IN ULONG Length,
     IN FILE_INFORMATION_CLASS FileInformationClass
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3700,7 +3625,6 @@ NtQueryDirectoryFile(
     IN BOOLEAN RestartScan
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3718,7 +3642,6 @@ ZwQueryDirectoryFile(
     IN BOOLEAN RestartScan
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3729,7 +3652,6 @@ NtQueryVolumeInformationFile(
     IN ULONG Length,
     IN FS_INFORMATION_CLASS FsInformationClass
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3742,7 +3664,6 @@ ZwQueryVolumeInformationFile(
     IN FS_INFORMATION_CLASS FsInformationClass
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3753,7 +3674,6 @@ NtSetInformationFile(
     IN ULONG Length,
     IN FILE_INFORMATION_CLASS FileInformationClass
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3766,7 +3686,6 @@ ZwSetInformationFile(
     IN FILE_INFORMATION_CLASS FileInformationClass
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3778,7 +3697,6 @@ NtSetVolumeInformationFile(
     IN FS_INFORMATION_CLASS FsInformationClass
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3789,7 +3707,6 @@ ZwSetVolumeInformationFile(
     IN ULONG Length,
     IN FS_INFORMATION_CLASS FsInformationClass
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3803,8 +3720,8 @@ NtQueryEaFile(
     IN  PVOID EaList OPTIONAL,
     IN  ULONG EaListLength,
     IN  PULONG EaIndex OPTIONAL,
-    IN  BOOLEAN RestartScan);
-
+    IN  BOOLEAN RestartScan
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -3818,8 +3735,8 @@ ZwQueryEaFile(
     IN  PVOID EaList OPTIONAL,
     IN  ULONG EaListLength,
     IN  PULONG EaIndex OPTIONAL,
-    IN  BOOLEAN RestartScan);
-
+    IN  BOOLEAN RestartScan
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -3828,8 +3745,8 @@ NtSetEaFile(
     IN  HANDLE FileHandle,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN  PVOID Buffer,
-    IN  ULONG Length);
-
+    IN  ULONG Length
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -3838,8 +3755,8 @@ ZwSetEaFile(
     IN  HANDLE FileHandle,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN  PVOID Buffer,
-    IN  ULONG Length);
-
+    IN  ULONG Length
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -3856,7 +3773,6 @@ NtReadFile(
     IN PULONG Key OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3871,7 +3787,6 @@ NtReadFileScatter(
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
     IN PULONG Key OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3888,7 +3803,6 @@ ZwReadFile(
     IN PULONG Key OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3903,7 +3817,6 @@ NtWriteFile(
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
     IN PULONG Key OPTIONAL
     ); 
-
 
 NTSYSAPI
 NTSTATUS
@@ -3920,7 +3833,6 @@ ZwWriteFile(
     IN PULONG Key OPTIONAL
     ); 
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3928,14 +3840,12 @@ NtDeleteFile(
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 ZwDeleteFile(
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3945,7 +3855,6 @@ NtFlushBuffersFile(
     OUT PIO_STATUS_BLOCK IoStatusBlock
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3953,7 +3862,6 @@ ZwFlushBuffersFile(
     IN HANDLE FileHandle,
     OUT PIO_STATUS_BLOCK IoStatusBlock
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -3971,7 +3879,6 @@ NtDeviceIoControlFile(
     IN  ULONG OutputBufferLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -3987,7 +3894,6 @@ ZwDeviceIoControlFile(
     IN  PVOID OutputBuffer,
     IN  ULONG OutputBufferLength
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -4005,7 +3911,6 @@ NtFsControlFile(
     IN  ULONG OutputBufferLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -4022,7 +3927,6 @@ ZwFsControlFile(
     IN  ULONG OutputBufferLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -4031,7 +3935,6 @@ NtCancelIoFile(
     OUT PIO_STATUS_BLOCK IoStatusBlock
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -4039,7 +3942,6 @@ ZwCancelIoFile(
     IN HANDLE Filehandle,
     OUT PIO_STATUS_BLOCK IoStatusBlock
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -4057,7 +3959,6 @@ NtLockFile(
     IN BOOLEAN ExclusiveLock
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -4074,7 +3975,6 @@ ZwLockFile(
     IN BOOLEAN ExclusiveLock
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -4085,7 +3985,6 @@ NtUnlockFile(
     IN PLARGE_INTEGER Length,
     IN ULONG Key
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -4174,7 +4073,7 @@ RtlNtPathNameToDosPathName(                     // Available in Windows XP or ne
 //-----------------------------------------------------------------------------
 // Process functions
 
-#define GDI_HANDLE_BUFFER_SIZE      34 
+#define GDI_HANDLE_BUFFER_SIZE      60 
 
 // RTL_USER_PROCESS_PARAMETERS::Flags
 #define RTL_USER_PROC_PARAMS_NORMALIZED         0x00000001
@@ -4316,6 +4215,8 @@ typedef enum _THREADINFOCLASS {
     ThreadIdealProcessor,                   // 0x0D
     ThreadPriorityBoost,                    // 0x0E
     ThreadSetTlsArrayAddress,               // 0x0F
+    ThreadIsIoPending,                      // 0x10
+    ThreadHideFromDebugger,                 // 0x11
     MaxThreadInfoClass
 } THREADINFOCLASS;
 
@@ -4486,9 +4387,12 @@ typedef struct _LDR_DATA_TABLE_ENTRY
     PVOID LoadedImports;
     PVOID EntryPointActivationContext;
     PVOID PatchInformation;
-    PVOID Unknown1;
-    PVOID Unknown2;
-    PVOID Unknown3;
+    LIST_ENTRY ForwarderLinks;
+    LIST_ENTRY ServiceTagLinks;
+    LIST_ENTRY StaticLinks;
+    PVOID ContextInformation;
+    PVOID OriginalBase;
+    LARGE_INTEGER LoadTime;
 
 } LDR_DATA_TABLE_ENTRY, *PLDR_DATA_TABLE_ENTRY;
 
@@ -4523,19 +4427,37 @@ typedef struct _PEB
     PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
     PVOID SubSystemData;
     PVOID ProcessHeap;
-    PVOID FastPebLock;
-    PVOID FastPebLockRoutine;
-    PVOID FastPebUnlockRoutine;
-    ULONG EnvironmentUpdateCount;
+
+    //--- Windows 7. Can be different in different Windows version. ---------------
+    
+    PRTL_CRITICAL_SECTION FastPebLock;
+    PVOID AtlThunkSListPtr;
+    PVOID IFEOKey;
+
+    union
+    {
+        ULONG CrossProcessFlags;
+        struct
+        {
+            ULONG ProcessInJob : 1;
+            ULONG ProcessInitializing : 1;
+            ULONG ProcessUsingVEH : 1;
+            ULONG ProcessUsingVCH : 1;
+            ULONG ProcessUsingFTH : 1;
+            ULONG ReservedBits0 : 27;
+        };
+    };
+
     PVOID KernelCallbackTable;
-    HANDLE SystemReserved;
-    PVOID  AtlThunkSListPtr32;
-    PPEB_FREE_BLOCK FreeList;
+    PVOID UserSharedInfoPtr;
+    ULONG SystemReserved[1];
+    ULONG AtlThunkSListPtr32;
+    PVOID ApiSetMap;
     ULONG TlsExpansionCounter;
     PVOID TlsBitmap;
     ULONG TlsBitmapBits[2];                         // relates to TLS_MINIMUM_AVAILABLE
     PVOID ReadOnlySharedMemoryBase;
-    PVOID ReadOnlySharedMemoryHeap;
+    PVOID HotpatchInformation;
     PVOID *ReadOnlyStaticServerData;
     PVOID AnsiCodePageData;
     PVOID OemCodePageData;
@@ -4574,7 +4496,7 @@ typedef struct _PEB
     PVOID GdiSharedHandleTable;
     PVOID ProcessStarterHelper;
     PVOID GdiDCAttributeList;
-    PVOID LoaderLock;
+    PRTL_CRITICAL_SECTION LoaderLock;
 
     //
     // Following fields filled in by MmCreatePeb from system values and/or
@@ -4592,6 +4514,9 @@ typedef struct _PEB
     ULONG ImageSubsystemMinorVersion;
     ULONG ImageProcessAffinityMask;
     ULONG GdiHandleBuffer[GDI_HANDLE_BUFFER_SIZE];
+    PVOID PostProcessInitRoutine;
+
+    // More here. Do not use.
 
 } PEB, *PPEB;
 
@@ -4612,6 +4537,7 @@ typedef struct _TEB
     ULONG CountOfOwnedCriticalSections;
     PVOID CsrClientThread;
     PVOID Win32ThreadInfo;
+    
     // Incomplete
 
 } TEB, *PTEB;
@@ -4638,66 +4564,11 @@ typedef VOID (NTAPI *PUSER_THREAD_START_ROUTINE)(
     IN PVOID ApcArgument1
     );
 
-NTSYSAPI
-NTSTATUS
-NTAPI
-RtlAdjustPrivilege(
-    ULONG    Privilege,
-    BOOLEAN  Enable,
-    BOOLEAN  CurrentThread,
-    PBOOLEAN Enabled
+typedef VOID (*PPS_APC_ROUTINE) (
+    __in_opt PVOID ApcArgument1,
+    __in_opt PVOID ApcArgument2,
+    __in_opt PVOID ApcArgument3
     );
-
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-RtlCreateProcessParameters(
-    PRTL_USER_PROCESS_PARAMETERS *ProcessParameters,
-    PUNICODE_STRING ImagePathName,
-    PUNICODE_STRING DllPath,
-    PUNICODE_STRING CurrentDirectory,
-    PUNICODE_STRING CommandLine,
-    PVOID Environment,
-    PUNICODE_STRING WindowTitle,
-    PUNICODE_STRING DesktopInfo,
-    PUNICODE_STRING ShellInfo,
-    PUNICODE_STRING RuntimeData
-    );
-
-
-NTSYSAPI
-PRTL_USER_PROCESS_PARAMETERS
-NTAPI
-RtlNormalizeProcessParams(
-    PRTL_USER_PROCESS_PARAMETERS ProcessParameters
-    ); 
-
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-RtlDestroyProcessParameters(
-    PRTL_USER_PROCESS_PARAMETERS ProcessParameters
-    ); 
-
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-RtlCreateUserProcess(
-    PUNICODE_STRING NtImagePathName,
-    ULONG Attributes,
-    PRTL_USER_PROCESS_PARAMETERS ProcessParameters,
-    PSECURITY_DESCRIPTOR ProcessSecurityDescriptor,
-    PSECURITY_DESCRIPTOR ThreadSecurityDescriptor,
-    HANDLE ParentProcess,
-    BOOLEAN InheritHandles,
-    HANDLE DebugPort,
-    HANDLE ExceptionPort,
-    PRTL_USER_PROCESS_INFORMATION ProcessInformation
-    ); 
-
 
 NTSYSAPI
 NTSTATUS
@@ -4715,11 +4586,189 @@ RtlCreateUserThread(
     OUT PCLIENT_ID ClientId OPTIONAL
     );
 
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtOpenThread (
+    OUT PHANDLE ThreadHandle,
+    IN ACCESS_MASK DesiredAccess,
+    IN POBJECT_ATTRIBUTES ObjectAttributes,
+    IN PCLIENT_ID ClientId OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+ZwOpenThread (
+    OUT PHANDLE ThreadHandle,
+    IN ACCESS_MASK DesiredAccess,
+    IN POBJECT_ATTRIBUTES ObjectAttributes,
+    IN PCLIENT_ID ClientId OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtQueryInformationThread(
+    IN HANDLE ThreadHandle,
+    IN THREADINFOCLASS ThreadInformationClass,
+    OUT PVOID ThreadInformation,
+    IN ULONG ThreadInformationLength,
+    OUT PULONG ReturnLength OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+ZwQueryInformationThread(
+    IN HANDLE ThreadHandle,
+    IN THREADINFOCLASS ThreadInformationClass,
+    OUT PVOID ThreadInformation,
+    IN ULONG ThreadInformationLength,
+    OUT PULONG ReturnLength OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtSetInformationThread(
+    IN HANDLE          ThreadHandle,
+    IN THREADINFOCLASS ThreadInformationClass,
+    IN PVOID           ThreadInformation,
+    IN ULONG           ThreadInformationLength
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+ZwSetInformationThread(
+    IN HANDLE          ThreadHandle,
+    IN THREADINFOCLASS ThreadInformationClass,
+    IN PVOID           ThreadInformation,
+    IN ULONG           ThreadInformationLength
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtSuspendThread(
+    IN HANDLE ThreadHandle,
+    OUT PULONG PreviousSuspendCount OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtResumeThread(
+    IN HANDLE ThreadHandle,
+    OUT PULONG PreviousSuspendCount OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtTerminateThread(
+    HANDLE Thread,
+    NTSTATUS ExitStatus
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+ZwTerminateThread(
+    HANDLE Thread,
+    NTSTATUS ExitStatus
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtSetThreadExecutionState(
+    ULONG EsFlags,
+    PULONG PreviousFlags
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtQueueApcThread(
+    HANDLE ThreadHandle,
+    PPS_APC_ROUTINE ApcRoutine,
+    PVOID ApcArgument1,
+    PVOID ApcArgument2,
+    PVOID ApcArgument3
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+ZwQueueApcThread(
+    HANDLE ThreadHandle,
+    PPS_APC_ROUTINE ApcRoutine,
+    PVOID ApcArgument1,
+    PVOID ApcArgument2,
+    PVOID ApcArgument3
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlAdjustPrivilege(
+    ULONG    Privilege,
+    BOOLEAN  Enable,
+    BOOLEAN  CurrentThread,
+    PBOOLEAN Enabled
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlCreateProcessParameters(
+    PRTL_USER_PROCESS_PARAMETERS *ProcessParameters,
+    PUNICODE_STRING ImagePathName,
+    PUNICODE_STRING DllPath,
+    PUNICODE_STRING CurrentDirectory,
+    PUNICODE_STRING CommandLine,
+    PVOID Environment,
+    PUNICODE_STRING WindowTitle,
+    PUNICODE_STRING DesktopInfo,
+    PUNICODE_STRING ShellInfo,
+    PUNICODE_STRING RuntimeData
+    );
+
+NTSYSAPI
+PRTL_USER_PROCESS_PARAMETERS
+NTAPI
+RtlNormalizeProcessParams(
+    PRTL_USER_PROCESS_PARAMETERS ProcessParameters
+    ); 
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlDestroyProcessParameters(
+    PRTL_USER_PROCESS_PARAMETERS ProcessParameters
+    ); 
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlCreateUserProcess(
+    PUNICODE_STRING NtImagePathName,
+    ULONG Attributes,
+    PRTL_USER_PROCESS_PARAMETERS ProcessParameters,
+    PSECURITY_DESCRIPTOR ProcessSecurityDescriptor,
+    PSECURITY_DESCRIPTOR ThreadSecurityDescriptor,
+    HANDLE ParentProcess,
+    BOOLEAN InheritHandles,
+    HANDLE DebugPort,
+    HANDLE ExceptionPort,
+    PRTL_USER_PROCESS_INFORMATION ProcessInformation
+    ); 
 
 #define NtCurrentProcess() ((HANDLE) -1)
 #define NtCurrentThread()  ((HANDLE) -2)
 #define NtCurrentPeb()     ((PPEB)(NtCurrentTeb()->ProcessEnvironmentBlock))
-
 
 NTSYSAPI
 NTSTATUS
@@ -4772,26 +4821,6 @@ ZwOpenProcess (
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtOpenThread (
-    OUT PHANDLE ThreadHandle,
-    IN ACCESS_MASK DesiredAccess,
-    IN POBJECT_ATTRIBUTES ObjectAttributes,
-    IN PCLIENT_ID ClientId OPTIONAL
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-ZwOpenThread (
-    OUT PHANDLE ThreadHandle,
-    IN ACCESS_MASK DesiredAccess,
-    IN POBJECT_ATTRIBUTES ObjectAttributes,
-    IN PCLIENT_ID ClientId OPTIONAL
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
 NtQueryInformationProcess(
     IN HANDLE ProcessHandle,
     IN PROCESSINFOCLASS ProcessInformationClass,
@@ -4808,28 +4837,6 @@ ZwQueryInformationProcess(
     IN PROCESSINFOCLASS ProcessInformationClass,
     OUT PVOID ProcessInformation,
     IN ULONG ProcessInformationLength,
-    OUT PULONG ReturnLength OPTIONAL
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-NtQueryInformationThread(
-    IN HANDLE ThreadHandle,
-    IN THREADINFOCLASS ThreadInformationClass,
-    OUT PVOID ThreadInformation,
-    IN ULONG ThreadInformationLength,
-    OUT PULONG ReturnLength OPTIONAL
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-ZwQueryInformationThread(
-    IN HANDLE ThreadHandle,
-    IN THREADINFOCLASS ThreadInformationClass,
-    OUT PVOID ThreadInformation,
-    IN ULONG ThreadInformationLength,
     OUT PULONG ReturnLength OPTIONAL
     );
 
@@ -4856,54 +4863,10 @@ ZwSetInformationProcess(
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtSuspendThread(
-    IN HANDLE ThreadHandle,
-    OUT PULONG PreviousSuspendCount OPTIONAL
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-NtResumeThread(
-    IN HANDLE ThreadHandle,
-    OUT PULONG PreviousSuspendCount OPTIONAL
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-NtTerminateThread(
-    HANDLE Thread,
-    NTSTATUS ExitStatus
-    );
-
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-ZwTerminateThread(
-    HANDLE Thread,
-    NTSTATUS ExitStatus
-    );
-
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-NtSetThreadExecutionState(
-    ULONG EsFlags,
-    PULONG PreviousFlags
-    );
-
-
-NTSYSAPI
-NTSTATUS
-NTAPI
 NtTerminateProcess(
     HANDLE Process,
     NTSTATUS ExitStatus
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5130,7 +5093,6 @@ NtConnectPort(
     IN  OUT PULONG ConnectionInformationLength OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5161,7 +5123,6 @@ ZwConnectPort(
         the port.
 
 --*/
-
 
 NTSYSAPI
 NTSTATUS
@@ -5247,14 +5208,12 @@ ZwAcceptConnectPort(
 
 --*/
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 NtCompleteConnectPort(
     IN  HANDLE PortHandle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5322,7 +5281,6 @@ NtRequestWaitReplyPort(
     OUT PPORT_MESSAGE ReplyMessage
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5347,7 +5305,6 @@ ZwRequestWaitReplyPort(
         that specifies the reply message to send to the port.
 
 --*/
-
 
 NTSYSAPI
 NTSTATUS
@@ -5471,12 +5428,10 @@ typedef struct RTL_HEAP_PARAMETERS {
     ULONG InitialCommit;
     ULONG InitialReserve;
     PVOID CommitRoutine;
-    ULONG Reserved;
+    ULONG Reserved[2];
 } RTL_HEAP_PARAMETERS, *PRTL_HEAP_PARAMETERS;
 
-
 #define RtlProcessHeap() (HANDLE)(NtCurrentTeb()->ProcessEnvironmentBlock->ProcessHeap)
-
 
 NTSYSAPI
 HANDLE
@@ -5490,6 +5445,15 @@ RtlCreateHeap (
     IN PRTL_HEAP_PARAMETERS Definition OPTIONAL
     );
 
+NTSYSAPI
+ULONG
+NTAPI
+RtlCreateTagHeap(
+    IN PVOID HeapHandle,
+    IN ULONG Flags,
+    IN PWSTR TagPrefix OPTIONAL,
+    IN PWSTR TagNames
+    );
 
 NTSYSAPI
 ULONG
@@ -5497,7 +5461,6 @@ NTAPI
 RtlDestroyHeap (
     IN HANDLE HeapHandle
     );
-
 
 NTSYSAPI
 PVOID
@@ -5507,7 +5470,6 @@ RtlAllocateHeap (
     IN ULONG Flags,
     IN SIZE_T Size
     );
-
 
 NTSYSAPI
 PVOID
@@ -5519,7 +5481,6 @@ RtlReAllocateHeap (
     IN SIZE_T Size
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -5529,7 +5490,6 @@ RtlFreeHeap (
     IN PVOID Address
     );
 
-
 NTSYSAPI
 ULONG
 NTAPI
@@ -5538,7 +5498,6 @@ RtlCompactHeap (
     IN ULONG Flags
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -5546,14 +5505,12 @@ RtlLockHeap (
     IN HANDLE HeapHandle
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
 RtlUnlockHeap (
     IN HANDLE HeapHandle
     );
-
 
 NTSYSAPI
 ULONG
@@ -5564,7 +5521,6 @@ RtlSizeHeap (
     IN PVOID Address
     );
 
-
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -5574,6 +5530,26 @@ RtlValidateHeap (
     IN PVOID Address OPTIONAL
     );
 
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlQueryHeapInformation (
+    IN PVOID HeapHandle,
+    IN HEAP_INFORMATION_CLASS HeapInformationClass,
+    OUT PVOID HeapInformation OPTIONAL,
+    IN SIZE_T HeapInformationLength OPTIONAL,
+    OUT PSIZE_T ReturnLength OPTIONAL
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlSetHeapInformation (
+    IN PVOID HeapHandle,
+    IN HEAP_INFORMATION_CLASS HeapInformationClass,
+    IN PVOID HeapInformation OPTIONAL,
+    IN SIZE_T HeapInformationLength OPTIONAL
+    );
 
 //-----------------------------------------------------------------------------
 // Virtual memory functions
@@ -5583,8 +5559,15 @@ typedef enum _MEMORY_INFORMATION_CLASS
     MemoryBasicInformation,                 // 0x00 MEMORY_BASIC_INFORMATION
     MemoryWorkingSetList,
     MemorySectionName,                      // 0x02 UNICODE_STRING
-    MemoryBasicVlmInformation
+    MemoryBasicVlmInformation,
+    MemoryWorkingSetInfoListInformatiom     // 0x04 Array of {[in]Offset, [out]Flags} to receive the image information
 } MEMORY_INFORMATION_CLASS;
+
+typedef struct _MEMORY_WORKING_SET_ENTRY
+{
+    PVOID Address;
+    ULONG Flags;
+} MEMORY_WORKING_SET_ENTRY, *PMEMORY_WORKING_SET_ENTRY;
 
 NTSYSAPI
 NTSTATUS
@@ -5598,7 +5581,6 @@ NtAllocateVirtualMemory (
     IN ULONG Protect
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5611,7 +5593,6 @@ ZwAllocateVirtualMemory (
     IN ULONG Protect
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5621,7 +5602,6 @@ NtFreeVirtualMemory (
     IN OUT PSIZE_T RegionSize,
     IN ULONG FreeType
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5644,7 +5624,6 @@ NtProtectVirtualMemory(
     OUT PULONG OldProtect
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5655,7 +5634,6 @@ ZwProtectVirtualMemory(
     IN ULONG NewProtect,
     OUT PULONG OldProtect
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5679,7 +5657,6 @@ ZwReadVirtualMemory(
     OUT PSIZE_T NumberOfBytesRead OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5690,7 +5667,6 @@ NtWriteVirtualMemory(
     IN SIZE_T BufferSize,
     OUT PSIZE_T NumberOfBytesWritten OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5703,7 +5679,6 @@ ZwWriteVirtualMemory(
     OUT PSIZE_T NumberOfBytesWritten OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5714,7 +5689,6 @@ NtFlushVirtualMemory (
     OUT PIO_STATUS_BLOCK IoStatus
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5724,7 +5698,6 @@ ZwFlushVirtualMemory (
     IN OUT PSIZE_T RegionSize,
     OUT PIO_STATUS_BLOCK IoStatus
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5737,7 +5710,6 @@ NtQueryVirtualMemory(
     IN SIZE_T MemoryInformationLength,
     OUT PSIZE_T ReturnLength OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5831,7 +5803,6 @@ typedef enum _SECTION_INFORMATION_CLASS
 
 --*/
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5844,7 +5815,6 @@ NtCreateSection(
     IN  ULONG AllocationAttributes,
     IN  HANDLE FileHandle OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5859,7 +5829,6 @@ ZwCreateSection(
     IN  HANDLE FileHandle OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5869,7 +5838,6 @@ NtOpenSection (
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5878,7 +5846,6 @@ ZwOpenSection (
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5896,7 +5863,6 @@ NtMapViewOfSection (
     IN ULONG Protect
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5913,7 +5879,6 @@ ZwMapViewOfSection (
     IN ULONG Protect
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5921,7 +5886,6 @@ NtUnmapViewOfSection (
     IN HANDLE ProcessHandle,
     IN PVOID BaseAddress
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5931,7 +5895,6 @@ ZwUnmapViewOfSection (
     IN PVOID BaseAddress
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5940,7 +5903,6 @@ NtExtendSection (
     IN OUT PLARGE_INTEGER SectionSize
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5948,7 +5910,6 @@ ZwExtendSection (
     IN HANDLE SectionHandle,
     IN OUT PLARGE_INTEGER SectionSize
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5960,7 +5921,6 @@ NtQuerySection (
     IN SIZE_T Length,
     OUT PSIZE_T ResultLength OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -5986,7 +5946,6 @@ typedef enum _WAIT_TYPE {
     WaitAny
     } WAIT_TYPE;
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5996,7 +5955,6 @@ NtWaitForSingleObject (
     IN PLARGE_INTEGER Timeout OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6005,7 +5963,6 @@ ZwWaitForSingleObject (
     IN BOOLEAN Alertable,
     IN PLARGE_INTEGER Timeout OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6017,7 +5974,6 @@ NtWaitForMultipleObjects (
     IN BOOLEAN Alertable,
     IN PLARGE_INTEGER Timeout OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6047,7 +6003,6 @@ typedef struct _EVENT_BASIC_INFORMATION {
 // Event handling routines
 //
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6058,7 +6013,6 @@ NtCreateEvent (
     IN EVENT_TYPE EventType,
     IN BOOLEAN InitialState
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6071,7 +6025,6 @@ ZwCreateEvent (
     IN BOOLEAN InitialState
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6079,14 +6032,12 @@ NtClearEvent (
     IN HANDLE Handle
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 ZwClearEvent (
     IN HANDLE Handle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6096,7 +6047,6 @@ NtPulseEvent (
     OUT PLONG PreviousState OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6104,7 +6054,6 @@ ZwPulseEvent (
     IN HANDLE Handle,
     OUT PLONG PreviousState OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6114,7 +6063,6 @@ NtResetEvent (
     OUT PLONG PreviousState OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6122,7 +6070,6 @@ ZwResetEvent (
     IN HANDLE Handle,
     OUT PLONG PreviousState OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6132,7 +6079,6 @@ NtSetEvent (
     OUT PLONG PreviousState OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6140,7 +6086,6 @@ ZwSetEvent (
     IN HANDLE Handle,
     OUT PLONG PreviousState OPTIONAL
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6151,7 +6096,6 @@ NtOpenEvent (
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6160,7 +6104,6 @@ ZwOpenEvent (
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6173,7 +6116,6 @@ NtQueryEvent (
     OUT PULONG ResultLength OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6184,7 +6126,6 @@ ZwQueryEvent (
     IN ULONG Length,
     OUT PULONG ResultLength OPTIONAL
     );
-
 
 //-----------------------------------------------------------------------------
 // Mutant support
@@ -6253,7 +6194,6 @@ NtCreateEventPair(
     IN POBJECT_ATTRIBUTES ObjectAttributes OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6301,7 +6241,6 @@ RtlSelfRelativeToAbsoluteSD(
     IN OUT PULONG PrimaryGroupSize
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6310,7 +6249,6 @@ RtlGetOwnerSecurityDescriptor(
     OUT PSID *Owner,
     OUT PBOOLEAN OwnerDefaulted
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6321,7 +6259,6 @@ RtlSetOwnerSecurityDescriptor(
     IN BOOLEAN OwnerDefaulted OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6330,7 +6267,6 @@ RtlGetGroupSecurityDescriptor(
     OUT PSID *Group,
     OUT PBOOLEAN GroupDefaulted
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6341,7 +6277,6 @@ RtlSetGroupSecurityDescriptor(
     IN BOOLEAN GroupDefaulted OPTIONAL
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6351,7 +6286,6 @@ RtlGetDaclSecurityDescriptor(
     OUT PACL  *Dacl,
     OUT PBOOLEAN  DaclDefaulted
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6372,7 +6306,6 @@ RtlGetSaclSecurityDescriptor(
     OUT PBOOLEAN SaclDefaulted
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6382,7 +6315,6 @@ RtlSetSaclSecurityDescriptor(
     IN PACL Sacl,
     IN BOOLEAN SaclDefaulted 
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6401,14 +6333,12 @@ RtlAllocateAndInitializeSid(
     OUT PSID *Sid
     );
 
-
 NTSYSAPI
 ULONG
 NTAPI
 RtlLengthSid(
     IN PSID Sid
     );
-
 
 NTSYSAPI
 BOOLEAN
@@ -6434,7 +6364,6 @@ RtlFreeSid(
     IN PSID Sid
     ); 
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6443,7 +6372,6 @@ RtlCreateAcl(
     IN ULONG AclLength,
     IN ULONG AclRevision
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6454,7 +6382,6 @@ RtlGetAce(
     OUT PVOID  *Ace
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6464,7 +6391,6 @@ RtlAddAccessAllowedAce(
     IN ACCESS_MASK AccessMask,
     IN PSID Sid
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6489,7 +6415,6 @@ NtOpenProcessToken(
     OUT PHANDLE TokenHandle
     );
 
-
 // Windows XP or newer
 NTSYSAPI
 NTSTATUS
@@ -6501,7 +6426,6 @@ NtOpenProcessTokenEx(
     OUT PHANDLE TokenHandle
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6511,7 +6435,6 @@ NtOpenThreadToken(
     IN BOOLEAN OpenAsSelf,
     OUT PHANDLE TokenHandle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6545,7 +6468,6 @@ NtSetInformationToken(
     IN ULONG  TokenInformationLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6558,7 +6480,6 @@ NtAdjustPrivilegesToken(
     OUT PULONG ReturnLength
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6570,7 +6491,6 @@ NtDuplicateToken(
     IN TOKEN_TYPE TokenType,
     OUT PHANDLE NewTokenHandle
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6648,7 +6568,6 @@ typedef struct _TOKEN_SECURITY_ATTRIBUTES_INFORMATION
 
 } TOKEN_SECURITY_ATTRIBUTES_INFORMATION, *PTOKEN_SECURITY_ATTRIBUTES_INFORMATION;
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6695,7 +6614,6 @@ NtCreateSymbolicLinkObject(
     IN PUNICODE_STRING DestinationName
     ); 
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6704,7 +6622,6 @@ NtOpenSymbolicLinkObject (
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6726,6 +6643,8 @@ RtlImageNtHeader(
     );
 
 #define RTL_IMAGE_NT_HEADER_EX_FLAG_NO_RANGE_CHECK (0x00000001)
+#define RTL_IMAGE_NT_HEADER_EX_FLAG_UNKNONW_W10    (0x00000002)     // Used to call RtlImageNtHeaderEx in W10, but never checked
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6887,7 +6806,6 @@ RtlNtStatusToDosError(
     NTSTATUS Status
     );
 
-
 NTSYSAPI
 ULONG
 NTAPI
@@ -6895,20 +6813,17 @@ RtlNtStatusToDosErrorNoTeb(
     NTSTATUS Status
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 RtlGetLastNtStatus(
     );
 
-
 NTSYSAPI
 ULONG
 NTAPI
 RtlGetLastWin32Error(
     );
-
 
 NTSYSAPI
 VOID
@@ -6917,14 +6832,12 @@ RtlSetLastWin32Error(
     ULONG WinError
     );
 
-
 NTSYSAPI
 VOID
 NTAPI
 RtlSetLastWin32ErrorAndNtStatusFromNtStatus(
     NTSTATUS Status
     );
-
 
 NTSYSAPI
 NTSTATUS
@@ -6941,6 +6854,19 @@ NtRaiseHardError(
 //-----------------------------------------------------------------------------
 // Other functions
 
+NTSYSAPI 
+NTSTATUS
+NTAPI
+NtContinue(
+    IN PCONTEXT Context,
+    IN BOOLEAN Alertable
+    );
+
+NTSYSAPI 
+NTSTATUS
+NTAPI
+NtTestAlert(
+    );
 
 NTSYSAPI 
 NTSTATUS
@@ -6950,14 +6876,12 @@ NtQueryPerformanceCounter(
     OUT PLARGE_INTEGER PerformanceFrequency OPTIONAL
     );
 
-
 NTSYSAPI 
 NTSTATUS
 NTAPI
 NtAllocateLocallyUniqueId(
     OUT PLUID LocallyUniqueId
     ); 
-
 
 NTSYSAPI
 NTSTATUS
@@ -6967,14 +6891,12 @@ NtDelayExecution(
     IN PLARGE_INTEGER DelayInterval
     );
 
-
 NTSYSAPI
 NTSTATUS
 NTAPI
 NtDisplayString(
     IN PUNICODE_STRING String
     );
-
 
 NTSYSAPI
 NTSTATUS
