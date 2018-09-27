@@ -2844,6 +2844,11 @@ typedef enum _FILE_INFORMATION_CLASS
     // Windows 10 REDSTONE+
     FileDesiredStorageClassInformation,      // 67
     FileStatInformation,                     // 68
+    FileMemoryPartitionInformation,          // 69
+
+    // Windows 10 April 2018 Update+
+    FileStatLxInformation,                   // 70
+    FileCaseSensitiveInformation,            // 71
  
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
@@ -3288,6 +3293,21 @@ typedef struct _FILE_LINKS_INFORMATION
     FILE_LINK_ENTRY_INFORMATION Entry;
 } FILE_LINKS_INFORMATION, *PFILE_LINKS_INFORMATION; 
 
+#ifndef WINAPI_FAMILY_PC_APP    // In newer SDKs only
+typedef struct _FILE_ID_128
+{
+    BYTE Identifier[16];
+} FILE_ID_128, *PFILE_ID_128;
+#endif
+
+typedef struct _FILE_LINK_ENTRY_FULL_ID_INFORMATION
+{
+    ULONG NextEntryOffset;
+    FILE_ID_128 ParentFileId;
+    ULONG FileNameLength;
+    WCHAR FileName[1];
+} FILE_LINK_ENTRY_FULL_ID_INFORMATION, *PFILE_LINK_ENTRY_FULL_ID_INFORMATION;
+
 typedef struct _FILE_ID_GLOBAL_TX_DIR_INFORMATION
 {
   ULONG          NextEntryOffset;
@@ -3316,18 +3336,19 @@ typedef struct _FILE_NUMA_NODE_INFORMATION {
     USHORT NodeNumber;
 } FILE_NUMA_NODE_INFORMATION, *PFILE_NUMA_NODE_INFORMATION;
 
+typedef struct _FILE_STANDARD_LINK_INFORMATION
+{
+    ULONG NumberOfAccessibleLinks;
+    ULONG TotalNumberOfLinks;
+    BOOLEAN DeletePending;
+    BOOLEAN Directory;
+} FILE_STANDARD_LINK_INFORMATION, *PFILE_STANDARD_LINK_INFORMATION;
+
 typedef struct _FILE_VOLUME_NAME_INFORMATION
 {
     ULONG DeviceNameLength;
     WCHAR DeviceName[1];
 } FILE_VOLUME_NAME_INFORMATION, *PFILE_VOLUME_NAME_INFORMATION;
-
-#ifndef WINAPI_FAMILY_PC_APP    // In newer SDKs only
-typedef struct _FILE_ID_128
-{
-    BYTE Identifier[16];
-} FILE_ID_128, *PFILE_ID_128;
-#endif
 
 typedef struct _FILE_ID_INFORMATION
 {
@@ -3379,9 +3400,26 @@ typedef struct _FILE_ID_EXTD_BOTH_DIR_INFORMATION
 #define FILE_DISPOSITION_FORCE_IMAGE_SECTION_CHECK  0x00000004
 #define FILE_DISPOSITION_ON_CLOSE                   0x00000008
 
-typedef struct _FILE_DISPOSITION_INFORMATION_EX {
+typedef struct _FILE_DISPOSITION_INFORMATION_EX
+{
     ULONG Flags;
 } FILE_DISPOSITION_INFORMATION_EX, *PFILE_DISPOSITION_INFORMATION_EX;
+
+typedef enum _FILE_STORAGE_TIER_CLASS {
+
+    FileStorageTierClassUnspecified = 0,
+    FileStorageTierClassCapacity,
+    FileStorageTierClassPerformance,
+    FileStorageTierClassMax
+
+} FILE_STORAGE_TIER_CLASS, *PFILE_STORAGE_TIER_CLASS;
+
+typedef struct _FILE_DESIRED_STORAGE_CLASS_INFORMATION
+{
+    FILE_STORAGE_TIER_CLASS Class;      // Class type of the tier
+    ULONG Flags;                        // Flags
+
+} FILE_DESIRED_STORAGE_CLASS_INFORMATION, *PFILE_DESIRED_STORAGE_CLASS_INFORMATION;
 
 typedef struct _FILE_STAT_INFORMATION
 {
@@ -3398,25 +3436,45 @@ typedef struct _FILE_STAT_INFORMATION
     ULONG EffectiveAccess;
 } FILE_STAT_INFORMATION, *PFILE_STAT_INFORMATION;
 
-/*
-typedef struct _FILE_REMOTE_PROTOCOL_INFO
+typedef struct _FILE_MEMORY_PARTITION_INFORMATION
 {
-  USHORT StructureVersion;
-  USHORT StructureSize;
-  ULONG  Protocol;
-  USHORT ProtocolMajorVersion;
-  USHORT ProtocolMinorVersion;
-  USHORT ProtocolRevision;
-  USHORT Reserved;
-  ULONG  Flags;
-  struct {
-    ULONG Reserved[8];
-  } GenericReserved;
-  struct {
-    ULONG Reserved[16];
-  } ProtocolSpecificReserved;
-} FILE_REMOTE_PROTOCOL_INFO, *PFILE_REMOTE_PROTOCOL_INFO;
-*/
+    ULONG_PTR OwnerPartitionHandle;
+    union {
+        struct {
+            UCHAR NoCrossPartitionAccess;
+            UCHAR Spare[3];
+        } DUMMYSTRUCTNAME;
+
+        ULONG AllFlags;
+    } Flags;
+} FILE_MEMORY_PARTITION_INFORMATION, *PFILE_MEMORY_PARTITION_INFORMATION;
+
+typedef struct _FILE_STAT_LX_INFORMATION {
+    LARGE_INTEGER FileId;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG FileAttributes;
+    ULONG ReparseTag;
+    ULONG NumberOfLinks;
+    ACCESS_MASK EffectiveAccess;
+    ULONG LxFlags;
+    ULONG LxUid;
+    ULONG LxGid;
+    ULONG LxMode;
+    ULONG LxDeviceIdMajor;
+    ULONG LxDeviceIdMinor;
+} FILE_STAT_LX_INFORMATION, *PFILE_STAT_LX_INFORMATION;
+
+#define FILE_CS_FLAG_CASE_SENSITIVE_DIR     0x00000001
+
+typedef struct _FILE_CASE_SENSITIVE_INFORMATION
+{
+    ULONG Flags;
+} FILE_CASE_SENSITIVE_INFORMATION, *PFILE_CASE_SENSITIVE_INFORMATION;
 
 typedef enum _FSINFOCLASS {
     FileFsVolumeInformation       = 1,
