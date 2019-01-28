@@ -3946,6 +3946,22 @@ NtDeviceIoControlFile(
 NTSYSAPI
 NTSTATUS
 NTAPI
+NtFsControlFile(      
+    IN  HANDLE FileHandle,
+    IN  HANDLE Event,
+    IN  PIO_APC_ROUTINE ApcRoutine,
+    IN  PVOID ApcContext,
+    OUT PIO_STATUS_BLOCK IoStatusBlock,
+    IN  ULONG FsControlCode,
+    IN  PVOID InputBuffer,
+    IN  ULONG InputBufferLength,
+    IN  PVOID OutputBuffer,
+    IN  ULONG OutputBufferLength
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
 ZwDeviceIoControlFile(      
     IN  HANDLE FileHandle,
     IN  HANDLE Event,

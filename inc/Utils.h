@@ -33,6 +33,8 @@
 #include <stdio.h>
 #include <windows.h>
 #include <commctrl.h>
+#include <commdlg.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #include <strsafe.h>
 
@@ -47,37 +49,39 @@
 //
 
 #if defined(_MSC_VER) && !defined(__UTILS_SELF__)
-
-  #ifdef _DEBUG                                 // DEBUG VERSIONS
-    #ifndef _UNICODE                            
-      #ifdef _DLL
-        #pragma comment(lib, "UtilsDAD.lib")    // Debug Ansi CRT-DLL version
-      #else        
-        #pragma comment(lib, "UtilsDAS.lib")    // Debug Ansi CRT-LIB version
+  #ifndef WDK_BUILD
+    #ifdef _DEBUG                                 // DEBUG VERSIONS
+      #ifndef _UNICODE                            
+        #ifdef _DLL
+          #pragma comment(lib, "UtilsDAD.lib")    // Debug Ansi CRT-DLL version
+        #else        
+          #pragma comment(lib, "UtilsDAS.lib")    // Debug Ansi CRT-LIB version
+        #endif
+      #else
+        #ifdef _DLL
+          #pragma comment(lib, "UtilsDUD.lib")    // Debug Unicode CRT-DLL version
+        #else        
+          #pragma comment(lib, "UtilsDUS.lib")    // Debug Unicode CRT-LIB version
+        #endif
       #endif
-    #else
-      #ifdef _DLL
-        #pragma comment(lib, "UtilsDUD.lib")    // Debug Unicode CRT-DLL version
-      #else        
-        #pragma comment(lib, "UtilsDUS.lib")    // Debug Unicode CRT-LIB version
+    #else                                         // RELEASE VERSIONS
+      #ifndef _UNICODE
+        #ifdef _DLL
+          #pragma comment(lib, "UtilsRAD.lib")    // Release Ansi CRT-DLL version
+        #else        
+          #pragma comment(lib, "UtilsRAS.lib")    // Release Ansi CRT-LIB version
+        #endif
+      #else
+        #ifdef _DLL
+          #pragma comment(lib, "UtilsRUD.lib")    // Release Unicode CRT-DLL version
+        #else                                                                         
+          #pragma comment(lib, "UtilsRUS.lib")    // Release Unicode CRT-LIB version
+        #endif
       #endif
     #endif
-  #else                                         // RELEASE VERSIONS
-    #ifndef _UNICODE
-      #ifdef _DLL
-        #pragma comment(lib, "UtilsRAD.lib")    // Release Ansi CRT-DLL version
-      #else        
-        #pragma comment(lib, "UtilsRAS.lib")    // Release Ansi CRT-LIB version
-      #endif
-    #else
-      #ifdef _DLL
-        #pragma comment(lib, "UtilsRUD.lib")    // Release Unicode CRT-DLL version
-      #else                                                                         
-        #pragma comment(lib, "UtilsRUS.lib")    // Release Unicode CRT-LIB version
-      #endif
-    #endif
+  #else
+    #pragma comment(lib, "UtilsWDK.lib")        // MSVCRT.DLL-based library made by WDK
   #endif
-
 #endif
 
 //-----------------------------------------------------------------------------
