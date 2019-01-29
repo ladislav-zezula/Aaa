@@ -435,11 +435,11 @@ RtlIntegerToUnicodeString(
     );
 
 NTSYSAPI
-NTSTATUS 
+NTSTATUS
 NTAPI
-RtlGUIDFromString( 
-    IN PUNICODE_STRING GuidString, 
-    OUT GUID *Guid 
+RtlGUIDFromString(
+    IN PUNICODE_STRING GuidString,
+    OUT GUID *Guid
     );
 
 NTSYSAPI
@@ -506,7 +506,7 @@ RtlUpcaseUnicodeToMultiByteN(
     IN PWCH UnicodeString,
     IN ULONG BytesInUnicodeString
     );
- 
+
 NTSYSAPI
 BOOLEAN
 NTAPI
@@ -608,7 +608,7 @@ ULONG
 NTAPI
 RtlRandom(
     IN OUT PULONG Seed
-    ); 
+    );
 
 //-----------------------------------------------------------------------------
 // Critical section functions
@@ -682,7 +682,7 @@ RtlDecompressBuffer(
     IN  ULONG UncompressedBufferSize,
     IN  PUCHAR CompressedBuffer,
     IN  ULONG CompressedBufferSize,
-    OUT PULONG FinalUncompressedSize 
+    OUT PULONG FinalUncompressedSize
     );
 
 //-----------------------------------------------------------------------------
@@ -1131,7 +1131,7 @@ NTAPI
 RtlIsGenericTableEmpty (
     IN PRTL_GENERIC_TABLE Table
     );
- 
+
 NTSYSAPI
 PVOID
 NTAPI
@@ -1211,7 +1211,7 @@ RtlDosSearchPath_U(
     OUT PWSTR lpBuffer,
     OUT PWSTR *lpFilePart
     );
- 
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -1322,7 +1322,7 @@ typedef struct _KEY_VALUE_BASIC_INFORMATION
     WCHAR Name[1];
 } KEY_VALUE_BASIC_INFORMATION, *PKEY_VALUE_BASIC_INFORMATION;
 
-typedef struct _KEY_VALUE_FULL_INFORMATION 
+typedef struct _KEY_VALUE_FULL_INFORMATION
 {
     ULONG TitleIndex;
     ULONG Type;
@@ -1469,7 +1469,7 @@ NtQueryKey(
     IN  KEY_INFORMATION_CLASS KeyInformationClass,
     OUT PVOID KeyInformation OPTIONAL,
     IN  ULONG Length,
-    OUT PULONG ResultLength    
+    OUT PULONG ResultLength
     );
 
 NTSYSAPI
@@ -1588,7 +1588,7 @@ typedef struct _RTL_QUERY_REGISTRY_TABLE
 } RTL_QUERY_REGISTRY_TABLE, *PRTL_QUERY_REGISTRY_TABLE;
 
 NTSYSAPI
-NTSTATUS 
+NTSTATUS
 NTAPI
 RtlQueryRegistryValues(
     IN ULONG  RelativeTo,
@@ -1704,11 +1704,11 @@ typedef enum _SYSTEM_INFORMATION_CLASS
     SystemVerifierFaultsInformation,
     MaxSystemInfoClass,
 } SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
-                                                    
-//                                                  
-// Thread priority                                  
-//                                                  
-                                                    
+
+//
+// Thread priority
+//
+
 typedef LONG KPRIORITY;
 
 //
@@ -2677,7 +2677,7 @@ NTSTATUS
 NTAPI
 NtShutdownSystem(
     IN SHUTDOWN_ACTION Action
-    ); 
+    );
 
 //-----------------------------------------------------------------------------
 // File functions
@@ -2776,7 +2776,7 @@ typedef enum _FILE_INFORMATION_CLASS
     FileAccessInformation,                   // 8
     FileNameInformation,                     // 9
     FileRenameInformation,                   // 10
-    FileLinkInformation,                     // 11  
+    FileLinkInformation,                     // 11
     FileNamesInformation,                    // 12
     FileDispositionInformation,              // 13
     FilePositionInformation,                 // 14
@@ -2815,7 +2815,7 @@ typedef enum _FILE_INFORMATION_CLASS
     FileProcessIdsUsingFileInformation,      // 47
     FileNormalizedNameInformation,           // 48
     FileNetworkPhysicalNameInformation,      // 49
-    
+
     // Windows 7+
     FileIdGlobalTxDirectoryInformation,      // 50
     FileIsRemoteDeviceInformation,           // 51
@@ -2823,7 +2823,7 @@ typedef enum _FILE_INFORMATION_CLASS
     FileNumaNodeInformation,                 // 53
     FileStandardLinkInformation,             // 54
     FileRemoteProtocolInformation,           // 55
-                                             
+
     // Windows 8+
     FileRenameInformationBypassAccessCheck,  // 56 (kernel-mode only)
     FileLinkInformationBypassAccessCheck,    // 57 (kernel-mode only)
@@ -2840,7 +2840,7 @@ typedef enum _FILE_INFORMATION_CLASS
     FileDispositionInformationEx,            // 64
     FileRenameInformationEx,                 // 65
     FileRenameInformationExBypassAccessCheck,// 66 (kernel-mode only)
-    
+
     // Windows 10 REDSTONE+
     FileDesiredStorageClassInformation,      // 67
     FileStatInformation,                     // 68
@@ -2849,7 +2849,7 @@ typedef enum _FILE_INFORMATION_CLASS
     // Windows 10 April 2018 Update+
     FileStatLxInformation,                   // 70
     FileCaseSensitiveInformation,            // 71
- 
+
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -2903,22 +2903,22 @@ typedef struct _FILE_BOTH_DIR_INFORMATION {
 } FILE_BOTH_DIR_INFORMATION, *PFILE_BOTH_DIR_INFORMATION;
 
 
-typedef struct _FILE_BASIC_INFORMATION {                    
-    LARGE_INTEGER CreationTime;                             
-    LARGE_INTEGER LastAccessTime;                           
-    LARGE_INTEGER LastWriteTime;                            
-    LARGE_INTEGER ChangeTime;                               
-    ULONG FileAttributes;                                   
-} FILE_BASIC_INFORMATION, *PFILE_BASIC_INFORMATION;         
+typedef struct _FILE_BASIC_INFORMATION {
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    ULONG FileAttributes;
+} FILE_BASIC_INFORMATION, *PFILE_BASIC_INFORMATION;
 
 
-typedef struct _FILE_STANDARD_INFORMATION {                 
-    LARGE_INTEGER AllocationSize;                           
-    LARGE_INTEGER EndOfFile;                                
-    ULONG NumberOfLinks;                                    
-    BOOLEAN DeletePending;                                  
-    BOOLEAN Directory;                                      
-} FILE_STANDARD_INFORMATION, *PFILE_STANDARD_INFORMATION;   
+typedef struct _FILE_STANDARD_INFORMATION {
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG NumberOfLinks;
+    BOOLEAN DeletePending;
+    BOOLEAN Directory;
+} FILE_STANDARD_INFORMATION, *PFILE_STANDARD_INFORMATION;
 
 // Windows 10 THRESHOLD+
 typedef struct _FILE_STANDARD_INFORMATION_EX {
@@ -2946,10 +2946,10 @@ typedef struct _FILE_ACCESS_INFORMATION {
 } FILE_ACCESS_INFORMATION, *PFILE_ACCESS_INFORMATION;
 
 
-typedef struct _FILE_NAME_INFORMATION {                     
-    ULONG FileNameLength;                                   
-    WCHAR FileName[1];                                      
-} FILE_NAME_INFORMATION, *PFILE_NAME_INFORMATION;           
+typedef struct _FILE_NAME_INFORMATION {
+    ULONG FileNameLength;
+    WCHAR FileName[1];
+} FILE_NAME_INFORMATION, *PFILE_NAME_INFORMATION;
 
 
 typedef struct _FILE_RENAME_INFORMATION {
@@ -2978,14 +2978,14 @@ typedef struct _FILE_NAMES_INFORMATION {
 } FILE_NAMES_INFORMATION, *PFILE_NAMES_INFORMATION;
 
 
-typedef struct _FILE_DISPOSITION_INFORMATION {                  
-    BOOLEAN DeleteFile;                                         
-} FILE_DISPOSITION_INFORMATION, *PFILE_DISPOSITION_INFORMATION; 
-                                                              
+typedef struct _FILE_DISPOSITION_INFORMATION {
+    BOOLEAN DeleteFile;
+} FILE_DISPOSITION_INFORMATION, *PFILE_DISPOSITION_INFORMATION;
 
-typedef struct _FILE_POSITION_INFORMATION {                 
-    LARGE_INTEGER CurrentByteOffset;                        
-} FILE_POSITION_INFORMATION, *PFILE_POSITION_INFORMATION;   
+
+typedef struct _FILE_POSITION_INFORMATION {
+    LARGE_INTEGER CurrentByteOffset;
+} FILE_POSITION_INFORMATION, *PFILE_POSITION_INFORMATION;
 
 
 typedef struct _FILE_FULL_EA_INFORMATION {
@@ -3002,9 +3002,9 @@ typedef struct _FILE_MODE_INFORMATION {
 } FILE_MODE_INFORMATION, *PFILE_MODE_INFORMATION;
 
 
-typedef struct _FILE_ALIGNMENT_INFORMATION {                
-    ULONG AlignmentRequirement;                             
-} FILE_ALIGNMENT_INFORMATION, *PFILE_ALIGNMENT_INFORMATION; 
+typedef struct _FILE_ALIGNMENT_INFORMATION {
+    ULONG AlignmentRequirement;
+} FILE_ALIGNMENT_INFORMATION, *PFILE_ALIGNMENT_INFORMATION;
 
 
 typedef struct _FILE_ALL_INFORMATION {
@@ -3025,8 +3025,8 @@ typedef struct _FILE_ALLOCATION_INFORMATION {
 } FILE_ALLOCATION_INFORMATION, *PFILE_ALLOCATION_INFORMATION;
 
 
-typedef struct _FILE_END_OF_FILE_INFORMATION {                 
-    LARGE_INTEGER EndOfFile;                                   
+typedef struct _FILE_END_OF_FILE_INFORMATION {
+    LARGE_INTEGER EndOfFile;
 } FILE_END_OF_FILE_INFORMATION, *PFILE_END_OF_FILE_INFORMATION;
 
 
@@ -3125,20 +3125,20 @@ typedef struct _FILE_MOVE_CLUSTER_INFORMATION {
 } FILE_MOVE_CLUSTER_INFORMATION, *PFILE_MOVE_CLUSTER_INFORMATION;
 
 
-typedef struct _FILE_NETWORK_OPEN_INFORMATION {                 
-    LARGE_INTEGER CreationTime;                                 
-    LARGE_INTEGER LastAccessTime;                               
-    LARGE_INTEGER LastWriteTime;                                
-    LARGE_INTEGER ChangeTime;                                   
-    LARGE_INTEGER AllocationSize;                               
-    LARGE_INTEGER EndOfFile;                                    
-    ULONG FileAttributes;                                       
+typedef struct _FILE_NETWORK_OPEN_INFORMATION {
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG FileAttributes;
 } FILE_NETWORK_OPEN_INFORMATION, *PFILE_NETWORK_OPEN_INFORMATION;
 
 
-typedef struct _FILE_ATTRIBUTE_TAG_INFORMATION {               
-    ULONG FileAttributes;                                       
-    ULONG ReparseTag;                                           
+typedef struct _FILE_ATTRIBUTE_TAG_INFORMATION {
+    ULONG FileAttributes;
+    ULONG ReparseTag;
 } FILE_ATTRIBUTE_TAG_INFORMATION, *PFILE_ATTRIBUTE_TAG_INFORMATION;
 
 
@@ -3202,9 +3202,9 @@ typedef struct _FILE_ID_FULL_DIR_INFORMATION {
 } FILE_ID_FULL_DIR_INFORMATION, *PFILE_ID_FULL_DIR_INFORMATION;
 
 
-typedef struct _FILE_VALID_DATA_LENGTH_INFORMATION {                        
-    LARGE_INTEGER ValidDataLength;                                          
-} FILE_VALID_DATA_LENGTH_INFORMATION, *PFILE_VALID_DATA_LENGTH_INFORMATION; 
+typedef struct _FILE_VALID_DATA_LENGTH_INFORMATION {
+    LARGE_INTEGER ValidDataLength;
+} FILE_VALID_DATA_LENGTH_INFORMATION, *PFILE_VALID_DATA_LENGTH_INFORMATION;
 
 //
 // Don't queue an entry to an associated completion port if returning success
@@ -3291,7 +3291,7 @@ typedef struct _FILE_LINKS_INFORMATION
     ULONG BytesNeeded;
     ULONG EntriesReturned;
     FILE_LINK_ENTRY_INFORMATION Entry;
-} FILE_LINKS_INFORMATION, *PFILE_LINKS_INFORMATION; 
+} FILE_LINKS_INFORMATION, *PFILE_LINKS_INFORMATION;
 
 #ifndef WINAPI_FAMILY_PC_APP    // In newer SDKs only
 typedef struct _FILE_ID_128
@@ -3493,8 +3493,8 @@ typedef enum _FSINFOCLASS {
     FileFsDataCopyInformation,   // 12
     FileFsMaximumInformation
 } FS_INFORMATION_CLASS, *PFS_INFORMATION_CLASS;
-                                            
-                                            
+
+
 typedef struct _FILE_FS_VOLUME_INFORMATION {
     LARGE_INTEGER VolumeCreationTime;
     ULONG VolumeSerialNumber;
@@ -3880,7 +3880,7 @@ NtWriteFile(
     IN ULONG Length,
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
     IN PULONG Key OPTIONAL
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -3895,7 +3895,7 @@ ZwWriteFile(
     IN ULONG Length,
     IN PLARGE_INTEGER ByteOffset OPTIONAL,
     IN PULONG Key OPTIONAL
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -3930,7 +3930,7 @@ ZwFlushBuffersFile(
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtDeviceIoControlFile(      
+NtDeviceIoControlFile(
     IN  HANDLE FileHandle,
     IN  HANDLE Event,
     IN  PIO_APC_ROUTINE ApcRoutine,
@@ -3946,23 +3946,7 @@ NtDeviceIoControlFile(
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtFsControlFile(      
-    IN  HANDLE FileHandle,
-    IN  HANDLE Event,
-    IN  PIO_APC_ROUTINE ApcRoutine,
-    IN  PVOID ApcContext,
-    OUT PIO_STATUS_BLOCK IoStatusBlock,
-    IN  ULONG FsControlCode,
-    IN  PVOID InputBuffer,
-    IN  ULONG InputBufferLength,
-    IN  PVOID OutputBuffer,
-    IN  ULONG OutputBufferLength
-    );
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-ZwDeviceIoControlFile(      
+ZwDeviceIoControlFile(
     IN  HANDLE FileHandle,
     IN  HANDLE Event,
     IN  PIO_APC_ROUTINE ApcRoutine,
@@ -3978,7 +3962,7 @@ ZwDeviceIoControlFile(
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtFsControlFile(      
+NtFsControlFile(
     IN  HANDLE FileHandle,
     IN  HANDLE Event,
     IN  PIO_APC_ROUTINE ApcRoutine,
@@ -3994,7 +3978,7 @@ NtFsControlFile(
 NTSYSAPI
 NTSTATUS
 NTAPI
-ZwFsControlFile(      
+ZwFsControlFile(
     IN  HANDLE FileHandle,
     IN  HANDLE Event,
     IN  PIO_APC_ROUTINE ApcRoutine,
@@ -4153,7 +4137,7 @@ RtlNtPathNameToDosPathName(                     // Available in Windows XP or ne
 //-----------------------------------------------------------------------------
 // Process functions
 
-#define GDI_HANDLE_BUFFER_SIZE      60 
+#define GDI_HANDLE_BUFFER_SIZE      60
 
 // RTL_USER_PROCESS_PARAMETERS::Flags
 #define RTL_USER_PROC_PARAMS_NORMALIZED         0x00000001
@@ -4163,7 +4147,7 @@ RtlNtPathNameToDosPathName(                     // Available in Windows XP or ne
 #define RTL_USER_PROC_RESERVE_1MB               0x00000020
 #define RTL_USER_PROC_RESERVE_16MB              0x00000040
 #define RTL_USER_PROC_CASE_SENSITIVE            0x00000080
-#define RTL_USER_PROC_DISABLE_HEAP_DECOMMIT     0x00000100 
+#define RTL_USER_PROC_DISABLE_HEAP_DECOMMIT     0x00000100
 #define RTL_USER_PROC_DLL_REDIRECTION_LOCAL     0x00001000
 #define RTL_USER_PROC_APP_MANIFEST_PRESENT      0x00002000
 #define RTL_USER_PROC_IMAGE_KEY_MISSING         0x00004000
@@ -4334,7 +4318,7 @@ typedef struct _SECTION_IMAGE_INFORMATION
     ULONG LoaderFlags;
     ULONG ImageFileSize;                    // Reserved[0] for NT 4.0 and 2000
     ULONG CheckSum;                         // Reserved[1] until Vista
-} SECTION_IMAGE_INFORMATION, *PSECTION_IMAGE_INFORMATION; 
+} SECTION_IMAGE_INFORMATION, *PSECTION_IMAGE_INFORMATION;
 
 
 typedef struct _RTL_USER_PROCESS_INFORMATION
@@ -4345,7 +4329,7 @@ typedef struct _RTL_USER_PROCESS_INFORMATION
     CLIENT_ID ClientId;
     SECTION_IMAGE_INFORMATION ImageInformation;
 
-} RTL_USER_PROCESS_INFORMATION, *PRTL_USER_PROCESS_INFORMATION; 
+} RTL_USER_PROCESS_INFORMATION, *PRTL_USER_PROCESS_INFORMATION;
 
 
 typedef struct _RTL_USER_PROCESS_PARAMETERS
@@ -4399,7 +4383,7 @@ typedef struct _PEB_FREE_BLOCK
     struct _PEB_FREE_BLOCK *Next;
     ULONG Size;
 
-} PEB_FREE_BLOCK, *PPEB_FREE_BLOCK; 
+} PEB_FREE_BLOCK, *PPEB_FREE_BLOCK;
 
 
 typedef struct _PEB_LDR_DATA
@@ -4414,7 +4398,7 @@ typedef struct _PEB_LDR_DATA
     BOOLEAN    ShutdownInProgress;                  // Windows 10
     HANDLE     ShutdownThreadId;                    // Windows 10
 
-} PEB_LDR_DATA, *PPEB_LDR_DATA; 
+} PEB_LDR_DATA, *PPEB_LDR_DATA;
 
 #define LDRP_PACKED_BINARY              0x00000001
 #define LDRP_STATIC_LINK                0x00000002
@@ -4500,8 +4484,8 @@ typedef struct _PEB
             UCHAR SpareBits:1;
         };
     };
-    
-    HANDLE Mutant;                      
+
+    HANDLE Mutant;
     PVOID ImageBaseAddress;
     PPEB_LDR_DATA Ldr;
     PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
@@ -4509,7 +4493,7 @@ typedef struct _PEB
     PVOID ProcessHeap;
 
     //--- Windows 7. Can be different in different Windows version. ---------------
-    
+
     PRTL_CRITICAL_SECTION FastPebLock;
     PVOID AtlThunkSListPtr;
     PVOID IFEOKey;
@@ -4545,7 +4529,7 @@ typedef struct _PEB
 
     //
     // Useful information for LdrpInitialize
-    
+
     ULONG NumberOfProcessors;
     ULONG NtGlobalFlag;
 
@@ -4617,7 +4601,7 @@ typedef struct _TEB
     ULONG CountOfOwnedCriticalSections;
     PVOID CsrClientThread;
     PVOID Win32ThreadInfo;
-    
+
     // Incomplete
 
 } TEB, *PTEB;
@@ -4638,7 +4622,7 @@ typedef BOOLEAN (*PDLL_INIT_ROUTINE)(
     IN PVOID DllHandle,
     IN ULONG Reason,
     IN PCONTEXT Context OPTIONAL
-    ); 
+    );
 
 typedef VOID (NTAPI *PUSER_THREAD_START_ROUTINE)(
     IN PVOID ApcArgument1
@@ -4821,14 +4805,14 @@ PRTL_USER_PROCESS_PARAMETERS
 NTAPI
 RtlNormalizeProcessParams(
     PRTL_USER_PROCESS_PARAMETERS ProcessParameters
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
 NTAPI
 RtlDestroyProcessParameters(
     PRTL_USER_PROCESS_PARAMETERS ProcessParameters
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -4844,7 +4828,7 @@ RtlCreateUserProcess(
     HANDLE DebugPort,
     HANDLE ExceptionPort,
     PRTL_USER_PROCESS_INFORMATION ProcessInformation
-    ); 
+    );
 
 #define NtCurrentProcess() ((HANDLE) -1)
 #define NtCurrentThread()  ((HANDLE) -2)
@@ -5015,7 +4999,7 @@ typedef struct _PORT_MESSAGE
     union
     {
         ULONG_PTR ClientViewSize;       // Size of section created by the sender (in bytes)
-        ULONG  CallbackId;              // 
+        ULONG  CallbackId;              //
     };
 
 } PORT_MESSAGE, *PPORT_MESSAGE, LPC_MESSAGE, *PLPC_MESSAGE;
@@ -5030,11 +5014,11 @@ typedef struct _PORT_VIEW {
     HANDLE SectionHandle;               // Handle to section object with
                                         // SECTION_MAP_WRITE and SECTION_MAP_READ
     ULONG  SectionOffset;               // The offset in the section to map a view for
-                                        // the port data area. The offset must be aligned 
+                                        // the port data area. The offset must be aligned
                                         // with the allocation granularity of the system.
     SIZE_T ViewSize;                    // The size of the view (in bytes)
     PVOID  ViewBase;                    // The base address of the view in the creator
-                                        // 
+                                        //
     PVOID  ViewRemoteBase;              // The base address of the view in the process
                                         // connected to the port.
 } PORT_VIEW, *PPORT_VIEW;
@@ -5094,14 +5078,14 @@ typedef struct _REMOTE_PORT_VIEW {
         message storage. Zero means default value.
 
     ZwCreatePort verifies that (MaxDataSize <= 0x104) and (MaxMessageSize <= 0x148).
- 
+
 --*/
 
 NTSYSAPI
 NTSTATUS
 NTAPI
 NtCreatePort(
-    OUT PHANDLE PortHandle,                     
+    OUT PHANDLE PortHandle,
     IN  POBJECT_ATTRIBUTES ObjectAttributes,
     IN  ULONG MaxConnectionInfoLength,
     IN  ULONG MaxMessageLength,
@@ -5112,7 +5096,7 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 ZwCreatePort(
-    OUT PHANDLE PortHandle,                     
+    OUT PHANDLE PortHandle,
     IN  POBJECT_ATTRIBUTES ObjectAttributes,
     IN  ULONG MaxConnectionInfoLength,
     IN  ULONG MaxMessageLength,
@@ -5158,7 +5142,7 @@ ZwCreatePort(
         sent by the listener.
 
 --*/
- 
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5195,7 +5179,7 @@ ZwConnectPort(
 
     Listens on a port for a connection request message on the server side.
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
     ConnectionRequest - Points to a caller-allocated buffer
@@ -5211,7 +5195,7 @@ NtListenPort(
     IN  HANDLE PortHandle,
     OUT PPORT_MESSAGE RequestMessage
     );
- 
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -5283,7 +5267,7 @@ ZwAcceptConnectPort(
 
     Completes the port connection process on the server side.
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
 --*/
@@ -5310,7 +5294,7 @@ ZwCompleteConnectPort(
 
     Sends a request message to a port (client side)
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
     RequestMessage - Points to a caller-allocated buffer or variable
@@ -5341,7 +5325,7 @@ ZwRequestPort (
 
     Sends a request message to a port and waits for a reply (client side)
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
     RequestMessage - Points to a caller-allocated buffer or variable
@@ -5378,7 +5362,7 @@ ZwRequestWaitReplyPort(
 
     Sends a reply message to a port (Server side)
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
     ReplyMessage - Points to a caller-allocated buffer or variable
@@ -5409,7 +5393,7 @@ ZwReplyPort(
 
     Sends a reply message to a port and waits for a reply message
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
     ReplyMessage - Points to a caller-allocated buffer or variable
@@ -5441,7 +5425,7 @@ ZwReplyWaitReplyPort(
     Optionally sends a reply message to a port and waits for a
     message
 
-    PortHandle - A handle to a port object. The handle doesn't need 
+    PortHandle - A handle to a port object. The handle doesn't need
         to grant any specific access.
 
     PortContext - Optionally points to a variable that receives
@@ -5544,7 +5528,7 @@ RtlDestroyHeap (
 
 NTSYSAPI
 PVOID
-NTAPI 
+NTAPI
 RtlAllocateHeap (
     IN HANDLE HeapHandle,
     IN ULONG Flags,
@@ -5553,7 +5537,7 @@ RtlAllocateHeap (
 
 NTSYSAPI
 PVOID
-NTAPI 
+NTAPI
 RtlReAllocateHeap (
     IN HANDLE HeapHandle,
     IN ULONG Flags,
@@ -6393,7 +6377,7 @@ RtlSetSaclSecurityDescriptor(
     IN OUT PSECURITY_DESCRIPTOR SecurityDescriptor,
     IN BOOLEAN SaclPresent,
     IN PACL Sacl,
-    IN BOOLEAN SaclDefaulted 
+    IN BOOLEAN SaclDefaulted
     );
 
 NTSYSAPI
@@ -6442,7 +6426,7 @@ PVOID
 NTAPI
 RtlFreeSid(
     IN PSID Sid
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -6579,10 +6563,10 @@ NtCompareTokens(
     IN  HANDLE FirstTokenHandle,
     IN  HANDLE SecondTokenHandle,
     OUT PBOOLEAN IdenticalTokens
-    );  
+    );
 
 //-----------------------------------------------------------------------------
-// Token functions available from Windows 8.1 
+// Token functions available from Windows 8.1
 
 // Token security attribute type
 #define TOKEN_SECURITY_ATTRIBUTE_TYPE_INVALID 0x00
@@ -6684,7 +6668,7 @@ ZwQuerySecurityAttributesToken(
 #define SYMBOLIC_LINK_ALL_ACCESS (STANDARD_RIGHTS_REQUIRED | 0x1)
 #endif
 
-NTSYSAPI 
+NTSYSAPI
 NTSTATUS
 NTAPI
 NtCreateSymbolicLinkObject(
@@ -6692,7 +6676,7 @@ NtCreateSymbolicLinkObject(
     IN ACCESS_MASK DesiredAccess,
     IN POBJECT_ATTRIBUTES ObjectAttributes,
     IN PUNICODE_STRING DestinationName
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
@@ -6934,7 +6918,7 @@ NtRaiseHardError(
 //-----------------------------------------------------------------------------
 // Other functions
 
-NTSYSAPI 
+NTSYSAPI
 NTSTATUS
 NTAPI
 NtContinue(
@@ -6942,13 +6926,13 @@ NtContinue(
     IN BOOLEAN Alertable
     );
 
-NTSYSAPI 
+NTSYSAPI
 NTSTATUS
 NTAPI
 NtTestAlert(
     );
 
-NTSYSAPI 
+NTSYSAPI
 NTSTATUS
 NTAPI
 NtQueryPerformanceCounter(
@@ -6956,12 +6940,12 @@ NtQueryPerformanceCounter(
     OUT PLARGE_INTEGER PerformanceFrequency OPTIONAL
     );
 
-NTSYSAPI 
+NTSYSAPI
 NTSTATUS
 NTAPI
 NtAllocateLocallyUniqueId(
     OUT PLUID LocallyUniqueId
-    ); 
+    );
 
 NTSYSAPI
 NTSTATUS
