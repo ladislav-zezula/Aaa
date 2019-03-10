@@ -21,6 +21,9 @@
 /* 29.05.04  1.00  Lad  The first version of Utils.h                         */
 /*****************************************************************************/
 
+#pragma error("Using Utils.lib with WDK build")
+
+
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
@@ -80,7 +83,7 @@
       #endif
     #endif
   #else
-    #pragma comment(lib, "UtilsWDK.lib")        // MSVCRT.DLL-based library made by WDK
+    #pragma comment(lib, "UtilsWDK.lib")          // MSVCRT.DLL-based library made by WDK build
   #endif
 #endif
 
