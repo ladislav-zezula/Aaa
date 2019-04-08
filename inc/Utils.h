@@ -201,6 +201,39 @@
 #endif
 
 //
+// Defines for Windows version returned by GetWindowsVersion()
+//
+
+#define OSVER_WINDOWS_2000    0x0500
+#define OSVER_WINDOWS_XP      0x0501
+#define OSVER_WINDOWS_2003    0x0502
+#define OSVER_WINDOWS_VISTA   0x0600
+#define OSVER_WINDOWS_7       0x0601
+#define OSVER_WINDOWS_8       0x0602
+#define OSVER_WINDOWS_8_1     0x0603
+#define OSVER_WINDOWS_10      0x0A00
+
+//
+// Defines for Windows build returned by GetWindowsBuildNumber()
+//
+
+#define OSBUILD_WINDOWS_NT      1381
+#define OSBUILD_WINDOWS_2000    2195
+#define OSBUILD_WINDOWS_XP      2600
+#define OSBUILD_WINDOWS_2003    3790
+#define OSBUILD_WINDOWS_VISTA   6000
+#define OSBUILD_WINDOWS_7       7600
+#define OSBUILD_WINDOWS_8       9200
+#define OSBUILD_WINDOWS_8_1     9600
+#define OSBUILD_WINDOWS_10     10240
+#define OSBUILD_WINDOWS_10_TS2 10586                // Windows 10 Threshold 2
+#define OSBUILD_WINDOWS_10_RS1 14393                // Windows 10 Redstone 1 (1607)
+#define OSBUILD_WINDOWS_10_RS2 15063                // Windows 10 Redstone 2 (1703)
+#define OSBUILD_WINDOWS_10_RS3 16299                // Windows 10 Redstone 3 (1709)
+#define OSBUILD_WINDOWS_10_RS4 17134                // Windows 10 Redstone 4 (1803)
+#define OSBUILD_WINDOWS_10_RS5 17763                // Windows 10 Redstone 4 (1809)
+
+//
 // Macros for handling LIST_ENTRY-based lists
 //
 
@@ -413,8 +446,11 @@ int WINAPI GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD 
 // and stores them to the "pRect" parameter
 void WINAPI GetWindowBorders(HWND hWnd, LPRECT pRect);
 
-// Retrieves the Windows version (WinXP = 0x0501, Win7 = 0x0601)
+// Retrieves the Windows version (see OSVER_WINDOWS_XXX)
 DWORD WINAPI GetWindowsVersion(POSVERSIONINFO pOsvi = NULL);
+
+// Retrieves the Windows build number (see OSBUILD_WINDOWS_XXX)
+DWORD WINAPI GetWindowsBuildNumber();
 
 // Initializes the dialog controls, like combo boxes and list boxes.
 int WINAPI InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
@@ -637,7 +673,7 @@ int WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 int WINAPI ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
-int WINAPI rsprintf(LPTSTR szBuffer, int nMaxChars, UINT nIDFormat, ...);
+int WINAPI rsprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, ...);
 
 // Recalculates a screen window position (such as retrieved by GetWindowRect)
 // to the client coordinates of the window "hWnd".
