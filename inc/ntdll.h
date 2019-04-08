@@ -2850,6 +2850,12 @@ typedef enum _FILE_INFORMATION_CLASS
     FileStatLxInformation,                   // 70
     FileCaseSensitiveInformation,            // 71
 
+	// Windows 10 Fall 2018 Update+
+	FileLinkInformationEx,                          // 72
+	FileLinkInformationExBypassAccessCheck,         // 73
+	FileStorageReserveIdInformation,                // 74
+	FileCaseSensitiveInformationForceAccessCheck,   // 75
+
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -3095,6 +3101,13 @@ typedef struct _FILE_LINK_INFORMATION {
     WCHAR FileName[1];
 } FILE_LINK_INFORMATION, *PFILE_LINK_INFORMATION;
 
+// Renamed from original FILE_LINK_INFORMATION in RS5+
+typedef struct _FILE_LINK_INFORMATION_EX {
+	ULONG Flags;              // FileLinkInformationEx
+	HANDLE RootDirectory;
+	ULONG FileNameLength;
+	WCHAR FileName[1];
+} FILE_LINK_INFORMATION_EX, *PFILE_LINK_INFORMATION_EX;
 
 typedef struct _FILE_OBJECTID_INFORMATION
 {
