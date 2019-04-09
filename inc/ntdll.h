@@ -3101,6 +3101,13 @@ typedef struct _FILE_LINK_INFORMATION {
     WCHAR FileName[1];
 } FILE_LINK_INFORMATION, *PFILE_LINK_INFORMATION;
 
+#define FILE_LINK_REPLACE_IF_EXISTS                     0x00000001      // If a file with the given name already exists, it should be replaced with the new link. Equivalent to the ReplaceIfExists field used with the FileLinkInformation information class.
+#define FILE_LINK_POSIX_SEMANTICS                       0x00000002      // If FILE_LINK_REPLACE_IF_EXISTS is also specified, allow replacing a file even if there are existing handles to it. Existing handles to the replaced file continue to be valid for operations such as read and write. Any subsequent opens of the target name will open the new link, not the replaced file.
+#define FILE_LINK_SUPPRESS_STORAGE_RESERVE_INHERITANCE  0x00000008      // When creating a link in a new directory, suppress any inheritance rules related to the storage reserve ID property of the file.
+#define FILE_LINK_NO_INCREASE_AVAILABLE_SPACE           0x00000010      // If FILE_LINK_SUPPRESS_STORAGE_RESERVE_INHERITANCE is not also specified, when creating a link in a new directory, automatically resize affected storage reserve areas to prevent the user visible free space on the volume from increasing. Requires manage volume access.
+#define FILE_LINK_NO_DECREASE_AVAILABLE_SPACE           0x00000020      // If FILE_LINK_SUPPRESS_STORAGE_RESERVE_INHERITANCE is not also specified, when creating a link in a new directory, automatically resize affected storage reserve areas to prevent the user visible free space on the volume from decreasing. Requires manage volume access.
+#define FILE_LINK_PRESERVE_AVAILABLE_SPACE              0x00000030      // Equivalent to specifying both FILE_LINK_NO_INCREASE_AVAILABLE_SPACE and FILE_LINK_NO_DECREASE_AVAILABLE_SPACE.
+#define FILE_LINK_IGNORE_READONLY_ATTRIBUTE             0x00000040
 
 // Renamed from original FILE_LINK_INFORMATION in RS5+
 typedef struct _FILE_LINK_INFORMATION_EX {
@@ -4523,14 +4530,18 @@ typedef struct _PEB
             ULONG ProcessUsingVEH : 1;
             ULONG ProcessUsingVCH : 1;
             ULONG ProcessUsingFTH : 1;
-            ULONG ReservedBits0 : 27;
+            ULONG ReservedBits0 : 25;
         };
     };
 
+    union
+    {
     PVOID KernelCallbackTable;
     PVOID UserSharedInfoPtr;
+    };
+
     ULONG SystemReserved[1];
-    ULONG AtlThunkSListPtr32;
+    PVOID AtlThunkSListPtr32;
     PVOID ApiSetMap;
     ULONG TlsExpansionCounter;
     PVOID TlsBitmap;
