@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <windows.h>
+#include <windowsx.h>
 #include <commctrl.h>
 #include <commdlg.h>
 #include <shellapi.h>
