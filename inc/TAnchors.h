@@ -34,11 +34,23 @@
 #define akRightBottom (akRight | akBottom)
 #define akAll         (akLeft  | akTop | akRight | akBottom)
 
+typedef BOOL (*CALCCHILDPOS)(HWND hWndChild, PVOID pvUserParam, const RECT & NewClientRect, struct _WNDPOS & NewChildPos);
+
+typedef struct _WNDPOS
+{
+    int x;
+    int y;
+    int cx;
+    int cy;
+} WNDPOS, *PWNDPOS;
+
 struct TAnchor
 {
     LIST_ENTRY Entry;                   // Links to other anchors
     HWND   hWnd;                        // Handle to the child (anchored) window
 
+    CALCCHILDPOS PfnCalcChildPos;       // Custom callback for calculating the child window position
+    PVOID  pvUserParam;
     int    nLeftRel;                    // Here are the anchor points. The nXXXRel means relative position
     int    nLeftSpace;                  // of the anchor point (in percent of the parent client area)
     int    nTopRel;                     // Example :   0 is left-most or top-most point in the parent's client area
@@ -60,6 +72,9 @@ class TAnchors
     // Adding anchors
     TAnchor * AddAnchor(HWND hWnd, DWORD dwAnchors);
     TAnchor * AddAnchor(HWND hDlg, UINT nIDCtrl, DWORD dwAnchors);
+
+    TAnchor * AddAnchor(HWND hWnd, CALCCHILDPOS PfnGetNewChildRect, PVOID pvUserParam);
+    TAnchor * AddAnchor(HWND hDlg, UINT nIDCtrl, CALCCHILDPOS PfnGetNewChildRect, PVOID pvUserParam);
 
     TAnchor * AddAnchorEx(HWND hWnd, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
     TAnchor * AddAnchorEx(HWND hDlg, UINT nIDCtrl, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
@@ -88,7 +103,7 @@ class TAnchors
     void SaveChildWindowInfo(HWND hWnd, TAnchor * pAnchor);
 
     // Calculates new window position and size
-    BOOL GetNewWindowRect(HWND hParent, TAnchor * pAnchor, RECT & rect);
+    BOOL GetNewChildRect(TAnchor * pAnchor, const RECT & NewClientRect, WNDPOS & NewChildPos);
     void AddWsClipChildren(HWND hParent);
 
     // Double buffering repaint logic
@@ -107,8 +122,8 @@ class TAnchors
     LIST_ENTRY m_AnchorLinks;
     RECT      m_rectParent;             // Parent rectangle (initialized in SetParentRectManual)
     HWND      m_hWndParent;             // Parent window of the anchored controls
-    BOOL      m_bHasGroupBox;           // TRUE if one of the windows is a group box
-    BOOL      m_bThemeActive;           // TRUE if the XP+ theme is active
+    UINT      m_bHasGroupBox:1;         // TRUE if one of the windows is a group box
+    UINT      m_bThemeActive:1;         // TRUE if the XP+ theme is active
     int       m_nAnchors;               // Number of anchors
     int       m_nMinSizeX;
     int       m_nMinSizeY;

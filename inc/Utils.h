@@ -337,6 +337,37 @@ struct TListViewColumns
 extern HINSTANCE g_hInst;
 
 //-----------------------------------------------------------------------------
+// Easy conversions bewtween ANSI and UNICODE
+
+size_t inline StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCSTR szString)
+{
+    LPSTR szBufferEnd = NULL;
+
+    StringCchCopyExA(szBuffer, ccBuffer, szString, &szBufferEnd, NULL, 0);
+    return (szBufferEnd - szBuffer);
+}
+
+size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
+{
+    LPWSTR szBufferEnd = NULL;
+
+    StringCchCopyExW(szBuffer, ccBuffer, szString, &szBufferEnd, NULL, 0);
+    return (szBufferEnd - szBuffer);
+}
+
+size_t inline StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
+{
+    int nLength = WideCharToMultiByte(CP_ACP, WC_COMPOSITECHECK, szString, -1, szBuffer, (int)ccBuffer, NULL, NULL);
+    return (nLength > 0) ? (nLength - 1) : 0;
+}
+
+size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCSTR szString)
+{
+    int nLength = MultiByteToWideChar(CP_ACP, 0, szString, -1, szBuffer, (int)ccBuffer);
+    return (nLength > 0) ? (nLength - 1) : 0;
+}
+
+//-----------------------------------------------------------------------------
 // Utility function prototypes
 
 // Adds/removes backslash to/from end of path name
@@ -680,6 +711,10 @@ int WINAPI rsprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, ...);
 // to the client coordinates of the window "hWnd".
 void WINAPI ScreenRectToClientRect(HWND hWnd, LPRECT pRect);
 void WINAPI ClientRectToScreenRect(HWND hWnd, LPRECT pRect);
+
+// Retrieves the rectangle of a window relative to its parent
+BOOL WINAPI GetWindowRectParentRelative(HWND hWnd, LPRECT pRect);
+BOOL WINAPI GetClientRectScreenRelative(HWND hWnd, LPRECT pRect);
 
 // Sets a bold font for a dialog control
 int WINAPI SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
