@@ -146,6 +146,26 @@
 // Macros
 
 //
+// Support for ssize_t type
+//
+
+#ifndef ssize_t
+  #ifdef _WIN64
+    typedef signed __int64 ssize_t;
+  #else
+    typedef signed int     ssize_t;
+  #endif
+#endif
+
+//
+// LPCBYTE not defined in DWK headers
+//
+
+#ifndef LPCBYTE
+typedef const BYTE *LPCBYTE;
+#endif
+
+//
 // Use with #pragma TODO("This needs to be fixed")
 //
 
@@ -154,16 +174,6 @@
 #define chSTR(x)  chSTR2(x)
 #define TODO(todo)  message(__FILE__ "(" chSTR(__LINE__) ") : TODO: " #todo)
 #endif // TODO
-
-//
-// Macro for getting max. number of characters in a buffer
-// Removed old "_tsize" macro for being confusing
-//
-
-#ifndef _maxchars
-#define _maxchars(buff)  ((sizeof(buff) / sizeof(buff[0])) - 1)
-#define _maxchars_remaining(buff, ptr)  (_maxchars(buff) - (ptr - buff) - 1)
-#endif  // _maxchars
 
 //
 // Macro for setting pointer window data, to compensate the improper declaration
@@ -331,10 +341,15 @@ struct TListViewColumns
 
 //-----------------------------------------------------------------------------
 // Global variables
-                                                         
+
 // Must be defined by the application. It is the instance of the
 // module where to load resources from
 extern HINSTANCE g_hInst;
+
+// String conversion tables
+extern const char * Base64Table_Standard;
+extern const char * IntToHexChar;
+extern const BYTE CharToByte[0x80];
 
 //-----------------------------------------------------------------------------
 // Easy conversions bewtween ANSI and UNICODE
@@ -365,6 +380,191 @@ size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCSTR szString)
 {
     int nLength = MultiByteToWideChar(CP_ACP, 0, szString, -1, szBuffer, (int)ccBuffer);
     return (nLength > 0) ? (nLength - 1) : 0;
+}
+
+//-----------------------------------------------------------------------------
+// Binary <-> String support
+
+template <typename XCHAR>
+DWORD BinaryToString(XCHAR * szBuffer, size_t cchBuffer, LPCVOID pvBinary, size_t cbBinary)
+{
+    LPCBYTE pbBinary = (LPCBYTE)pvBinary;
+
+    // The size of the string must be enough to hold the binary + EOS
+    if(cchBuffer < ((cbBinary * 2) + 1))
+        return ERROR_INSUFFICIENT_BUFFER;
+
+    // Convert the string to the array of MD5
+    // Copy the blob data as text
+    for(size_t i = 0; i < cbBinary; i++)
+    {
+        *szBuffer++ = IntToHexChar[pbBinary[0] >> 0x04];
+        *szBuffer++ = IntToHexChar[pbBinary[0] & 0x0F];
+        pbBinary++;
+    }
+
+    // Terminate the string
+    *szBuffer = 0;
+    return ERROR_SUCCESS;
+}
+
+template <typename XCHAR>
+DWORD StringToBinary(const XCHAR * szString, LPVOID pvBinary, size_t cbBinary, size_t * PtrBinary = NULL)
+{
+    LPBYTE pbBinary = (LPBYTE)pvBinary;
+    LPBYTE pbBinaryEnd = pbBinary + cbBinary;
+    LPBYTE pbSaveBinary = pbBinary;
+
+    // Verify parameter
+    if(szString != NULL && szString[0] != 0)
+    {
+        // Work as long as we have at least 2 characters ready
+        while(szString[0] != 0 && szString[1] != 0)
+        {
+            // Convert both to unsigned char to get rid of negative indexes produced by szString[x]
+            BYTE StringByte0 = (BYTE)szString[0];
+            BYTE StringByte1 = (BYTE)szString[1];
+
+            // Each character must be within the range of 0x80
+            if(StringByte0 > 0x80 || StringByte1 > 0x80)
+                return ERROR_INVALID_PARAMETER;
+            if(CharToByte[StringByte0] == 0xFF || CharToByte[StringByte1] == 0xFF)
+                return ERROR_INVALID_PARAMETER;
+
+            // Overflow check
+            if(pbBinary >= pbBinaryEnd)
+                return ERROR_INSUFFICIENT_BUFFER;
+
+            *pbBinary++ = (CharToByte[StringByte0] << 0x04) | CharToByte[StringByte1];
+            szString += 2;
+        }
+
+        // Odd number of chars?
+        if(szString[0] != 0 && szString[1] == 0)
+            return ERROR_INVALID_PARAMETER;
+    }
+
+    // Give the length
+    if(PtrBinary != NULL)
+        PtrBinary[0] = pbBinary - pbSaveBinary;
+    return ERROR_SUCCESS;
+}
+
+size_t inline GetLengthOfBase64(size_t cbBinary)
+{
+    size_t cchChars;
+    size_t nBits = (cbBinary * 4);
+
+    cchChars = (nBits / 3) + ((nBits % 3) ? 1 : 0);
+    if(nBits % 3)
+        cchChars += 3 - (nBits % 3);
+
+    return cchChars;
+}
+
+template <typename XCHAR>
+DWORD BinaryToBase64(LPCVOID pvBinary, size_t cbBinary, XCHAR * szBuffer, size_t cchBuffer, const char * Base64Table = Base64Table_Standard)
+{
+    LPCBYTE pbBinary = (LPCBYTE)pvBinary;
+    DWORD BitBuffer = 0;
+    DWORD BitCount  = 0;
+    DWORD CharIndex = 0;
+
+    // Verify the length of the buffer
+    if(cchBuffer <= GetLengthOfBase64(cbBinary))
+        return ERROR_BUFFER_OVERFLOW;
+
+    // Convert the binary buffer
+    for(size_t i = 0; i < cbBinary; i++)
+    {
+        // Load 8 bits
+        BitBuffer = (BitBuffer << 0x08) + pbBinary[i];
+        BitCount += 8;
+
+        // Parse bits
+        while(BitCount >= 6)
+        {
+            // Decrement the bit count
+            BitCount -= 6;
+
+            // The character index is the upper (BitCount - 6) bits
+            CharIndex = BitBuffer >> BitCount;
+            BitBuffer = BitBuffer % (1 << BitCount);
+
+            // Put the new value
+            *szBuffer++ = Base64Table[CharIndex];
+        }
+    }
+
+    // Put the rest
+    if(BitCount != 0)
+    {
+        CharIndex = BitBuffer << (6 - BitCount);
+        *szBuffer++ = Base64Table[CharIndex];
+    }
+
+    // Put the remaining chars
+    if((cbBinary % 3) != 0)
+        *szBuffer++ = '=';
+    if((cbBinary % 3) == 1)
+        *szBuffer++ = '=';
+    *szBuffer = 0;
+    return ERROR_SUCCESS;
+}
+
+template <typename XCHAR>
+DWORD Base64ToBinary(const XCHAR * szBase64, LPVOID pvBinary, size_t cbBinary, size_t * PtrSize, const char * Base64Table = Base64Table_Standard)
+{
+    LPBYTE pbBinary = (LPBYTE)pvBinary;
+    LPBYTE pbBinaryEnd = pbBinary + cbBinary;
+    LPBYTE pbBinary0 = pbBinary;
+    DWORD BitBuffer = 0;
+    DWORD BitCount = 0;
+    BYTE Base64ToBits[0x80];
+    BYTE OneByte;
+
+    // Prepare the conversion table
+    memset(Base64ToBits, 0xFF, sizeof(Base64ToBits));
+    for(BYTE i = 0; Base64Table[i] != 0; i++)
+    {
+        OneByte = Base64Table[i];
+        Base64ToBits[OneByte] = i;
+    }
+
+    // Do the decoding
+    while(szBase64[0] != 0 && szBase64[0] != '=')
+    {
+        // Check for end of string
+        if(szBase64[0] > sizeof(Base64ToBits))
+            return ERROR_BAD_FORMAT;
+        if((OneByte = Base64ToBits[*szBase64++]) == 0xFF)
+            return ERROR_BAD_FORMAT;
+
+        // Put the 6 bits into the bit buffer
+        BitBuffer = (BitBuffer << 6) | OneByte;
+        BitCount += 6;
+
+        // Flush all values
+        while(BitCount >= 8)
+        {
+            // Decrement the bit count in the bit buffer
+            BitCount -= 8;
+
+            // The byte is the upper 8 bits of the bit buffer
+            OneByte = (BYTE)(BitBuffer >> BitCount);
+            BitBuffer = BitBuffer % (1 << BitCount);
+
+            // Put the byte value
+            if(pbBinary >= pbBinaryEnd)
+                return ERROR_BUFFER_OVERFLOW;
+            *pbBinary++ = OneByte;
+        }
+    }
+
+    // Return the decoded length
+    if(PtrSize != NULL)
+        PtrSize[0] = (pbBinary - pbBinary0);
+    return ERROR_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
@@ -457,7 +657,7 @@ int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LP
 
 // Retrieves the error text. The caller must free the text using
 // delete [] szText;
-LPTSTR WINAPI GetErrorText(int nError);
+LPTSTR WINAPI GetErrorText(DWORD dwErrCode);
 
 // Fills the module version
 int WINAPI GetModuleVersion(LPCTSTR szModuleName, ULARGE_INTEGER * pVersion);
@@ -506,7 +706,7 @@ int WINAPI MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...
 
 // Shows a message box with appended error code text
 // "Failed to open the file %s\nAccess denied"
-int WINAPI MessageBoxError(HWND hParent, UINT_PTR nIDText, int nError = ERROR_SUCCESS, ...);
+int WINAPI MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
 
 // Shows a message box that also includes check box
 int WINAPI MessageBoxWithCheckBox(
@@ -610,10 +810,8 @@ BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCa
         {
             if(szWildCardPtr[0] == '*')
             {
-                szWildCardPtr++;
-
-                if(szWildCardPtr[0] == '*')
-                    continue;
+                while(szWildCardPtr[0] == '*')
+                    szWildCardPtr++;
 
                 if(szWildCardPtr[0] == 0)
                     return TRUE;
