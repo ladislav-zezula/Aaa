@@ -137,10 +137,77 @@
 #define LISTVIEW_LAST_ITEM   0x7FFFFFFF         // The highest item ID
 
 //-----------------------------------------------------------------------------
-// Structure sizes for older Windows
+// Defines that are not presen in the oldes SDKs
+
+#ifndef SS_REALSIZECONTROL
+#define SS_REALSIZECONTROL      0x00000040L
+#endif
+
+#ifndef LVS_EX_DOUBLEBUFFER
+#define LVS_EX_DOUBLEBUFFER     0x00010000
+#endif
+
+#ifndef LVIF_COLUMNS
+#define LVIF_COLUMNS            0x00000200
+#endif
+
+#ifndef LVM_SETVIEW
+#define LV_VIEW_ICON            0x0000
+#define LV_VIEW_DETAILS         0x0001
+#define LV_VIEW_SMALLICON       0x0002
+#define LV_VIEW_LIST            0x0003
+#define LV_VIEW_TILE            0x0004
+#define LV_VIEW_MAX             0x0004
+#define LVM_SETVIEW            (LVM_FIRST + 142)
+#define LVM_GETVIEW            (LVM_FIRST + 143)
+#endif  // LVM_SETVIEW
+
+#ifndef TVIF_EXPANDEDIMAGE
+#define TVIF_EXPANDEDIMAGE      0x0200
+#endif
+
+#ifndef PBM_SETSTATE
+#define PBM_SETSTATE            (WM_USER+16) // wParam = PBST_[State] (NORMAL, ERROR, PAUSED)
+#define PBST_NORMAL             0x0001
+#define PBST_ERROR              0x0002
+#define PBST_PAUSED             0x0003
+#endif // PBM_SETSTATE
+
+#ifndef WM_THEMECHANGED
+#define WM_THEMECHANGED         0x031A
+#endif
 
 // Windows 2000 or newer doesn't accept sizeof(MENUITEMINFO) greater than MENUITEMINFO_V4_SIZE
 #define MENUITEMINFO_V4_SIZE  FIELD_OFFSET(MENUITEMINFO, hbmpItem)
+
+// TVITEMEX for Windows Vista or newer
+typedef struct tagTVITEMEX_V6
+{
+    UINT      mask;
+    HTREEITEM hItem;
+    UINT      state;
+    UINT      stateMask;
+    LPTSTR    pszText;
+    int       cchTextMax;
+    int       iImage;
+    int       iSelectedImage;
+    int       cChildren;
+    LPARAM    lParam;
+    int       iIntegral;
+    UINT      uStateEx;
+    HWND      hwnd;
+    int       iExpandedImage;
+    int       iReserved;
+} TVITEMEX_V6, *LPTVITEMEX_V6;
+
+// TVINSERTSTRUCT for Windows Vista or newer
+typedef struct tagTVINSERTSTRUCT_V6
+{
+    HTREEITEM hParent;
+    HTREEITEM hInsertAfter;
+    TVITEMEX_V6 item;
+
+} TVINSERTSTRUCT_V6, *LPTVINSERTSTRUCT_V6;
 
 //-----------------------------------------------------------------------------
 // Macros
@@ -158,7 +225,7 @@
 #endif
 
 //
-// LPCBYTE not defined in DWK headers
+// LPCBYTE not defined in WDK headers
 //
 
 #ifndef LPCBYTE
@@ -571,6 +638,7 @@ DWORD Base64ToBinary(const XCHAR * szBase64, LPVOID pvBinary, size_t cbBinary, s
 // Utility function prototypes
 
 // Adds/removes backslash to/from end of path name
+LPTSTR WINAPI AddBackslash(LPTSTR szPathName, size_t cchPathName);
 LPTSTR WINAPI AddBackslash(LPTSTR szPathName);
 LPTSTR WINAPI RemoveBackslash(LPTSTR szPathName);
 
