@@ -137,7 +137,7 @@
 #define LISTVIEW_LAST_ITEM   0x7FFFFFFF         // The highest item ID
 
 //-----------------------------------------------------------------------------
-// Defines that are not presen in the oldes SDKs
+// Defines that are not present in the oldes SDKs
 
 #ifndef SS_REALSIZECONTROL
 #define SS_REALSIZECONTROL      0x00000040L
@@ -312,6 +312,26 @@ typedef const BYTE *LPCBYTE;
 #define OSBUILD_WINDOWS_10_RS5 17763                // Windows 10 Redstone 4 (1809)
 
 //
+// Macros for 32-bit ROL and ROR
+//
+
+ULONG FORCEINLINE RolOperation(ULONG dwValue, ULONG dwRolCount)
+{
+    // Rol by (0x20+x) is the same like rol by x
+    dwRolCount &= 0x1F;
+
+    return (dwValue << dwRolCount) | (dwValue >> (0x20 - dwRolCount));
+}
+
+ULONG FORCEINLINE RorOperation(ULONG dwValue, ULONG dwRorCount)
+{
+    // Ror by (0x20+x) is the same like ror by x
+    dwRorCount &= 0x1F;
+
+    return (dwValue >> dwRorCount) | (dwValue << (0x20 - dwRorCount));
+}
+
+//
 // Macros for handling LIST_ENTRY-based lists
 //
 
@@ -412,6 +432,7 @@ struct TListViewColumns
 // Must be defined by the application. It is the instance of the
 // module where to load resources from
 extern HINSTANCE g_hInst;
+extern HANDLE g_hHeap;
 
 // String conversion tables
 extern const char * Base64Table_Standard;
@@ -419,7 +440,7 @@ extern const char * IntToHexChar;
 extern const BYTE CharToByte[0x80];
 
 //-----------------------------------------------------------------------------
-// Easy conversions bewtween ANSI and UNICODE
+// Easy conversions between ANSI and UNICODE
 
 size_t inline StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCSTR szString)
 {
@@ -447,6 +468,18 @@ size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCSTR szString)
 {
     int nLength = MultiByteToWideChar(CP_ACP, 0, szString, -1, szBuffer, (int)ccBuffer);
     return (nLength > 0) ? (nLength - 1) : 0;
+}
+
+//-----------------------------------------------------------------------------
+// Generic strlen support
+
+template <typename XCHAR>
+size_t StringLength(const XCHAR * szString)
+{
+    const XCHAR * szStr;
+
+    for (szStr = szString; szStr[0] != 0; szStr++);
+    return (szStr - szString);
 }
 
 //-----------------------------------------------------------------------------
@@ -635,7 +668,133 @@ DWORD Base64ToBinary(const XCHAR * szBase64, LPVOID pvBinary, size_t cbBinary, s
 }
 
 //-----------------------------------------------------------------------------
+// Generic file path support
+
+// Retrieves the pointer to plain name and extension
+template <typename XCHAR>
+XCHAR * WINAPI GetPlainName(const XCHAR * szFileName)
+{
+    const XCHAR * szPlainName = szFileName;
+
+    while(szFileName[0] != 0)
+    {
+        if(szFileName[0] == '\\' || szFileName[0] == '/')
+            szPlainName = szFileName + 1;
+        szFileName++;
+    }
+
+    return (XCHAR *)szPlainName;
+}
+
+template <typename XCHAR>
+XCHAR * WINAPI GetFileExtension(const XCHAR * szFileName)
+{
+    const XCHAR * szExtension = NULL;
+
+    // We need to start searching from the plain name
+    // Avoid: C:\$RECYCLE.BIN\File.ext
+    szFileName = GetPlainName(szFileName);
+
+    // Find the last dot in the plain file name
+    while(szFileName[0] != 0)
+    {
+        if(szFileName[0] == '.')
+            szExtension = szFileName;
+        szFileName++;
+    }
+
+    // If not found, return the end of the file name
+    return (XCHAR *)((szExtension != NULL) ? szExtension : szFileName);
+}
+
+// This function compares a string with a wildcard search string.
+// returns TRUE, when the string matches with the wildcard.
+template <typename XCHAR>
+BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCard)
+{
+    const XCHAR * szWildCardPtr;
+
+    for(;;)
+    {
+        // If there is '?' in the wildcard, we skip one char
+        while(szWildCard[0] == '?')
+        {
+            if(szString[0] == 0)
+                return FALSE;
+
+            szWildCard++;
+            szString++;
+        }
+
+        // Handle '*'
+        szWildCardPtr = szWildCard;
+        if(szWildCardPtr[0] != 0)
+        {
+            if(szWildCardPtr[0] == '*')
+            {
+                while(szWildCardPtr[0] == '*')
+                    szWildCardPtr++;
+
+                if(szWildCardPtr[0] == 0)
+                    return TRUE;
+
+                if(toupper(szWildCardPtr[0]) == toupper(szString[0]))
+                {
+                    if(CompareStringWildCard(szString, szWildCardPtr))
+                        return TRUE;
+                }
+            }
+            else
+            {
+                if(toupper(szWildCardPtr[0]) != toupper(szString[0]))
+                    return FALSE;
+
+                szWildCard = szWildCardPtr + 1;
+            }
+
+            if(szString[0] == 0)
+                return FALSE;
+            szString++;
+        }
+        else
+        {
+            return (szString[0] == 0) ? TRUE : FALSE;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------- 
+// Debug print and log print support
+
+void WINAPI LogToFile(LPCTSTR szFileName, LPCTSTR szFmt, va_list argList);
+
+// In debug version, shows a formatted text on debug output
+#if defined(_DEBUG) || defined(DBG)
+void WINAPI Dbg(LPCTSTR szFmt, ...);
+#else
+_inline void _cdecl Dbg(...) {}
+#endif
+
+// If LOG_FILE_NAME is defined, the function sends a string to the log file
+#if defined(LOG_FILE_NAME)
+__inline void WINAPI Log(LPCTSTR szFmt, ...)
+{
+    va_list argList;
+
+    va_start(argList, szFmt);
+    LogToFile(_T(LOG_FILE_NAME), szFmt, argList);
+    va_end(argList);
+}
+#else
+_inline void _cdecl Log(...) {}
+#endif
+
+//-----------------------------------------------------------------------------
 // Utility function prototypes
+
+// Initialization
+void   WINAPI InitInstance(HINSTANCE hInst = NULL, HANDLE hHeap = NULL);
+bool   WINAPI SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
 
 // Adds/removes backslash to/from end of path name
 LPTSTR WINAPI AddBackslash(LPTSTR szPathName, size_t cchPathName);
@@ -695,13 +854,6 @@ size_t WINAPI GetMultiStringLength(LPCTSTR szMultiString);
 DWORD WINAPI GetMultiStringCount(LPCTSTR szMultiString);
 void WINAPI FreeMultiString(LPTSTR szMultiString);
 
-// In debug version, shows a formatted text on debug output
-#if defined(_DEBUG) || defined(DBG)
-int DebugPrint(LPCTSTR szFmt, ...);
-#else
-__inline int WINAPI DebugPrint(LPCTSTR, ...) { return 0; }
-#endif
-
 // Shows the message box dialog with "Don't display again" text
 INT_PTR WINAPI DontDisplayAgainDialog(HWND hParent, UINT nIDTemplate, int * piLastAnswer);
 
@@ -733,7 +885,6 @@ int WINAPI GetModuleVersion(HMODULE hModule, ULARGE_INTEGER * pVersion);
 
 // Returns a localized string for a few IDS_XXX strings.
 LPCTSTR WINAPI GetString(UINT_PTR nIDString);
-bool WINAPI SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
 
 // Returns the language of current Windows installation
 // (Not the value set by the user in Regional Settings)
@@ -815,99 +966,6 @@ int WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
 
 // Returns the domain name for currently logged on user
 int WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
-
-// Retrieves the pointer to plain name and extension
-template <typename XCHAR>
-XCHAR * WINAPI GetPlainName(const XCHAR * szFileName)
-{
-    const XCHAR * szPlainName = szFileName;
-
-    while(szFileName[0] != 0)
-    {
-        if(szFileName[0] == '\\' || szFileName[0] == '/')
-            szPlainName = szFileName + 1;
-        szFileName++;
-    }
-
-    return (XCHAR *)szPlainName;
-}
-
-template <typename XCHAR>
-XCHAR * WINAPI GetFileExtension(const XCHAR * szFileName)
-{
-    const XCHAR * szExtension = NULL;
-
-    // We need to start searching from the plain name
-    // Avoid: C:\$RECYCLE.BIN\File.ext
-    szFileName = GetPlainName(szFileName);
-    
-    // Find the last dot in the plain file name
-    while(szFileName[0] != 0)
-    {
-        if(szFileName[0] == '.')
-            szExtension = szFileName;
-        szFileName++;
-    }
-
-    // If not found, return the end of the file name
-    return (XCHAR *)((szExtension != NULL) ? szExtension : szFileName);
-}
-
-// This function compares a string with a wildcard search string.
-// returns TRUE, when the string matches with the wildcard.
-template <typename XCHAR>
-BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCard)
-{
-    const XCHAR * szWildCardPtr;
-
-    for(;;)
-    {
-        // If there is '?' in the wildcard, we skip one char
-        while(szWildCard[0] == '?')
-        {
-            if(szString[0] == 0)
-                return FALSE;
-
-            szWildCard++;
-            szString++;
-        }
-
-        // Handle '*'
-        szWildCardPtr = szWildCard;
-        if(szWildCardPtr[0] != 0)
-        {
-            if(szWildCardPtr[0] == '*')
-            {
-                while(szWildCardPtr[0] == '*')
-                    szWildCardPtr++;
-
-                if(szWildCardPtr[0] == 0)
-                    return TRUE;
-
-                if(toupper(szWildCardPtr[0]) == toupper(szString[0]))
-                {
-                    if(CompareStringWildCard(szString, szWildCardPtr))
-                        return TRUE;
-                }
-            }
-            else
-            {
-                if(toupper(szWildCardPtr[0]) != toupper(szString[0]))
-                    return FALSE;
-
-                szWildCard = szWildCardPtr + 1;
-            }
-
-            if(szString[0] == 0)
-                return FALSE;
-            szString++;
-        }
-        else
-        {
-            return (szString[0] == 0) ? TRUE : FALSE;
-        }
-    }
-}
 
 // RadioButton functions
 DWORD WINAPI GetRadioValue(HWND hDlg, UINT nIDFirst);

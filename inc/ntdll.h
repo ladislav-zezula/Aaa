@@ -2030,9 +2030,8 @@ typedef struct _SYSTEM_POOL_INFORMATION
 // Class 16
 typedef struct _SYSTEM_HANDLE_TABLE_ENTRY_INFO
 {
-    USHORT UniqueProcessId;
-    USHORT CreatorBackTraceIndex;
-    UCHAR ObjectTypeIndex;
+    ULONG UniqueProcessId;
+    UCHAR ObjectTypeNumber;
     UCHAR HandleAttributes;
     USHORT HandleValue;
     PVOID Object;
@@ -6388,7 +6387,9 @@ RtlSetDaclSecurityDescriptor(
     );
 
 
+NTSYSAPI
 NTSTATUS
+NTAPI
 RtlGetSaclSecurityDescriptor(
     IN PSECURITY_DESCRIPTOR SecurityDescriptor,
     OUT PBOOLEAN SaclPresent,
