@@ -1,7 +1,7 @@
 /*****************************************************************************/
-/* Ntdll.h                                Copyright (c) Ladislav Zezula 2005 */
+/* ntdll.h                                Copyright (c) Ladislav Zezula 2005 */
 /*---------------------------------------------------------------------------*/
-/* Header file for the import library "Ntdll.lib"                            */
+/* Header file for the import library "ntdll.lib"                            */
 /*                                                                           */
 /* This library has been created because of never-ending problems when       */
 /* Ntdll.lib from Windows DDK with SDK libs (duplicate symbols, linker       */
@@ -11,7 +11,7 @@
 /*---------------------------------------------------------------------------*/
 /*   Date    Ver   Who  Comment                                              */
 /* --------  ----  ---  -------                                              */
-/* 15.05.03  1.00  Lad  The first version of Ntdll.h                         */
+/* 15.05.03  1.00  Lad  Created                                              */
 /* 16.09.05  2.00  Lad  Far more functions                                   */
 /*****************************************************************************/
 
@@ -3646,6 +3646,26 @@ NtOpenFile(
 NTSYSAPI
 NTSTATUS
 NTAPI
+NtCreateNamedPipeFile(
+     OUT PHANDLE FileHandle,
+     IN ULONG DesiredAccess,
+     IN POBJECT_ATTRIBUTES ObjectAttributes,
+     OUT PIO_STATUS_BLOCK IoStatusBlock,
+     IN ULONG ShareAccess,
+     IN ULONG CreateDisposition,
+     IN ULONG CreateOptions,
+     IN ULONG NamedPipeType,
+     IN ULONG ReadMode,
+     IN ULONG CompletionMode,
+     IN ULONG MaximumInstances,
+     IN ULONG InboundQuota,
+     IN ULONG OutboundQuota,
+     IN PLARGE_INTEGER DefaultTimeout OPTIONAL
+     );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
 ZwOpenFile(
     OUT PHANDLE FileHandle,
     IN ACCESS_MASK DesiredAccess,
@@ -6726,15 +6746,20 @@ NtQuerySymbolicLinkObject (
 //-----------------------------------------------------------------------------
 // Loader functions
 
+#define RTL_IMAGE_NT_HEADER_EX_FLAG_NO_RANGE_CHECK  (0x00000001)
+#define RTL_IMAGE_NT_HEADER_EX_FLAG_UNKNOWN_W10     (0x00000002)     // Used to call RtlImageNtHeaderEx in W10, but never checked
+
+#define LDRP_FIND_RESOURCE_DATA                     (0x00000000)
+#define LDRP_FIND_RESOURCE_DIRECTORY                (0x00000002)
+#define LDR_FIND_RESOURCE_LANGUAGE_EXACT            (0x00000004)
+#define LDR_FIND_RESOURCE_LANGUAGE_REDIRECT_VERSION (0x00000008)
+
 NTSYSAPI
 PIMAGE_NT_HEADERS
 NTAPI
 RtlImageNtHeader(
     IN PVOID Base
     );
-
-#define RTL_IMAGE_NT_HEADER_EX_FLAG_NO_RANGE_CHECK (0x00000001)
-#define RTL_IMAGE_NT_HEADER_EX_FLAG_UNKNONW_W10    (0x00000002)     // Used to call RtlImageNtHeaderEx in W10, but never checked
 
 NTSYSAPI
 NTSTATUS
@@ -6813,6 +6838,18 @@ LdrFindResource_U(
     OUT PIMAGE_RESOURCE_DATA_ENTRY *ResourceDataEntry
     );
 
+// Windows XP+
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrFindResourceEx_U(
+    IN ULONG Flags,
+    IN PVOID DllHandle,
+    IN PULONG_PTR ResourceIdPath,
+    IN ULONG ResourceIdPathLength,
+    OUT PIMAGE_RESOURCE_DATA_ENTRY *ResourceDataEntry
+    );
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -6821,6 +6858,20 @@ LdrAccessResource(
     IN PIMAGE_RESOURCE_DATA_ENTRY ResourceDataEntry,
     OUT PVOID *Address OPTIONAL,
     OUT PULONG Size OPTIONAL
+    );
+
+NTSTATUS
+NTAPI
+RtlFormatMessage(
+    IN PWSTR Message,
+    IN ULONG MaxWidth OPTIONAL,
+    IN BOOLEAN IgnoreInserts,
+    IN BOOLEAN ArgumentsAreAnsi,
+    IN BOOLEAN ArgumentsAreAnArray,
+    IN va_list* Arguments,
+    OUT PWSTR Buffer,
+    IN ULONG BufferSize,
+    OUT PULONG ReturnLength OPTIONAL
     );
 
 NTSYSAPI

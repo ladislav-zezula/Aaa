@@ -880,8 +880,8 @@ int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LP
 LPTSTR WINAPI GetErrorText(DWORD dwErrCode);
 
 // Fills the module version
-int WINAPI GetModuleVersion(LPCTSTR szModuleName, ULARGE_INTEGER * pVersion);
-int WINAPI GetModuleVersion(HMODULE hModule, ULARGE_INTEGER * pVersion);
+DWORD WINAPI GetModuleVersion(LPCTSTR szModuleName, ULARGE_INTEGER * pVersion);
+DWORD WINAPI GetModuleVersion(HMODULE hModule, ULARGE_INTEGER * pVersion);
 
 // Returns a localized string for a few IDS_XXX strings.
 LPCTSTR WINAPI GetString(UINT_PTR nIDString);
@@ -919,6 +919,9 @@ BOOL WINAPI IsAdministrator();
 
 // Checks of the directory is accessible at least for listin files
 BOOL WINAPI IsDirectoryAccessible(const LPTSTR szDirectory);
+
+// Sets the timeout for message box, in milliseconds
+void WINAPI SetMessageBoxTimeout(DWORD dwTimeout);
 
 // Shows a message box using resource strings
 int WINAPI MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
@@ -1062,7 +1065,9 @@ bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, DWORD dwFlags = 
 // Works with FS redirection
 void WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);
 void WINAPI RevertWoW64FsRedirection(PVOID pvOldValue);
-bool WINAPI IsWow64Process();
+bool WINAPI IsWow64Process(HANDLE hProcess = GetCurrentProcess());
+bool WINAPI Is64BitModule(HMODULE hMod);
+bool WINAPI Is64BitWindows();
 
 // Writes the dump file after crash
 LONG WINAPI WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);
