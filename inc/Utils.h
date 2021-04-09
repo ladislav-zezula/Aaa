@@ -928,7 +928,8 @@ int WINAPI MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...
 
 // Shows a message box with appended error code text
 // "Failed to open the file %s\nAccess denied"
-int WINAPI MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
+// Returns the error code passed to dwErrCode
+DWORD WINAPI MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
 
 // Shows a message box that also includes check box
 int WINAPI MessageBoxWithCheckBox(
