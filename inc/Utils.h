@@ -960,16 +960,24 @@ int WINAPI MessageBoxYANC(
 // Sets an icon to the dialog
 void WINAPI SetDialogIcon(HWND hDlg, UINT nIDIcon);
 
-// Searches all available processes by given name.
-// If the name is found, the function returns the process ID.
-#define INVALID_PROCESS_ID ((DWORD)-1)
-DWORD WINAPI FindProcessByName(LPCTSTR szExeName);
-
 // Ensures that the path exists.
 int WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
 
 // Returns the domain name for currently logged on user
 int WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
+
+// Searches all available processes by given name.
+// If the name is found, the function returns the process ID.
+#define INVALID_PROCESS_ID 0xFFFFFFFF
+
+typedef struct _FIND_PROCESS_PARAMS
+{
+    LPTSTR szExeName;
+    size_t cchExeName;
+    DWORD  dwProcessId;
+} FIND_PROCESS_PARAMS, *PFIND_PROCESS_PARAMS;
+
+bool WINAPI FindProcessByName(LPCTSTR szExeName, PFIND_PROCESS_PARAMS pFindParams = NULL);
 
 // RadioButton functions
 DWORD WINAPI GetRadioValue(HWND hDlg, UINT nIDFirst);
