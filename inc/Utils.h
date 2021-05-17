@@ -39,11 +39,14 @@
 #include <shlobj.h>
 #include <strsafe.h>
 
+#pragma warning(disable: 28193)     // PreFAST: 'dwErrCode' holds a value that must be examined.
+#pragma warning(disable: 28197)     // PreFAST: Possibly leaking memory 'pNewAnchor'
+
 //-----------------------------------------------------------------------------
 // Use the appropriate library
 //
 // The library type is encoded in the library name as the following UtilsXYZ.lib:
-// 
+//
 //  X - D for Debug version, R for Release version
 //  Y - A for ANSI version, U for Unicode version
 //  Z - S for static-linked CRT library, D for multithreaded DLL CRT library
@@ -52,16 +55,16 @@
 #if defined(_MSC_VER) && !defined(__UTILS_SELF__)
   #ifndef WDK_BUILD
     #ifdef _DEBUG                                 // DEBUG VERSIONS
-      #ifndef _UNICODE                            
+      #ifndef _UNICODE
         #ifdef _DLL
           #pragma comment(lib, "UtilsDAD.lib")    // Debug Ansi CRT-DLL version
-        #else        
+        #else
           #pragma comment(lib, "UtilsDAS.lib")    // Debug Ansi CRT-LIB version
         #endif
       #else
         #ifdef _DLL
           #pragma comment(lib, "UtilsDUD.lib")    // Debug Unicode CRT-DLL version
-        #else        
+        #else
           #pragma comment(lib, "UtilsDUS.lib")    // Debug Unicode CRT-LIB version
         #endif
       #endif
@@ -69,13 +72,13 @@
       #ifndef _UNICODE
         #ifdef _DLL
           #pragma comment(lib, "UtilsRAD.lib")    // Release Ansi CRT-DLL version
-        #else        
+        #else
           #pragma comment(lib, "UtilsRAS.lib")    // Release Ansi CRT-LIB version
         #endif
       #else
         #ifdef _DLL
           #pragma comment(lib, "UtilsRUD.lib")    // Release Unicode CRT-DLL version
-        #else                                                                         
+        #else
           #pragma comment(lib, "UtilsRUS.lib")    // Release Unicode CRT-LIB version
         #endif
       #endif
@@ -109,7 +112,7 @@
 #define IDS_ERROR                  1            // "Error"
 #define IDS_CONFIRM                2            // "Confirmation"
 #define IDS_QUESTION               3            // "Question"
-#define IDS_INFO                   4            // "Information"    
+#define IDS_INFO                   4            // "Information"
 #define IDS_WARNING                5            // "Warning"
 #define IDS_REQUEST                6            // "Request"
 #define IDS_RETRYCANCEL            7            // Dummy string for "Retry/Cancel" MessageBox
@@ -177,7 +180,7 @@
 #define WM_THEMECHANGED         0x031A
 #endif
 
-// Windows 2000 or newer doesn't accept sizeof(MENUITEMINFO) greater than MENUITEMINFO_V4_SIZE
+// Windows older than 2000 don't accept sizeof(MENUITEMINFO) greater than MENUITEMINFO_V4_SIZE
 #define MENUITEMINFO_V4_SIZE  FIELD_OFFSET(MENUITEMINFO, hbmpItem)
 
 // TVITEMEX for Windows Vista or newer
@@ -423,7 +426,7 @@ struct TListViewColumns
 {
     UINT nIDTitle;                      // The title of the list view (string resource ID)
     int  nWidth;                        // The width of the list view. -1 means that the item's
-                                        // width is up to the listview width 
+                                        // width is up to the listview width
 };
 
 //-----------------------------------------------------------------------------
@@ -763,7 +766,7 @@ BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCa
     }
 }
 
-//----------------------------------------------------------------------------- 
+//-----------------------------------------------------------------------------
 // Debug print and log print support
 
 void WINAPI LogToFile(LPCTSTR szFileName, LPCTSTR szFmt, va_list argList);
@@ -802,12 +805,12 @@ LPTSTR WINAPI AddBackslash(LPTSTR szPathName);
 LPTSTR WINAPI RemoveBackslash(LPTSTR szPathName);
 
 // String allocations
-LPTSTR WINAPI NewStr(LPCSTR szString, size_t nCharsToReserve = 0);
-LPTSTR WINAPI NewStr(LPCWSTR szString, size_t nCharsToReserve = 0);
+LPTSTR WINAPI NewStr(LPCSTR szString, size_t cchCharsToReserve = 0);
+LPTSTR WINAPI NewStr(LPCWSTR szString, size_t cchCharsToReserve = 0);
 LPTSTR WINAPI NewStr(LPCSTR szStringBegin, LPCSTR szStringEnd);
 LPTSTR WINAPI NewStr(LPCWSTR szStringBegin, LPCWSTR szStringEnd);
-LPSTR  WINAPI NewStrAnsi(LPCSTR szString, size_t nCharsToReserve = 0);
-LPSTR  WINAPI NewStrAnsi(LPCWSTR szString, size_t nCharsToReserve = 0);
+LPSTR  WINAPI NewStrAnsi(LPCSTR szString, size_t cchCharsToReserve = 0);
+LPSTR  WINAPI NewStrAnsi(LPCWSTR szString, size_t cchCharsToReserve = 0);
 
 // Uses static buffer if enough space, otherwise allocates new
 LPSTR  WINAPI NewStrWithBuff(LPSTR szStaticBuff, size_t cchStaticBuff, LPCSTR szSrc);
@@ -844,8 +847,9 @@ BOOL WINAPI CompareWindowsTexts(HWND hDlg, UINT nID1, UINT nID2, UINT nIDMsg);
 
 // Creates a HDROP structure for the file.
 // The caller must free it using GlobalFree.
-HDROP WINAPI CreateDropForFile(LPCTSTR szFileName);
 HDROP WINAPI CreateDropForDirectory(LPCTSTR szDirName, PLARGE_INTEGER pFileSize);
+HDROP WINAPI CreateDropForFile(LPCTSTR szFileName);
+HDROP WINAPI CreateCopyOfHDROP(HDROP hDrop);
 
 // Multistring support
 LPTSTR WINAPI CreateMultiString(bool bEosSeparator);
@@ -867,7 +871,7 @@ int WINAPI ShowDlgItems(HWND hDlg, int nCmdShow, ...);
 int WINAPI EnableDlgItems(HWND hDlg, BOOL bEnable, ...);
 
 // Enables a privilege to the current process
-int WINAPI EnablePrivilege(LPCTSTR szPrivilegeName);
+DWORD WINAPI EnablePrivilege(LPCTSTR szPrivilegeName);
 
 // Gets the rectangle of a dialog's template
 BOOL WINAPI GetDialogRect(HWND hParent, UINT nIDDlgTemplate, RECT & rect);
@@ -892,7 +896,7 @@ USHORT WINAPI GetSystemLanguage();
 
 // Fills the buffer by the current user's specific directory name
 int WINAPI GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath);
-   
+
 // Gets the widths of the window borders (non-client area)
 // and stores them to the "pRect" parameter
 void WINAPI GetWindowBorders(HWND hWnd, LPRECT pRect);
@@ -964,7 +968,7 @@ void WINAPI SetDialogIcon(HWND hDlg, UINT nIDIcon);
 int WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
 
 // Returns the domain name for currently logged on user
-int WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
+DWORD WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
 
 // Searches all available processes by given name.
 // If the name is found, the function returns the process ID.
@@ -1055,6 +1059,9 @@ BOOL WINAPI GetClientRectScreenRelative(HWND hWnd, LPRECT pRect);
 // Sets a bold font for a dialog control
 int WINAPI SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
 
+// Retrieves a window text and stores it into a string
+LPTSTR WINAPI NewStr(HWND hWnd, size_t cchCharsToReserve = 0);
+
 // Sets a window text from resource
 int WINAPI SetWindowTextRc(HWND hWnd, UINT nIDText, ...);
 
@@ -1070,6 +1077,10 @@ BOOL WINAPI VerifyUserPassword(LPTSTR szUserName, LPTSTR szDomain, LPTSTR szPass
 #define WDBG_PATH_INCLUDE_FILENAME  0x0002
 #define WDBG_PATH_CHECK_WINDBGX     0x0004
 bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, DWORD dwFlags = 0);
+
+// API resolver
+DWORD WINAPI ResolveAPI(LPCTSTR szModuleName, LPCSTR szApiName, FARPROC * PfnProcAddress);
+DWORD WINAPI ResolveAPIs(LPCTSTR szModuleName, ...);
 
 // Works with FS redirection
 void WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);

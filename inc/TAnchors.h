@@ -44,13 +44,22 @@ typedef struct _WNDPOS
     int cy;
 } WNDPOS, *PWNDPOS;
 
+typedef enum _WNDTYP
+{
+    WndNone,
+    WndGroupBox,                        // The window is a group box
+    WndComboDropDown,                   // The window is a combo box with editable window (CBS_DROPDOWN)
+} WNDTYP, *PWNDTYP;
+
 struct TAnchor
 {
     LIST_ENTRY Entry;                   // Links to other anchors
     HWND   hWnd;                        // Handle to the child (anchored) window
 
     CALCCHILDPOS PfnCalcChildPos;       // Custom callback for calculating the child window position
+    LPARAM SaveSelection;               // Used for dropdown combo boxes during resize
     PVOID  pvUserParam;
+    WNDTYP WndType;                     // Special window type
     int    nLeftRel;                    // Here are the anchor points. The nXXXRel means relative position
     int    nLeftSpace;                  // of the anchor point (in percent of the parent client area)
     int    nTopRel;                     // Example :   0 is left-most or top-most point in the parent's client area
@@ -60,7 +69,6 @@ struct TAnchor
     int    nBottomRel;
     int    nBottomSpace;
     int    nThemePartId;
-    BOOL   bIsGroupBox;
 };
 
 class TAnchors
@@ -70,13 +78,13 @@ class TAnchors
     ~TAnchors();
 
     // Adding anchors
-    TAnchor * AddAnchor(HWND hWnd, DWORD dwAnchors);
+    TAnchor * AddAnchor(HWND hWndChild, DWORD dwAnchors);
     TAnchor * AddAnchor(HWND hDlg, UINT nIDCtrl, DWORD dwAnchors);
 
-    TAnchor * AddAnchor(HWND hWnd, CALCCHILDPOS PfnGetNewChildRect, PVOID pvUserParam);
+    TAnchor * AddAnchor(HWND hWndChild, CALCCHILDPOS PfnGetNewChildRect, PVOID pvUserParam);
     TAnchor * AddAnchor(HWND hDlg, UINT nIDCtrl, CALCCHILDPOS PfnGetNewChildRect, PVOID pvUserParam);
 
-    TAnchor * AddAnchorEx(HWND hWnd, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
+    TAnchor * AddAnchorEx(HWND hWndChild, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
     TAnchor * AddAnchorEx(HWND hDlg, UINT nIDCtrl, int nLeftRel, int nTopRel, int nRightRel, int nBottomRel);
 
     // Removes the anchor from the list. Note that this does NOT destroy the window.
@@ -95,16 +103,19 @@ class TAnchors
     // Returns the parent dialog of the dialog controls
     HWND GetParentWindow()  { return m_hWndParent; }
 
-  protected:
+    protected:
 
+    TAnchor * CreateNewAnchor(HWND hWndChild, RECT & rectParent, RECT & rectChild);
     TAnchor * InsertAnchor(TAnchor * pAnchor);
     void GetParentWindowRect(HWND hParent, RECT & rect);
-    void SaveParentWindowInfo(HWND hParent);
-    void SaveChildWindowInfo(HWND hWnd, TAnchor * pAnchor);
+    void SaveParentWindowInfo(HWND hWndParent);
+    void SaveChildWindowInfo(HWND hWndChild, TAnchor * pAnchor);
+    WNDTYP GetChildWindowType(HWND hWndChild);
 
     // Calculates new window position and size
     BOOL GetNewChildRect(TAnchor * pAnchor, const RECT & NewClientRect, WNDPOS & NewChildPos);
-    void AddWsClipChildren(HWND hParent);
+    void UpdateWsClipChildren(HWND hWndParent);
+    void SaveComboBoxSelection(TAnchor * pAnchor, DWORD & RefComboCount);
 
     // Double buffering repaint logic
     void MoveWindowOrg(HDC hDC, int dx, int dy);
@@ -112,12 +123,6 @@ class TAnchors
 //  void PaintThemedFrame(TAnchor * pAnchor, HDC hDC, LPRECT pEdgeRect);
     BOOL PaintChildrenTo(HWND hWnd, HDC hDC);
     BOOL PaintWindow(HWND hWnd);
-
-    // xxxWindowPos helpers
-    void DisableGroupBoxRedrawing();
-    void RedrawGroupBoxes();
-
-    static BOOL WindowIsGroupBox(HWND hWnd);
 
     LIST_ENTRY m_AnchorLinks;
     RECT      m_rectParent;             // Parent rectangle (initialized in SetParentRectManual)
