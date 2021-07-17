@@ -263,6 +263,7 @@ typedef const BYTE *LPCBYTE;
 //
 
 #define CRASHDUMP_TRY        __try
+#define CRASHDUMP_INVOKE()   { *(char *)0 = 0; }
 #define CRASHDUMP_EXCEPT     __except(WriteDumpFile(NULL, GetExceptionInformation()))
 
 //
@@ -1083,8 +1084,8 @@ DWORD WINAPI ResolveAPI(LPCTSTR szModuleName, LPCSTR szApiName, FARPROC * PfnPro
 DWORD WINAPI ResolveAPIs(LPCTSTR szModuleName, ...);
 
 // Works with FS redirection
-void WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);
-void WINAPI RevertWoW64FsRedirection(PVOID pvOldValue);
+BOOL WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);
+BOOL WINAPI RevertWoW64FsRedirection(PVOID pvOldValue);
 bool WINAPI IsWow64Process(HANDLE hProcess = GetCurrentProcess());
 bool WINAPI Is64BitModule(HMODULE hMod);
 bool WINAPI Is64BitWindows();
