@@ -39,6 +39,11 @@
 #include <shlobj.h>
 #include <strsafe.h>
 
+#if(_MSC_VER >= 1500)               // Supported in Visual Studio 2008+
+#pragma warning(disable: 4995)      // intrin.h(374) : warning C4995: 'strcat': name was marked as #pragma deprecated
+#include <intrin.h>
+#endif
+
 #pragma warning(disable: 28193)     // PreFAST: 'dwErrCode' holds a value that must be examined.
 #pragma warning(disable: 28197)     // PreFAST: Possibly leaking memory 'pNewAnchor'
 
@@ -107,7 +112,7 @@
 #endif  // _NO_UTILS_MANIFEST
 
 //-----------------------------------------------------------------------------
-// Strings
+// Resource strings
 
 #define IDS_ERROR                  1            // "Error"
 #define IDS_CONFIRM                2            // "Confirmation"
@@ -316,24 +321,59 @@ typedef const BYTE *LPCBYTE;
 #define OSBUILD_WINDOWS_10_RS5 17763                // Windows 10 Redstone 4 (1809)
 
 //
-// Macros for 32-bit ROL and ROR
+// Support for std::tstring, which works like std::string or std::wstring
 //
+
+#ifdef _STRING_
+  #if defined(UNICODE) || defined(_UNICODE)
+    #define tstring wstring
+  #else
+    #define tstring string
+  #endif
+#endif // _STRING
+
+//-----------------------------------------------------------------------------
+// Structures
+
+struct TListViewColumns
+{
+    UINT nIDTitle;                      // The title of the list view (string resource ID)
+    int  nWidth;                        // The width of the list view. -1 means that the item's
+                                        // width is up to the listview width
+};
+
+//-----------------------------------------------------------------------------
+// Macros / inline functions
+
+//
+// Macros for 32-bit rotate operations.
+// VS 2008+ has support for _lrotl/_lrotr, so the call is inlined into rol/ror
+// WDK6001 can still recognize these as rol/ror and uses inline assembly
+//
+
+#if(_MSC_VER >= 1500)
+
+#pragma intrinsic(_lrotl, _lrotr)
+#define RolOperation(dwValue, dwRolCount)  _lrotl(dwValue, dwRolCount)
+#define RorOperation(dwValue, dwRorCount)  _lrotr(dwValue, dwRorCount)
+
+#else
 
 ULONG FORCEINLINE RolOperation(ULONG dwValue, ULONG dwRolCount)
 {
-    // Rol by (0x20+x) is the same like rol by x
+    // Ror by (0x20 + x) is the same like ror by x
     dwRolCount &= 0x1F;
-
     return (dwValue << dwRolCount) | (dwValue >> (0x20 - dwRolCount));
 }
 
 ULONG FORCEINLINE RorOperation(ULONG dwValue, ULONG dwRorCount)
 {
-    // Ror by (0x20+x) is the same like ror by x
+    // Ror by (0x20 + x) is the same like ror by x
     dwRorCount &= 0x1F;
-
     return (dwValue >> dwRorCount) | (dwValue << (0x20 - dwRorCount));
 }
+
+#endif  // (_MSC_VER >= 1500)
 
 //
 // Macros for handling LIST_ENTRY-based lists
@@ -409,6 +449,10 @@ RemoveEntryList(
 }
 #endif  // #if !defined(_WDMDDK_) && !defined(_LIST_ENTRY_MACROS_DEFINED_)
 
+//
+// Useful in FindFirstFile/FindNextFile loops
+//
+
 FORCEINLINE bool IsDotDirectoryName(LPCTSTR szFileName)
 {
     if(szFileName[0] == _T('.'))
@@ -419,16 +463,6 @@ FORCEINLINE bool IsDotDirectoryName(LPCTSTR szFileName)
     }
     return false;
 }
-
-//-----------------------------------------------------------------------------
-// Structures
-
-struct TListViewColumns
-{
-    UINT nIDTitle;                      // The title of the list view (string resource ID)
-    int  nWidth;                        // The width of the list view. -1 means that the item's
-                                        // width is up to the listview width
-};
 
 //-----------------------------------------------------------------------------
 // Global variables
@@ -774,7 +808,7 @@ void WINAPI LogToFile(LPCTSTR szFileName, LPCTSTR szFmt, va_list argList);
 
 // In debug version, shows a formatted text on debug output
 #if defined(_DEBUG) || defined(DBG)
-void WINAPI Dbg(LPCTSTR szFmt, ...);
+void _cdecl Dbg(LPCTSTR szFmt, ...);
 #else
 _inline void _cdecl Dbg(...) {}
 #endif
@@ -801,8 +835,7 @@ void   WINAPI InitInstance(HINSTANCE hInst = NULL, HANDLE hHeap = NULL);
 bool   WINAPI SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
 
 // Adds/removes backslash to/from end of path name
-LPTSTR WINAPI AddBackslash(LPTSTR szPathName, size_t cchPathName);
-LPTSTR WINAPI AddBackslash(LPTSTR szPathName);
+LPTSTR WINAPI AddBackslash(LPTSTR szPathName, size_t cchPathName = MAX_PATH);
 LPTSTR WINAPI RemoveBackslash(LPTSTR szPathName);
 
 // String allocations
@@ -1030,9 +1063,11 @@ BOOL   WINAPI ListView_SetItemParam(HWND hList, int nItem, LPARAM lParam);
 // TabControl support
 int WINAPI TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
 int WINAPI TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
+int WINAPI TabCtrl_SelectNextPage(HWND hTabCtrl, BOOL bNextPage);
 int WINAPI TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
 int WINAPI TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
 HWND WINAPI TabCtrl_GetSelectedPage(HWND hTabCtrl);
+BOOL WINAPI TabCtrl_IsDialogMessage(HWND hDlg, HWND hTabCtrl, LPMSG pMsg);
 INT_PTR WINAPI TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Reads line from text file. The file must be opened in text mode
@@ -1089,6 +1124,9 @@ BOOL WINAPI RevertWoW64FsRedirection(PVOID pvOldValue);
 bool WINAPI IsWow64Process(HANDLE hProcess = GetCurrentProcess());
 bool WINAPI Is64BitModule(HMODULE hMod);
 bool WINAPI Is64BitWindows();
+
+// Writes the whole resource to a file
+DWORD WriteResourceToFile(LPCTSTR szFileName, LPCTSTR szResourceType, LPCTSTR szResID);
 
 // Writes the dump file after crash
 LONG WINAPI WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);

@@ -997,14 +997,12 @@ typedef enum _RTL_GENERIC_COMPARE_RESULTS
     GenericEqual
 } RTL_GENERIC_COMPARE_RESULTS;
 
-
 typedef struct _RTL_SPLAY_LINKS
 {
     struct _RTL_SPLAY_LINKS *Parent;
     struct _RTL_SPLAY_LINKS *LeftChild;
     struct _RTL_SPLAY_LINKS *RightChild;
 } RTL_SPLAY_LINKS, *PRTL_SPLAY_LINKS;
-
 
 struct _RTL_GENERIC_TABLE;
 
@@ -1030,7 +1028,6 @@ VOID
     PVOID Buffer
     );
 
-
 typedef struct _RTL_GENERIC_TABLE
 {
     PRTL_SPLAY_LINKS TableRoot;
@@ -1044,13 +1041,11 @@ typedef struct _RTL_GENERIC_TABLE
     PVOID TableContext;
 } RTL_GENERIC_TABLE, *PRTL_GENERIC_TABLE;
 
-
 typedef struct _RTL_HANDLE_TABLE_ENTRY
 {
     ULONG Flags;
     struct _RTL_HANDLE_TABLE_ENTRY *NextFree;
 } RTL_HANDLE_TABLE_ENTRY, *PRTL_HANDLE_TABLE_ENTRY;
-
 
 typedef struct _RTL_HANDLE_TABLE
 {
@@ -1566,7 +1561,6 @@ NtFlushKey(
 #define RTL_REGISTRY_HANDLE       0x40000000    // Specifies that the Path parameter is actually a registry handle to use
 #define RTL_REGISTRY_OPTIONAL     0x80000000    // Specifies that the key referenced by this parameter and the Path parameter are optional
 
-
 typedef NTSTATUS (NTAPI * PRTL_QUERY_REGISTRY_ROUTINE)(
     IN PWSTR ValueName,
     IN ULONG ValueType,
@@ -1597,7 +1591,6 @@ RtlQueryRegistryValues(
     IN PVOID  Context,
     IN PVOID  Environment OPTIONAL
     );
-
 
 //-----------------------------------------------------------------------------
 // Query system information
@@ -2460,14 +2453,12 @@ typedef struct _SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX
     ULONG  Reserved;
 } SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX, *PSYSTEM_HANDLE_TABLE_ENTRY_INFO_EX;
 
-
 typedef struct _SYSTEM_HANDLE_INFORMATION_EX
 {
     ULONG_PTR NumberOfHandles;
     ULONG_PTR Reserved;
     SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX Handles[1];
 } SYSTEM_HANDLE_INFORMATION_EX, *PSYSTEM_HANDLE_INFORMATION_EX;
-
 
 // Class 69
 typedef struct _SYSTEM_HOTPATCH_CODE_INFORMATION
@@ -5109,7 +5100,7 @@ typedef struct _REMOTE_PORT_VIEW {
     PortHandle - Points to a variable that will receive the
         port object handle if the call is successful.
 
-    ObjectAttributes - Points to a structure that specifies the object’s
+    ObjectAttributes - Points to a structure that specifies the objectï¿½s
         attributes. OBJ_KERNEL_HANDLE, OBJ_OPENLINK, OBJ_OPENIF, OBJ_EXCLUSIVE,
         OBJ_PERMANENT, and OBJ_INHERIT are not valid attributes for a port object.
 
@@ -5873,7 +5864,7 @@ typedef enum _SECTION_INFORMATION_CLASS
         SECTION_ALL_ACCESS  - All of the preceding +
                               STANDARD_RIGHTS_REQUIRED
 
-    ObjectAttributes - Points to a structure that specifies the object’s attributes.
+    ObjectAttributes - Points to a structure that specifies the objectï¿½s attributes.
         OBJ_OPENLINK is not a valid attribute for a section object.
 
     MaximumSize - Optionally points to a variable that specifies the size,
@@ -6516,6 +6507,34 @@ RtlAddAccessAllowedAceEx(
 
 //-----------------------------------------------------------------------------
 // Token functions
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtAccessCheck (
+    IN PSECURITY_DESCRIPTOR SecurityDescriptor,
+    IN HANDLE ClientToken,
+    IN ACCESS_MASK DesiredAccess,
+    IN PGENERIC_MAPPING GenericMapping,
+    OUT PPRIVILEGE_SET PrivilegeSet,
+    IN OUT PULONG PrivilegeSetLength,
+    OUT PACCESS_MASK GrantedAccess,
+    OUT NTSTATUS * AccessStatus
+    );
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+ZwAccessCheck (
+    IN PSECURITY_DESCRIPTOR SecurityDescriptor,
+    IN HANDLE ClientToken,
+    IN ACCESS_MASK DesiredAccess,
+    IN PGENERIC_MAPPING GenericMapping,
+    OUT PPRIVILEGE_SET PrivilegeSet,
+    IN OUT PULONG PrivilegeSetLength,
+    OUT PACCESS_MASK GrantedAccess,
+    OUT NTSTATUS * AccessStatus
+    );
 
 NTSYSAPI
 NTSTATUS
