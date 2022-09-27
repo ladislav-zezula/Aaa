@@ -915,7 +915,13 @@ int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LP
 
 // Retrieves the error text. The caller must free the text using
 // delete [] szText;
+#define ERRT_APPEND_ERROR_CODE      0x01    // Append " (error code: %u)"
+#define ERRT_APPEND_TWO_NEWLINES    0x02    // Append two newlines instead of one
+#define ERRT_APPEND_ERROR_MSG       0x04    // Append error message
+#define ERRT_APPEND_ENDING_DOT      0x08    // Append a dot at the end
+DWORD  WINAPI GetErrorText(LPTSTR szBuffer, DWORD dwLength, DWORD dwErrCode);
 LPTSTR WINAPI GetErrorText(DWORD dwErrCode);
+LPTSTR WINAPI AppendErrorText(LPTSTR szBuffer, size_t ccBuffer, DWORD dwErrCode, DWORD dwFlags);
 
 // Fills the module version
 DWORD WINAPI GetModuleVersion(LPCTSTR szModuleName, ULARGE_INTEGER * pVersion);
@@ -1015,6 +1021,9 @@ typedef struct _FIND_PROCESS_PARAMS
     DWORD  dwProcessId;
 } FIND_PROCESS_PARAMS, *PFIND_PROCESS_PARAMS;
 
+typedef bool (ENUM_PROCESS_PROC)(PFIND_PROCESS_PARAMS pFindParams, LPVOID lpParameter);
+
+bool WINAPI EnumAllProcesses(ENUM_PROCESS_PROC PfnEnumProc, LPVOID lpParameter = NULL);
 bool WINAPI FindProcessByName(LPCTSTR szExeName, PFIND_PROCESS_PARAMS pFindParams = NULL);
 
 // RadioButton functions
@@ -1081,7 +1090,8 @@ int WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 int WINAPI ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
-int WINAPI rsprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, ...);
+int __cdecl rsvprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, va_list argList);
+int __cdecl rsprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, ...);
 
 // Recalculates a screen window position (such as retrieved by GetWindowRect)
 // to the client coordinates of the window "hWnd".

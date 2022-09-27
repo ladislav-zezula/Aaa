@@ -2857,7 +2857,7 @@ typedef enum _FILE_INFORMATION_CLASS
     FileCaseSensitiveInformationForceAccessCheck,   // 75
 
     // Windows 11
-    FileKnownFolderInformation,              // 76
+    FileKnownFolderInformation,                     // 76
 
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
@@ -3341,7 +3341,7 @@ typedef struct _FILE_LINKS_INFORMATION
     FILE_LINK_ENTRY_INFORMATION Entry;
 } FILE_LINKS_INFORMATION, *PFILE_LINKS_INFORMATION;
 
-#ifndef WINAPI_FAMILY_PC_APP    // In newer SDKs only
+#ifndef FILE_SUPPORTS_INTEGRITY_STREAMS             // In newer Microsoft SDKs only. Consistent with CLANG and GCC
 typedef struct _FILE_ID_128
 {
     BYTE Identifier[16];
@@ -4303,6 +4303,7 @@ RtlNtPathNameToDosPathName(                     // Available in Windows XP or ne
 #define RTL_USER_PROC_DLL_REDIRECTION_LOCAL     0x00001000
 #define RTL_USER_PROC_APP_MANIFEST_PRESENT      0x00002000
 #define RTL_USER_PROC_IMAGE_KEY_MISSING         0x00004000
+#define RTL_USER_PROC_ADDRESS_SPACE_PRESENT     0x00008000          // Guessed name, flag is set by PspSetupUserProcessAddressSpace
 #define RTL_USER_PROC_OPTIN_PROCESS             0x00020000
 #define RTL_USER_PROC_SECURE_PROCESS            0x80000000
 
@@ -4391,18 +4392,18 @@ typedef enum _PROCESSINFOCLASS {
     ProcessHandleTracing,                   // 0x20
     ProcessIoPriority,                      // 0x21
     ProcessExecuteFlags,                    // 0x22
-    ProcessTlsInformation,
+    ProcessTlsInformation,                  //
     ProcessCookie,
     ProcessImageInformation,
     ProcessCycleTime,
     ProcessPagePriority,
     ProcessInstrumentationCallback,
     ProcessThreadStackAllocation,
-    ProcessWorkingSetWatchEx,
-    ProcessImageFileNameWin32,
-    ProcessImageFileMapping,
-    ProcessAffinityUpdateMode,
-    ProcessMemoryAllocationMode,
+    ProcessWorkingSetWatchEx,               // 0x2A
+    ProcessImageFileNameWin32,              // 0x2B
+    ProcessImageFileMapping,                // 0x2C
+    ProcessAffinityUpdateMode,              // 0x2D
+    ProcessMemoryAllocationMode,            // 0x2E
     ProcessGroupInformation,
     ProcessTokenVirtualizationEnabled,
     ProcessConsoleHostProcess,
@@ -4488,8 +4489,7 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS
 {
     ULONG MaximumLength;                            // Should be set before call RtlCreateProcessParameters
     ULONG Length;                                   // Length of valid structure
-    ULONG Flags;                                    // Currently only PPF_NORMALIZED (1) is known:
-                                                    //  - Means that structure is normalized by call RtlNormalizeProcessParameters
+    ULONG Flags;                                    // RTL_USER_PROC_PARAMS_XXX
     ULONG DebugFlags;
 
     PVOID ConsoleHandle;                            // HWND to console window associated with process (if any).
@@ -5220,7 +5220,7 @@ typedef struct _REMOTE_PORT_VIEW {
     PortHandle - Points to a variable that will receive the
         port object handle if the call is successful.
 
-    ObjectAttributes - Points to a structure that specifies the object�s
+    ObjectAttributes - Points to a structure that specifies the object's
         attributes. OBJ_KERNEL_HANDLE, OBJ_OPENLINK, OBJ_OPENIF, OBJ_EXCLUSIVE,
         OBJ_PERMANENT, and OBJ_INHERIT are not valid attributes for a port object.
 
@@ -5984,7 +5984,7 @@ typedef enum _SECTION_INFORMATION_CLASS
         SECTION_ALL_ACCESS  - All of the preceding +
                               STANDARD_RIGHTS_REQUIRED
 
-    ObjectAttributes - Points to a structure that specifies the object�s attributes.
+    ObjectAttributes - Points to a structure that specifies the object's attributes.
         OBJ_OPENLINK is not a valid attribute for a section object.
 
     MaximumSize - Optionally points to a variable that specifies the size,
