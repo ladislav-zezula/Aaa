@@ -808,9 +808,11 @@ void WINAPI LogToFile(LPCTSTR szFileName, LPCTSTR szFmt, va_list argList);
 
 // In debug version, shows a formatted text on debug output
 #if defined(_DEBUG) || defined(DBG)
+void _cdecl DbgV(LPCTSTR szFmt, va_list argList);
 void _cdecl Dbg(LPCTSTR szFmt, ...);
 #else
-_inline void _cdecl Dbg(...) {}
+_inline void _cdecl DbgV(LPCTSTR, va_list) {}
+_inline void _cdecl Dbg(...)  {}
 #endif
 
 // If LOG_FILE_NAME is defined, the function sends a string to the log file
@@ -1081,7 +1083,7 @@ INT_PTR WINAPI TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam
 
 // Reads line from text file. The file must be opened in text mode
 // Returns -1 if end of file, otherwise number of characters read
-int WINAPI ReadLine(FILE * fp, LPTSTR szBuffer, int nMaxChars);
+int WINAPI ReadLine(FILE * fp, LPTSTR szBuffer, size_t ccBuffer);
 
 // Replaces the file name with the another one
 int WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
