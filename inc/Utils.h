@@ -145,10 +145,15 @@
 #define LISTVIEW_LAST_ITEM   0x7FFFFFFF         // The highest item ID
 
 //-----------------------------------------------------------------------------
-// Defines that are not present in the oldes SDKs
+// Defines that are not present in older SDKs
 
 #ifndef SS_REALSIZECONTROL
 #define SS_REALSIZECONTROL      0x00000040L
+#endif
+
+#ifndef HDF_SORTUP
+#define HDF_SORTUP              0x0400
+#define HDF_SORTDOWN            0x0200
 #endif
 
 #ifndef LVS_EX_DOUBLEBUFFER
@@ -480,7 +485,7 @@ extern const BYTE CharToByte[0x80];
 //-----------------------------------------------------------------------------
 // Easy conversions between ANSI and UNICODE
 
-size_t inline StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCSTR szString)
+_inline size_t StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCSTR szString)
 {
     LPSTR szBufferEnd = NULL;
 
@@ -488,7 +493,7 @@ size_t inline StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCSTR szString)
     return (szBufferEnd - szBuffer);
 }
 
-size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
+_inline size_t StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
 {
     LPWSTR szBufferEnd = NULL;
 
@@ -496,13 +501,13 @@ size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
     return (szBufferEnd - szBuffer);
 }
 
-size_t inline StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
+_inline size_t StringCchCopyX(LPSTR szBuffer, size_t ccBuffer, LPCWSTR szString)
 {
     int nLength = WideCharToMultiByte(CP_ACP, WC_COMPOSITECHECK, szString, -1, szBuffer, (int)ccBuffer, NULL, NULL);
     return (nLength > 0) ? (nLength - 1) : 0;
 }
 
-size_t inline StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCSTR szString)
+_inline size_t StringCchCopyX(LPWSTR szBuffer, size_t ccBuffer, LPCSTR szString)
 {
     int nLength = MultiByteToWideChar(CP_ACP, 0, szString, -1, szBuffer, (int)ccBuffer);
     return (nLength > 0) ? (nLength - 1) : 0;
@@ -588,7 +593,7 @@ DWORD StringToBinary(const XCHAR * szString, LPVOID pvBinary, size_t cbBinary, s
     return ERROR_SUCCESS;
 }
 
-size_t inline GetLengthOfBase64(size_t cbBinary)
+_inline size_t GetLengthOfBase64(size_t cbBinary)
 {
     size_t cchChars;
     size_t nBits = (cbBinary * 4);
@@ -817,7 +822,7 @@ _inline void _cdecl Dbg(...)  {}
 
 // If LOG_FILE_NAME is defined, the function sends a string to the log file
 #if defined(LOG_FILE_NAME)
-__inline void WINAPI Log(LPCTSTR szFmt, ...)
+_inline void _cdecl Log(LPCTSTR szFmt, ...)
 {
     va_list argList;
 
@@ -834,7 +839,7 @@ _inline void _cdecl Log(...) {}
 
 // Initialization
 void   WINAPI InitInstance(HINSTANCE hInst = NULL, HANDLE hHeap = NULL);
-bool   WINAPI SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
+bool   _cdecl SetLocalizedStrings(UINT nIDString, UINT nIDLocalizedString, ...);
 
 // Adds/removes backslash to/from end of path name
 LPTSTR WINAPI AddBackslash(LPTSTR szPathName, size_t cchPathName = MAX_PATH);
@@ -903,8 +908,8 @@ bool WINAPI StringToGuid(LPCTSTR szString, LPGUID pGuid);
 
 // Enables/disables a group of dialog items by their ID.
 // The ID list must end with 0.
-int WINAPI ShowDlgItems(HWND hDlg, int nCmdShow, ...);
-int WINAPI EnableDlgItems(HWND hDlg, BOOL bEnable, ...);
+int _cdecl ShowDlgItems(HWND hDlg, int nCmdShow, ...);
+int _cdecl EnableDlgItems(HWND hDlg, BOOL bEnable, ...);
 
 // Enables a privilege to the current process
 DWORD WINAPI EnablePrivilege(LPCTSTR szPrivilegeName);
@@ -937,7 +942,7 @@ LPCTSTR WINAPI GetString(UINT_PTR nIDString);
 USHORT WINAPI GetSystemLanguage();
 
 // Fills the buffer by the current user's specific directory name
-int WINAPI GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath);
+DWORD WINAPI GetShellFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath);
 
 // Gets the widths of the window borders (non-client area)
 // and stores them to the "pRect" parameter
@@ -970,12 +975,12 @@ BOOL WINAPI IsDirectoryAccessible(const LPTSTR szDirectory);
 void WINAPI SetMessageBoxTimeout(DWORD dwTimeout);
 
 // Shows a message box using resource strings
-int WINAPI MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
+int _cdecl MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
 
 // Shows a message box with appended error code text
 // "Failed to open the file %s\nAccess denied"
 // Returns the error code passed to dwErrCode
-DWORD WINAPI MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
+DWORD _cdecl MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
 
 // Shows a message box that also includes check box
 int WINAPI MessageBoxWithCheckBox(
@@ -997,7 +1002,7 @@ int WINAPI MessageBoxWithCheckBox(
     UINT uType);
 
 // Shows a question message box with "Yes - Yes All - No - Cancel" buttons
-int WINAPI MessageBoxYANC(
+int _cdecl MessageBoxYANC(
     HWND hWndParent,
     UINT_PTR nIDTitle,
     UINT_PTR nIDTextFmt,
@@ -1066,6 +1071,7 @@ BOOL WINAPI IsURLButton(HWND hWnd);
 
 int    WINAPI ListView_CreateColumns(HWND hList, TListViewColumns * pColumns);
 void   WINAPI ListView_ResizeColumns(HWND hList, TListViewColumns * pColumns, int nMinColumnWidth = 0);
+void   WINAPI ListView_SetSortArrow(HWND hListView, int nColumn, bool bAscending);
 int    WINAPI InsertLVItem(HWND hList, int nIcon, LPCTSTR szText, LPARAM lParam);
 int    WINAPI ListView_SetSubItem(HWND hList, int nItem, int nSubItem, LPCTSTR szText);
 LPARAM WINAPI ListView_GetItemParam(HWND hList, int nItem);
@@ -1092,11 +1098,12 @@ int WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 int WINAPI ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
-int __cdecl rsvprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, va_list argList);
-int __cdecl rsprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, ...);
+int _cdecl rsvprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, va_list argList);
+int _cdecl rsprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, ...);
 
 // Recalculates a screen window position (such as retrieved by GetWindowRect)
 // to the client coordinates of the window "hWnd".
+void WINAPI GetWindowScreenRect(HWND hWnd, LPRECT pRect);
 void WINAPI ScreenRectToClientRect(HWND hWnd, LPRECT pRect);
 void WINAPI ClientRectToScreenRect(HWND hWnd, LPRECT pRect);
 
@@ -1111,10 +1118,11 @@ int WINAPI SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
 LPTSTR WINAPI NewStr(HWND hWnd, size_t cchCharsToReserve = 0);
 
 // Sets a window text from resource
-int WINAPI SetWindowTextRc(HWND hWnd, UINT nIDText, ...);
+int WINAPI SetWindowTextRcVA(HWND hWnd, UINT nIDText, va_list argList);
+int _cdecl SetWindowTextRc(HWND hWnd, UINT nIDText, ...);
 
 // Shows a systray baloon or a timed messagebox
-int WINAPI ShowSystrayBaloon(HWND hDlg, UINT nIDIcon, UINT nIDTitle, UINT nIDText, ...);
+int _cdecl ShowSystrayBaloon(HWND hDlg, UINT nIDIcon, UINT nIDTitle, UINT nIDText, ...);
 
 // Verifies if the user's password is valid.
 BOOL WINAPI VerifyUserPassword(LPTSTR szUserName, LPTSTR szDomain, LPTSTR szPassword);
@@ -1128,7 +1136,7 @@ bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, DWORD dwFlags = 
 
 // API resolver
 DWORD WINAPI ResolveAPI(LPCTSTR szModuleName, LPCSTR szApiName, FARPROC * PfnProcAddress);
-DWORD WINAPI ResolveAPIs(LPCTSTR szModuleName, ...);
+DWORD _cdecl ResolveAPIs(LPCTSTR szModuleName, ...);
 
 // Works with FS redirection
 BOOL WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);
