@@ -9,7 +9,7 @@
 /*  MSVC++ 11.0 _MSC_VER == 1700 (Visual Studio 2012)                        */
 /*  MSVC++ 10.0 _MSC_VER == 1600 (Visual Studio 2010)                        */
 /*  MSVC++ 9.0  _MSC_VER == 1500 (Visual Studio 2008)                        */
-/*  MSVC++ 8.0  _MSC_VER == 1400 (Visual Studio 2005)                        */
+/*  MSVC++ 8.0  _MSC_VER == 1400 (Visual Studio 2005, WDK build)             */
 /*  MSVC++ 7.1  _MSC_VER == 1310 (Visual Studio 2003)                        */
 /*  MSVC++ 7.0  _MSC_VER == 1300                                             */
 /*  MSVC++ 6.0  _MSC_VER == 1200                                             */
@@ -235,6 +235,14 @@ typedef struct tagTVINSERTSTRUCT_V6
   #else
     typedef signed int     ssize_t;
   #endif
+#endif
+
+//
+// Macro for an invalid size_t
+//
+
+#ifndef INVALID_SIZE_T
+#define INVALID_SIZE_T          (size_t)(-1)
 #endif
 
 //
@@ -977,16 +985,11 @@ void WINAPI SetMessageBoxTimeout(DWORD dwTimeout);
 // Shows a message box using resource strings
 int _cdecl MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
 
-// Shows a message box with appended error code text
-// "Failed to open the file %s\nAccess denied"
-// Returns the error code passed to dwErrCode
-DWORD _cdecl MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
-
 // Shows a message box that also includes check box
 int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
     LPCTSTR szText,
-    LPCTSTR szTitle,
+    LPCTSTR szCaption,
     LPCTSTR szCheckText,
     bool * pbCheckValue,
     UINT uType);
@@ -996,10 +999,19 @@ int WINAPI MessageBoxWithCheckBox(
 int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
     UINT nIDText,
-    UINT nIDTitle,
+    UINT nIDCaption,
     UINT nIDCheckText,
     bool * pbCheckValue,
     UINT uType);
+
+// Shows a message box with appended error code text
+// "Failed to open the file %s\nAccess denied"
+// Returns the error code passed to dwErrCode
+DWORD _cdecl MessageBoxError(
+    HWND hParent,
+    UINT_PTR nIDText,
+    DWORD dwErrCode = ERROR_SUCCESS,
+    ...);
 
 // Shows a question message box with "Yes - Yes All - No - Cancel" buttons
 int _cdecl MessageBoxYANC(
