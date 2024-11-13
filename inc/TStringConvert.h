@@ -49,7 +49,7 @@ class TConvertString
             m_StaticBuffer[0] = 0;
 
             // Retrieve the length of the UTF-8 string
-            if((m_nLen = SrcStrToTrgStr(szSrcStr, szSrcEnd, NULL, 0)) != 0)
+            if((m_nLen = ConvertString(NULL, 0, szSrcStr, szSrcEnd)) != 0)
             {
                 // Allocate buffer if too long
                 if((m_nLen + 1) > _countof(m_StaticBuffer))
@@ -62,19 +62,19 @@ class TConvertString
                 }
 
                 // Convert the string
-                SrcStrToTrgStr(szSrcStr, szSrcEnd, m_szStr, m_nLen + 1);
+                ConvertString(m_szStr, m_nLen + 1, szSrcStr, szSrcEnd);
             }
         }
         return m_szStr;
     }
 
-    size_t SrcStrToTrgStr(LPCWSTR szSrcStr, LPCWSTR szSrcEnd, LPSTR szTrgStr, size_t nTrgStr)
+    size_t ConvertString(LPSTR szTrgStr, size_t ccTrgStr, LPCWSTR szSrcStr, LPCWSTR szSrcEnd)
     {
-        size_t nLength = (szSrcEnd > szSrcStr) ? (szSrcEnd - szSrcStr) : INVALID_SIZE_T;
+        size_t ccSrcStr = (szSrcEnd > szSrcStr) ? (szSrcEnd - szSrcStr) : INVALID_SIZE_T;
         size_t nResult;
 
         // Perform the conversion
-        nResult = WideCharToMultiByte(CodePage, 0, szSrcStr, (int)(nLength), szTrgStr, (int)(nTrgStr), NULL, NULL);
+        nResult = WideCharToMultiByte(CodePage, 0, szSrcStr, (int)(ccSrcStr), szTrgStr, (int)(ccTrgStr), NULL, NULL);
 
         // Terminate with zero, if needed
         if(szSrcEnd && szSrcEnd[0] && szTrgStr)
@@ -82,16 +82,14 @@ class TConvertString
         return nResult;
     }
 
-    size_t SrcStrToTrgStr(LPCSTR szSrcStr, LPCSTR szSrcEnd, LPWSTR szTrgStr, size_t nTrgStr)
+    size_t ConvertString(LPWSTR szTrgStr, size_t ccTrgStr, LPCSTR szSrcStr, LPCSTR szSrcEnd)
     {
-        size_t nLength = (szSrcEnd > szSrcStr) ? (szSrcEnd - szSrcStr) : INVALID_SIZE_T;
-        size_t nResult;
+        // Make sure that we know the length of the target
+        size_t ccSrcStr = (szSrcEnd > szSrcStr) ? (szSrcEnd - szSrcStr) : INVALID_SIZE_T;
 
-        // Perform the conversion
-        nResult = MultiByteToWideChar(CodePage, 0, szSrcStr, (int)(nLength), szTrgStr, (int)(nTrgStr));
+        int nResult = MultiByteToWideChar(CodePage, 0, szSrcStr, (int)ccSrcStr, szTrgStr, (int)(ccTrgStr));
 
-        // Terminate with zero, if needed
-        if(szSrcEnd && szSrcEnd[0] && szTrgStr)
+        if(szTrgStr != NULL)
             szTrgStr[nResult] = 0;
         return nResult;
     }
@@ -112,6 +110,11 @@ class TConvertString
     }
 
     protected:
+
+    bool ConversionFailed(int nResult)
+    {
+        return (nResult == 0) && (GetLastError() == ERROR_NO_UNICODE_TRANSLATION);
+    }
 
     TRGCHAR * m_szStr;
     size_t m_nLen;

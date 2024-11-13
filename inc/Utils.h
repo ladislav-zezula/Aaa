@@ -907,9 +907,6 @@ size_t WINAPI GetMultiStringLength(LPCTSTR szMultiString);
 DWORD WINAPI GetMultiStringCount(LPCTSTR szMultiString);
 void WINAPI FreeMultiString(LPTSTR szMultiString);
 
-// Shows the message box dialog with "Don't display again" text
-INT_PTR WINAPI DontDisplayAgainDialog(HWND hParent, UINT nIDTemplate, int * piLastAnswer);
-
 // Converts a GUID to registry string format (i.e. {XXXXXXXX-XXXX-...})
 int  WINAPI GuidToString(LPGUID pGuid, LPTSTR szBuffer, size_t cchBuffer);
 bool WINAPI StringToGuid(LPCTSTR szString, LPGUID pGuid);
@@ -982,9 +979,6 @@ BOOL WINAPI IsDirectoryAccessible(const LPTSTR szDirectory);
 // Sets the timeout for message box, in milliseconds
 void WINAPI SetMessageBoxTimeout(DWORD dwTimeout);
 
-// Shows a message box using resource strings
-int _cdecl MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
-
 // Shows a message box that also includes check box
 int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
@@ -1004,21 +998,19 @@ int WINAPI MessageBoxWithCheckBox(
     bool * pbCheckValue,
     UINT uType);
 
+// Shows a message box using resource strings
+int   WINAPI MessageBoxRcV(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, va_list argList);
+int   _cdecl MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
+
+// Shows a question message box with "Yes - Yes All - No - Cancel" buttons
+int   WINAPI MessageBoxYANCV(HWND hWndParent, UINT_PTR nIDTitle, UINT_PTR nIDTextFmt, va_list argList);
+int   _cdecl MessageBoxYANC(HWND hWndParent, UINT_PTR nIDTitle, UINT_PTR nIDTextFmt, ...);
+
 // Shows a message box with appended error code text
 // "Failed to open the file %s\nAccess denied"
 // Returns the error code passed to dwErrCode
-DWORD _cdecl MessageBoxError(
-    HWND hParent,
-    UINT_PTR nIDText,
-    DWORD dwErrCode = ERROR_SUCCESS,
-    ...);
-
-// Shows a question message box with "Yes - Yes All - No - Cancel" buttons
-int _cdecl MessageBoxYANC(
-    HWND hWndParent,
-    UINT_PTR nIDTitle,
-    UINT_PTR nIDTextFmt,
-    ...);
+DWORD WINAPI MessageBoxErrorV(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode, va_list argList);
+DWORD _cdecl MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
 
 // Sets an icon to the dialog
 void WINAPI SetDialogIcon(HWND hDlg, UINT nIDIcon);
