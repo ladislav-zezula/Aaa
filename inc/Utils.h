@@ -186,6 +186,10 @@
 #define PBST_PAUSED             0x0003
 #endif // PBM_SETSTATE
 
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED           0x02E0
+#endif
+
 #ifndef WM_THEMECHANGED
 #define WM_THEMECHANGED         0x031A
 #endif
@@ -301,6 +305,14 @@ typedef const BYTE *LPCBYTE;
 #endif
 
 //
+// Base default DPI value
+//
+
+#ifndef USER_DEFAULT_SCREEN_DPI
+#define USER_DEFAULT_SCREEN_DPI 96
+#endif
+
+//
 // Defines for Windows version returned by GetWindowsVersion()
 //
 
@@ -389,6 +401,20 @@ ULONG FORCEINLINE RorOperation(ULONG dwValue, ULONG dwRorCount)
 #endif  // (_MSC_VER >= 1500)
 
 //
+// Easy access to a width or height of a rectangle
+//
+
+inline int RectCX(const RECT & rect)
+{
+    return rect.right - rect.left;
+}
+
+inline int RectCY(const RECT & rect)
+{
+    return rect.bottom - rect.top;
+}
+
+//
 // Macros for handling LIST_ENTRY-based lists
 //
 
@@ -468,11 +494,13 @@ RemoveEntryList(
 
 FORCEINLINE bool IsDotDirectoryName(LPCTSTR szFileName)
 {
-    if(szFileName[0] == _T('.'))
+    // Check for the first dot
+    if(*szFileName++ == _T('.'))
     {
-        if(szFileName[1] == _T('.'))
-            return (szFileName[2] == 0);
-        return (szFileName[1] == 0);
+        // Check for the second dot
+        if(*szFileName == _T('.'))
+            szFileName++;
+        return (szFileName[0] == 0);
     }
     return false;
 }
@@ -815,6 +843,14 @@ BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCa
 }
 
 //-----------------------------------------------------------------------------
+// Per-monitor DPI support (since Windows 10 17134)
+
+bool DPI_HighDpiSupported();
+UINT DPI_GetDpiForSystem();
+UINT DPI_GetDpiForWindow(HWND hWnd);
+int  DPI_SystemMetrics(int nIndex, int nDPI = 0);
+
+//-----------------------------------------------------------------------------
 // Debug print and log print support
 
 void WINAPI LogToFile(LPCTSTR szFileName, LPCTSTR szFmt, va_list argList);
@@ -931,7 +967,7 @@ int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LP
 #define ERRT_APPEND_TWO_NEWLINES    0x02    // Append two newlines instead of one
 #define ERRT_APPEND_ERROR_MSG       0x04    // Append error message
 #define ERRT_APPEND_ENDING_DOT      0x08    // Append a dot at the end
-DWORD  WINAPI GetErrorText(LPTSTR szBuffer, DWORD dwLength, DWORD dwErrCode);
+DWORD  WINAPI GetErrorText(LPTSTR szBuffer, size_t ccBuffer, DWORD dwErrCode);
 LPTSTR WINAPI GetErrorText(DWORD dwErrCode);
 LPTSTR WINAPI AppendErrorText(LPTSTR szBuffer, size_t ccBuffer, DWORD dwErrCode, DWORD dwFlags);
 
@@ -982,8 +1018,8 @@ void WINAPI SetMessageBoxTimeout(DWORD dwTimeout);
 // Shows a message box that also includes check box
 int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
-    LPCTSTR szText,
     LPCTSTR szCaption,
+    LPCTSTR szMessage,
     LPCTSTR szCheckText,
     bool * pbCheckValue,
     UINT uType);
@@ -992,25 +1028,25 @@ int WINAPI MessageBoxWithCheckBox(
 // This one uses string resource IDs rather than texts.
 int WINAPI MessageBoxWithCheckBox(
     HWND hWndParent,
-    UINT nIDText,
     UINT nIDCaption,
+    UINT nIDMessage,
     UINT nIDCheckText,
     bool * pbCheckValue,
     UINT uType);
 
 // Shows a message box using resource strings
-int   WINAPI MessageBoxRcV(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, va_list argList);
-int   _cdecl MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDText, ...);
+int   WINAPI MessageBoxRcV(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDFormat, va_list argList);
+int   _cdecl MessageBoxRc(HWND hParent, UINT_PTR nIDCaption, UINT_PTR nIDFormat, ...);
 
 // Shows a question message box with "Yes - Yes All - No - Cancel" buttons
-int   WINAPI MessageBoxYANCV(HWND hWndParent, UINT_PTR nIDTitle, UINT_PTR nIDTextFmt, va_list argList);
-int   _cdecl MessageBoxYANC(HWND hWndParent, UINT_PTR nIDTitle, UINT_PTR nIDTextFmt, ...);
+int   WINAPI MessageBoxYANCV(HWND hWndParent, UINT_PTR nIDTitle, UINT_PTR nIDFormat, va_list argList);
+int   _cdecl MessageBoxYANC(HWND hWndParent, UINT_PTR nIDTitle, UINT_PTR nIDFormat, ...);
 
 // Shows a message box with appended error code text
 // "Failed to open the file %s\nAccess denied"
 // Returns the error code passed to dwErrCode
-DWORD WINAPI MessageBoxErrorV(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode, va_list argList);
-DWORD _cdecl MessageBoxError(HWND hParent, UINT_PTR nIDText, DWORD dwErrCode = ERROR_SUCCESS, ...);
+DWORD WINAPI MessageBoxErrorV(HWND hParent, UINT_PTR nIDFormat, DWORD dwErrCode, va_list argList);
+DWORD _cdecl MessageBoxError(HWND hParent, UINT_PTR nIDFormat, DWORD dwErrCode = ERROR_SUCCESS, ...);
 
 // Sets an icon to the dialog
 void WINAPI SetDialogIcon(HWND hDlg, UINT nIDIcon);
@@ -1084,10 +1120,13 @@ BOOL   WINAPI ListView_SetItemParam(HWND hList, int nItem, LPARAM lParam);
 // TabControl support
 int WINAPI TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
 int WINAPI TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
+int WINAPI TabCtrl_NewDpi(HWND hTabCtrl);
+int WINAPI TabCtrl_GetIdealChildRect(HWND hTabCtrl, LPRECT pRect);
 int WINAPI TabCtrl_SelectNextPage(HWND hTabCtrl, BOOL bNextPage);
 int WINAPI TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
 int WINAPI TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
 HWND WINAPI TabCtrl_GetSelectedPage(HWND hTabCtrl);
+HWND WINAPI TabCtrl_IsTabControl(HWND hTabCtrl);
 BOOL WINAPI TabCtrl_IsDialogMessage(HWND hDlg, HWND hTabCtrl, LPMSG pMsg);
 INT_PTR WINAPI TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
