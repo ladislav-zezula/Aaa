@@ -30,9 +30,9 @@
 
 enum TIniEncoding
 {
-    EncodingAnsi,
-    EncodingUnicode,
-    EncodingUnicodeBE,
+    EncodingAnsi = 0,
+    EncodingUTF16,
+    EncodingUTF16_BE,
     EncodingUTF8,
     EncodingMax
 };

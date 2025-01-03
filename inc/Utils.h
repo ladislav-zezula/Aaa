@@ -516,7 +516,7 @@ extern HANDLE g_hHeap;
 // String conversion tables
 extern const char * Base64Table_Standard;
 extern const char * IntToHexChar;
-extern const BYTE CharToByte[0x80];
+extern const BYTE CharToByte[0x100];
 
 //-----------------------------------------------------------------------------
 // Easy conversions between ANSI and UNICODE
@@ -845,6 +845,7 @@ BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCa
 //-----------------------------------------------------------------------------
 // Per-monitor DPI support (since Windows 10 17134)
 
+UINT GetBaseSystemDpi();
 bool DPI_HighDpiSupported();
 UINT DPI_GetDpiForSystem();
 UINT DPI_GetDpiForWindow(HWND hWnd);
