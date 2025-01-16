@@ -513,6 +513,11 @@ FORCEINLINE bool IsDotDirectoryName(LPCTSTR szFileName)
 extern HINSTANCE g_hInst;
 extern HANDLE g_hHeap;
 
+// Common Windows library names
+extern const TCHAR * const g_szNtdllDll;
+extern const TCHAR * const g_szKernel32Dll;
+extern const TCHAR * const g_szUser32Dll;
+
 // String conversion tables
 extern const char * Base64Table_Standard;
 extern const char * IntToHexChar;
@@ -1194,5 +1199,7 @@ DWORD WriteResourceToFile(LPCTSTR szFileName, LPCTSTR szResourceType, LPCTSTR sz
 
 // Writes the dump file after crash
 LONG WINAPI WriteDumpFile(HWND hWndParent, PEXCEPTION_POINTERS ExceptionPointers);
+
+bool WINAPI IsRunningInWine();
 
 #endif // __UTILS_H__
