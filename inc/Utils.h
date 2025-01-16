@@ -516,6 +516,7 @@ extern HANDLE g_hHeap;
 // Common Windows library names
 extern const TCHAR * const g_szNtdllDll;
 extern const TCHAR * const g_szKernel32Dll;
+extern const TCHAR * const g_szAdvapi32Dll;
 extern const TCHAR * const g_szUser32Dll;
 
 // String conversion tables
