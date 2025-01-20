@@ -1188,10 +1188,11 @@ bool WINAPI FindWindbgPath(LPTSTR szBuffer, size_t cchMaxChars, DWORD dwFlags = 
 DWORD WINAPI ResolveAPI(LPCTSTR szModuleName, LPCSTR szApiName, FARPROC * PfnProcAddress);
 DWORD _cdecl ResolveAPIs(LPCTSTR szModuleName, ...);
 
-// Works with FS redirection
+// Wow64 support
 BOOL WINAPI DisableWoW64FsRedirection(PVOID * ppvOldValue);
 BOOL WINAPI RevertWoW64FsRedirection(PVOID pvOldValue);
 bool WINAPI IsWow64Process(HANDLE hProcess = GetCurrentProcess());
+void WINAPI GetWoW64SystemInfo(LPSYSTEM_INFO lpSystemInfo);
 bool WINAPI Is64BitModule(HMODULE hMod);
 bool WINAPI Is64BitWindows();
 
