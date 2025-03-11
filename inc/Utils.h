@@ -978,6 +978,10 @@ DWORD  WINAPI GetErrorText(LPTSTR szBuffer, size_t ccBuffer, DWORD dwErrCode);
 LPTSTR WINAPI GetErrorText(DWORD dwErrCode);
 LPTSTR WINAPI AppendErrorText(LPTSTR szBuffer, size_t ccBuffer, DWORD dwErrCode, DWORD dwFlags);
 
+// Conversion from KeybCS2 to Unicode and UTF-8
+size_t KeybCS2ToUnicode(const char * lpKeybCS2, size_t cbKeybCS2, LPWSTR szBuffer, size_t ccBuffer);
+size_t KeybCS2ToUTF8(const char * lpKeybCS2, size_t cbKeybCS2, LPSTR szBuffer, size_t ccBuffer);
+
 // Fills the module version
 DWORD WINAPI GetModuleVersion(LPCTSTR szModuleName, ULARGE_INTEGER * pVersion);
 DWORD WINAPI GetModuleVersion(HMODULE hModule, ULARGE_INTEGER * pVersion);
