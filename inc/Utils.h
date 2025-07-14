@@ -313,6 +313,7 @@ typedef const BYTE *LPCBYTE;
 
 #ifndef USER_DEFAULT_SCREEN_DPI
 #define USER_DEFAULT_SCREEN_DPI 96
+#define USER_MAX_SCREEN_DPI    504
 #endif
 
 //
@@ -327,6 +328,7 @@ typedef const BYTE *LPCBYTE;
 #define OSVER_WINDOWS_8       0x0602
 #define OSVER_WINDOWS_8_1     0x0603
 #define OSVER_WINDOWS_10      0x0A00
+#define OSVER_WINDOWS_11      0x0B00
 
 //
 // Defines for Windows build returned by GetWindowsBuildNumber()
@@ -854,7 +856,6 @@ BOOL WINAPI CompareStringWildCard(const XCHAR * szString, const XCHAR * szWildCa
 //-----------------------------------------------------------------------------
 // Per-monitor DPI support (since Windows 10 17134)
 
-UINT GetBaseSystemDpi();
 bool DPI_HighDpiSupported();
 UINT DPI_GetDpiForSystem();
 UINT DPI_GetDpiForWindow(HWND hWnd);
