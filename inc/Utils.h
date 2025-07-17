@@ -971,7 +971,7 @@ DWORD WINAPI EnablePrivilege(LPCTSTR szPrivilegeName);
 BOOL WINAPI GetDialogRect(HWND hParent, UINT nIDDlgTemplate, RECT & rect);
 
 // Get the title of the page from the dialog template
-int WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LPTSTR szTitle, size_t cchTitle);
+DWORD WINAPI GetDialogTitleFromTemplate(HINSTANCE hInst, LPCTSTR szDlgTemplate, LPTSTR szTitle, size_t cchTitle);
 
 // Retrieves the error text. The caller must free the text using
 // delete [] szText;
@@ -1012,7 +1012,7 @@ DWORD WINAPI GetWindowsVersion(POSVERSIONINFO pOsvi = NULL);
 DWORD WINAPI GetWindowsBuildNumber();
 
 // Initializes the dialog controls, like combo boxes and list boxes.
-int WINAPI InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
+DWORD WINAPI InitDialogControls(HWND hDlg, LPCTSTR lpszResourceName);
 
 // Returns true if the user runs as administrator (or elevated in Vista)
 BOOL WINAPI IsAdministrator();
@@ -1068,7 +1068,7 @@ DWORD _cdecl MessageBoxError(HWND hParent, UINT_PTR nIDFormat, DWORD dwErrCode =
 void WINAPI SetDialogIcon(HWND hDlg, UINT nIDIcon);
 
 // Ensures that the path exists.
-int WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
+DWORD WINAPI ForcePathExist(LPCTSTR szPathName, BOOL bIsDirectory = FALSE);
 
 // Returns the domain name for currently logged on user
 DWORD WINAPI GetDomainName(LPTSTR szText, LPDWORD pdwSize);
@@ -1114,11 +1114,11 @@ HCURSOR WINAPI CreateUrlPointCursor();
 HCURSOR WINAPI CreateUrlWaitCursor();
 
 // URL Buttons functions
-BOOL WINAPI ClickURLButton(HWND hButton);
-BOOL WINAPI DrawURLButton(HWND hDlg, LPDRAWITEMSTRUCT dis);
-int  WINAPI InitURLButton(HWND hDlg, UINT nIDCtrl, BOOL bBigFont);
-int  WINAPI InitURLButtons(HWND hDlg);
-BOOL WINAPI IsURLButton(HWND hWnd);
+BOOL  WINAPI ClickURLButton(HWND hButton);
+BOOL  WINAPI DrawURLButton(HWND hDlg, LPDRAWITEMSTRUCT dis);
+DWORD WINAPI InitURLButton(HWND hDlg, UINT nIDCtrl, BOOL bBigFont);
+DWORD WINAPI InitURLButtons(HWND hDlg);
+BOOL  WINAPI IsURLButton(HWND hWnd);
 
 // Functions related to ListView columns and items
 #define ListView_GetItemA(hwnd, pitem)      (BOOL)SNDMSG((hwnd), LVM_GETITEMA, 0, (LPARAM)(LV_ITEMA *)(pitem))
@@ -1134,16 +1134,16 @@ LPARAM WINAPI ListView_GetItemParam(HWND hList, int nItem);
 BOOL   WINAPI ListView_SetItemParam(HWND hList, int nItem, LPARAM lParam);
 
 // TabControl support
-int WINAPI TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
-int WINAPI TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
-int WINAPI TabCtrl_NewDpi(HWND hTabCtrl);
-int WINAPI TabCtrl_GetIdealChildRect(HWND hTabCtrl, LPRECT pRect);
-int WINAPI TabCtrl_SelectNextPage(HWND hTabCtrl, BOOL bNextPage);
-int WINAPI TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
-int WINAPI TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
-HWND WINAPI TabCtrl_GetSelectedPage(HWND hTabCtrl);
-HWND WINAPI TabCtrl_IsTabControl(HWND hTabCtrl);
-BOOL WINAPI TabCtrl_IsDialogMessage(HWND hDlg, HWND hTabCtrl, LPMSG pMsg);
+DWORD  WINAPI TabCtrl_Create(HWND hTabCtrl, PVOID pPropSheetHeader);
+BOOL   WINAPI TabCtrl_Resize(HWND hTabCtrl, int x, int y, int cx, int cy);
+BOOL   WINAPI TabCtrl_NewDpi(HWND hTabCtrl);
+BOOL   WINAPI TabCtrl_GetIdealChildRect(HWND hTabCtrl, LPRECT pRect);
+int    WINAPI TabCtrl_SelectNextPage(HWND hTabCtrl, BOOL bNextPage);
+void   WINAPI TabCtrl_SelectPageByIndex(HWND hTabCtrl, UINT nPageIndex);
+BOOL   WINAPI TabCtrl_SelectPageByID(HWND hTabCtrl, LPCTSTR pszPageID);
+HWND   WINAPI TabCtrl_GetSelectedPage(HWND hTabCtrl);
+HWND   WINAPI TabCtrl_IsTabControl(HWND hTabCtrl);
+BOOL   WINAPI TabCtrl_IsDialogMessage(HWND hDlg, HWND hTabCtrl, LPMSG pMsg);
 INT_PTR WINAPI TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Reads line from text file. The file must be opened in text mode
@@ -1151,10 +1151,10 @@ INT_PTR WINAPI TabCtrl_HandleMessages(HWND hTabControl, UINT uMsg, WPARAM wParam
 int WINAPI ReadLine(FILE * fp, LPTSTR szBuffer, size_t ccBuffer);
 
 // Replaces the file name with the another one
-int WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
+DWORD  WINAPI ReplaceFileName(LPTSTR szFullPath, LPCTSTR szPlainName);
 
 // Replaces the file extension with another one.
-int WINAPI ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
+DWORD  WINAPI ReplaceFileExt(LPTSTR szFileName, LPCTSTR szNewExt);
 
 // Like sprintf, but the format string is taken from resources
 int _cdecl rsvprintf(LPTSTR szBuffer, size_t nMaxChars, UINT nIDFormat, va_list argList);
@@ -1171,7 +1171,7 @@ BOOL WINAPI GetWindowRectParentRelative(HWND hWnd, LPRECT pRect);
 BOOL WINAPI GetClientRectScreenRelative(HWND hWnd, LPRECT pRect);
 
 // Sets a bold font for a dialog control
-int WINAPI SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
+DWORD WINAPI SetBoldFont(HWND hDlg, UINT nIDCtrl, int nPercentSize = 0);
 
 // Retrieves a window text and stores it into a string
 LPTSTR WINAPI NewStr(HWND hWnd, size_t cchCharsToReserve = 0);
@@ -1181,7 +1181,7 @@ int WINAPI SetWindowTextRcVA(HWND hWnd, UINT nIDText, va_list argList);
 int _cdecl SetWindowTextRc(HWND hWnd, UINT nIDText, ...);
 
 // Shows a systray baloon or a timed messagebox
-int _cdecl ShowSystrayBaloon(HWND hDlg, UINT nIDIcon, UINT nIDTitle, UINT nIDText, ...);
+BOOL _cdecl ShowSystrayBaloon(HWND hDlg, UINT nIDIcon, UINT nIDTitle, UINT nIDText, ...);
 
 // Verifies if the user's password is valid.
 BOOL WINAPI VerifyUserPassword(LPTSTR szUserName, LPTSTR szDomain, LPTSTR szPassword);
