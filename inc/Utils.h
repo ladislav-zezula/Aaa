@@ -39,9 +39,6 @@
 #include <shlobj.h>
 #include <strsafe.h>
 
-#pragma warning(disable:4995)       // cstdio(49) : warning C4995: 'gets': name was marked as #pragma deprecated
-#include <string>
-
 #if(_MSC_VER >= 1500)               // Supported in Visual Studio 2008+
 #pragma warning(disable: 4995)      // intrin.h(374) : warning C4995: 'strcat': name was marked as #pragma deprecated
 #include <intrin.h>
@@ -917,7 +914,6 @@ LPWSTR WINAPI NewStrWithBuff(LPWSTR szStaticBuff, size_t cchStaticBuff, LPCWSTR 
 // Returns the pointer to plain file name
 // The caller needs to free the path using delete []
 LPTSTR WINAPI CreateFullPath(LPCTSTR szDirectory, LPCTSTR szSubDir, LPCTSTR szPlainName);
-DWORD  WINAPI CreateFullPath(std::tstring & fullPath, LPCTSTR szDirectory, LPCTSTR szSubDir, LPCTSTR szPlainName);
 
 // Adds a new string to the existing one. The existing must have been
 // allocated by new, the result must be freed using "FreeAppendedString", when no longer needed.

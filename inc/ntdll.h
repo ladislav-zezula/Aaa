@@ -2859,6 +2859,13 @@ typedef enum _FILE_INFORMATION_CLASS
     // Windows 11
     FileKnownFolderInformation,                     // 76
 
+    // WDK 22600
+    FileStatBasicInformation,                       // 77
+    FileId64ExtdDirectoryInformation,               // 78
+    FileId64ExtdBothDirectoryInformation,           // 79
+    FileIdAllExtdDirectoryInformation,              // 80
+    FileIdAllExtdBothDirectoryInformation,          // 81
+
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -2979,7 +2986,6 @@ typedef struct _FILE_RENAME_INFORMATION {
 #define FILE_RENAME_FORCE_RESIZE_TARGET_SR                0x00000080
 #define FILE_RENAME_FORCE_RESIZE_SOURCE_SR                0x00000100
 #define FILE_RENAME_FORCE_RESIZE_SR                       0x00000180
-
 
 // Renamed from original FILE_RENAME_INFORMATION in RS1+
 typedef struct _FILE_RENAME_INFORMATION_EX {
@@ -3607,6 +3613,8 @@ typedef struct _FILE_KNOWN_FOLDER_INFORMATION
 {
     FILE_KNOWN_FOLDER_TYPE Type;
 } FILE_KNOWN_FOLDER_INFORMATION, *PFILE_KNOWN_FOLDER_INFORMATION;
+
+
 
 typedef enum _FSINFOCLASS {
     FileFsVolumeInformation         = 1,
