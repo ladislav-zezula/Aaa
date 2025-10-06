@@ -1599,108 +1599,265 @@ RtlQueryRegistryValues(
 
 //-----------------------------------------------------------------------------
 // Query system information
+// Source: https://raw.githubusercontent.com/hfiref0x/KDU/master/Source/Shared/ntos/ntos.h
 
 typedef enum _SYSTEM_INFORMATION_CLASS
 {
-    SystemBasicInformation,                     // 0x00
-    SystemProcessorInformation,                 // 0x01
-    SystemPerformanceInformation,               // 0x02
-    SystemTimeOfDayInformation,                 // 0x03
-    SystemPathInformation,                      // 0x04 (Obsolete: Use KUSER_SHARED_DATA)
-    SystemProcessInformation,                   // 0x05
-    SystemCallCountInformation,                 // 0x06
-    SystemDeviceInformation,                    // 0x07
-    SystemProcessorPerformanceInformation,      // 0x08
-    SystemFlagsInformation,                     // 0x09
-    SystemCallTimeInformation,                  // 0x0a
-    SystemModuleInformation,                    // 0x0b
-    SystemLocksInformation,                     // 0x0c
-    SystemStackTraceInformation,                // 0x0d
-    SystemPagedPoolInformation,                 // 0x0e
-    SystemNonPagedPoolInformation,              // 0x0f
-    SystemHandleInformation,                    // 0x10
-    SystemObjectInformation,                    // 0x11
-    SystemPageFileInformation,                  // 0x12
-    SystemVdmInstemulInformation,               // 0x13
-    SystemVdmBopInformation,                    // 0x14
-    SystemFileCacheInformation,                 // 0x15
-    SystemPoolTagInformation,                   // 0x16
-    SystemInterruptInformation,                 // 0x17
-    SystemDpcBehaviorInformation,               // 0x18
-    SystemFullMemoryInformation,                // 0x19
-    SystemLoadGdiDriverInformation,             // 0x1a
-    SystemUnloadGdiDriverInformation,           // 0x1b
-    SystemTimeAdjustmentInformation,            // 0x1c
-    SystemSummaryMemoryInformation,             // 0x1d
-    SystemMirrorMemoryInformation,              // 0x1e
-    SystemPerformanceTraceInformation,          // 0x1f
-    SystemObsolete0,                            // 0x20
-    SystemExceptionInformation,                 // 0x21
-    SystemCrashDumpStateInformation,            // 0x22
-    SystemKernelDebuggerInformation,            // 0x23
-    SystemContextSwitchInformation,             // 0x24
-    SystemRegistryQuotaInformation,             // 0x25
-    SystemExtendServiceTableInformation,        // 0x26
-    SystemPrioritySeperation,                   // 0x27
-    SystemPlugPlayBusInformation,               // 0x28
-    SystemDockInformation,                      // 0x29
-    SystemPowerInformationNative,               // 0x2a
-    SystemProcessorSpeedInformation,            // 0x2b
-    SystemCurrentTimeZoneInformation,           // 0x2c
-    SystemLookasideInformation,
-    SystemTimeSlipNotification,
-    SystemSessionCreate,
-    SystemSessionDetach,
-    SystemSessionInformation,
-    SystemRangeStartInformation,
-    SystemVerifierInformation,
-    SystemAddVerifier,
-    SystemSessionProcessesInformation,
-    SystemLoadGdiDriverInSystemSpaceInformation,
-    SystemNumaProcessorMap,
-    SystemPrefetcherInformation,
-    SystemExtendedProcessInformation,
-    SystemRecommendedSharedDataAlignment,
-    SystemComPlusPackage,
-    SystemNumaAvailableMemory,
-    SystemProcessorPowerInformation,
-    SystemEmulationBasicInformation,
-    SystemEmulationProcessorInformation,
-    SystemExtendedHandleInformation,
-    SystemLostDelayedWriteInformation,
-    SystemBigPoolInformation,
-    SystemSessionPoolTagInformation,
-    SystemSessionMappedViewInformation,
-    SystemHotpatchInformation,
-    SystemObjectSecurityMode,
-    SystemWatchDogTimerHandler,
-    SystemWatchDogTimerInformation,
-    SystemLogicalProcessorInformation,
-    SystemWo64SharedInformationObosolete,
-    SystemRegisterFirmwareTableInformationHandler,
-    SystemFirmwareTableInformation,
-    SystemModuleInformationEx,
-    SystemVerifierTriageInformation,
-    SystemSuperfetchInformation,
-    SystemMemoryListInformation,
-    SystemFileCacheInformationEx,
-    SystemThreadPriorityClientIdInformation,
-    SystemProcessorIdleCycleTimeInformation,
-    SystemVerifierCancellationInformation,
-    SystemProcessorPowerInformationEx,
-    SystemRefTraceInformation,
-    SystemSpecialPoolInformation,
-    SystemProcessIdInformation,
-    SystemErrorPortInformation,
-    SystemBootEnvironmentInformation,
-    SystemHypervisorInformation,
-    SystemVerifierInformationEx,
-    SystemTimeZoneInformation,
-    SystemImageFileExecutionOptionsInformation,
-    SystemCoverageInformation,
-    SystemPrefetchPathInformation,
-    SystemVerifierFaultsInformation,
-    MaxSystemInfoClass,
+    SystemBasicInformation = 0,
+    SystemProcessorInformation = 1,
+    SystemPerformanceInformation = 2,
+    SystemTimeOfDayInformation = 3,
+    SystemPathInformation = 4,
+    SystemProcessInformation = 5,
+    SystemCallCountInformation = 6,
+    SystemDeviceInformation = 7,
+    SystemProcessorPerformanceInformation = 8,
+    SystemFlagsInformation = 9,
+    SystemCallTimeInformation = 10,
+    SystemModuleInformation = 11,
+    SystemLocksInformation = 12,
+    SystemStackTraceInformation = 13,
+    SystemPagedPoolInformation = 14,
+    SystemNonPagedPoolInformation = 15,
+    SystemHandleInformation = 16,
+    SystemObjectInformation = 17,
+    SystemPageFileInformation = 18,
+    SystemVdmInstemulInformation = 19,
+    SystemVdmBopInformation = 20,
+    SystemFileCacheInformation = 21,
+    SystemPoolTagInformation = 22,
+    SystemInterruptInformation = 23,
+    SystemDpcBehaviorInformation = 24,
+    SystemFullMemoryInformation = 25,
+    SystemLoadGdiDriverInformation = 26,
+    SystemUnloadGdiDriverInformation = 27,
+    SystemTimeAdjustmentInformation = 28,
+    SystemSummaryMemoryInformation = 29,
+    SystemMirrorMemoryInformation = 30,
+    SystemPerformanceTraceInformation = 31,
+    SystemObsolete0 = 32,
+    SystemExceptionInformation = 33,
+    SystemCrashDumpStateInformation = 34,
+    SystemKernelDebuggerInformation = 35,
+    SystemContextSwitchInformation = 36,
+    SystemRegistryQuotaInformation = 37,
+    SystemExtendServiceTableInformation = 38,
+    SystemPrioritySeperation = 39,
+    SystemVerifierAddDriverInformation = 40,
+    SystemVerifierRemoveDriverInformation = 41,
+    SystemProcessorIdleInformation = 42,
+    SystemLegacyDriverInformation = 43,
+    SystemCurrentTimeZoneInformation = 44,
+    SystemLookasideInformation = 45,
+    SystemTimeSlipNotification = 46,
+    SystemSessionCreate = 47,
+    SystemSessionDetach = 48,
+    SystemSessionInformation = 49,
+    SystemRangeStartInformation = 50,
+    SystemVerifierInformation = 51,
+    SystemVerifierThunkExtend = 52,
+    SystemSessionProcessInformation = 53,
+    SystemLoadGdiDriverInSystemSpace = 54,
+    SystemNumaProcessorMap = 55,
+    SystemPrefetcherInformation = 56,
+    SystemExtendedProcessInformation = 57,
+    SystemRecommendedSharedDataAlignment = 58,
+    SystemComPlusPackage = 59,
+    SystemNumaAvailableMemory = 60,
+    SystemProcessorPowerInformation = 61,
+    SystemEmulationBasicInformation = 62,
+    SystemEmulationProcessorInformation = 63,
+    SystemExtendedHandleInformation = 64,
+    SystemLostDelayedWriteInformation = 65,
+    SystemBigPoolInformation = 66,
+    SystemSessionPoolTagInformation = 67,
+    SystemSessionMappedViewInformation = 68,
+    SystemHotpatchInformation = 69,
+    SystemObjectSecurityMode = 70,
+    SystemWatchdogTimerHandler = 71,
+    SystemWatchdogTimerInformation = 72,
+    SystemLogicalProcessorInformation = 73,
+    SystemWow64SharedInformationObsolete = 74,
+    SystemRegisterFirmwareTableInformationHandler = 75,
+    SystemFirmwareTableInformation = 76,
+    SystemModuleInformationEx = 77,
+    SystemVerifierTriageInformation = 78,
+    SystemSuperfetchInformation = 79,
+    SystemMemoryListInformation = 80,
+    SystemFileCacheInformationEx = 81,
+    SystemThreadPriorityClientIdInformation = 82,
+    SystemProcessorIdleCycleTimeInformation = 83,
+    SystemVerifierCancellationInformation = 84,
+    SystemProcessorPowerInformationEx = 85,
+    SystemRefTraceInformation = 86,
+    SystemSpecialPoolInformation = 87,
+    SystemProcessIdInformation = 88,
+    SystemErrorPortInformation = 89,
+    SystemBootEnvironmentInformation = 90,
+    SystemHypervisorInformation = 91,
+    SystemVerifierInformationEx = 92,
+    SystemTimeZoneInformation = 93,
+    SystemImageFileExecutionOptionsInformation = 94,
+    SystemCoverageInformation = 95,
+    SystemPrefetchPatchInformation = 96,
+    SystemVerifierFaultsInformation = 97,
+    SystemSystemPartitionInformation = 98,
+    SystemSystemDiskInformation = 99,
+    SystemProcessorPerformanceDistribution = 100,
+    SystemNumaProximityNodeInformation = 101,
+    SystemDynamicTimeZoneInformation = 102,
+    SystemCodeIntegrityInformation = 103,
+    SystemProcessorMicrocodeUpdateInformation = 104,
+    SystemProcessorBrandString = 105,
+    SystemVirtualAddressInformation = 106,
+    SystemLogicalProcessorAndGroupInformation = 107,
+    SystemProcessorCycleTimeInformation = 108,
+    SystemStoreInformation = 109,
+    SystemRegistryAppendString = 110,
+    SystemAitSamplingValue = 111,
+    SystemVhdBootInformation = 112,
+    SystemCpuQuotaInformation = 113,
+    SystemNativeBasicInformation = 114,
+    SystemErrorPortTimeouts = 115,
+    SystemLowPriorityIoInformation = 116,
+    SystemBootEntropyInformation = 117,
+    SystemVerifierCountersInformation = 118,
+    SystemPagedPoolInformationEx = 119,
+    SystemSystemPtesInformationEx = 120,
+    SystemNodeDistanceInformation = 121,
+    SystemAcpiAuditInformation = 122,
+    SystemBasicPerformanceInformation = 123,
+    SystemQueryPerformanceCounterInformation = 124,
+    SystemSessionBigPoolInformation = 125,
+    SystemBootGraphicsInformation = 126,
+    SystemScrubPhysicalMemoryInformation = 127,
+    SystemBadPageInformation = 128,
+    SystemProcessorProfileControlArea = 129,
+    SystemCombinePhysicalMemoryInformation = 130,
+    SystemEntropyInterruptTimingInformation = 131,
+    SystemConsoleInformation = 132,
+    SystemPlatformBinaryInformation = 133,
+    SystemPolicyInformation = 134,
+    SystemHypervisorProcessorCountInformation = 135,
+    SystemDeviceDataInformation = 136,
+    SystemDeviceDataEnumerationInformation = 137,
+    SystemMemoryTopologyInformation = 138,
+    SystemMemoryChannelInformation = 139,
+    SystemBootLogoInformation = 140,
+    SystemProcessorPerformanceInformationEx = 141,
+    SystemSpare0 = 142,
+    SystemSecureBootPolicyInformation = 143,
+    SystemPageFileInformationEx = 144,
+    SystemSecureBootInformation = 145,
+    SystemEntropyInterruptTimingRawInformation = 146,
+    SystemPortableWorkspaceEfiLauncherInformation = 147,
+    SystemFullProcessInformation = 148,
+    SystemKernelDebuggerInformationEx = 149,
+    SystemBootMetadataInformation = 150,
+    SystemSoftRebootInformation = 151,
+    SystemElamCertificateInformation = 152,
+    SystemOfflineDumpConfigInformation = 153,
+    SystemProcessorFeaturesInformation = 154,
+    SystemRegistryReconciliationInformation = 155,
+    SystemEdidInformation = 156,
+    SystemManufacturingInformation = 157,
+    SystemEnergyEstimationConfigInformation = 158,
+    SystemHypervisorDetailInformation = 159,
+    SystemProcessorCycleStatsInformation = 160,
+    SystemVmGenerationCountInformation = 161,
+    SystemTrustedPlatformModuleInformation = 162,
+    SystemKernelDebuggerFlags = 163,
+    SystemCodeIntegrityPolicyInformation = 164,
+    SystemIsolatedUserModeInformation = 165,
+    SystemHardwareSecurityTestInterfaceResultsInformation = 166,
+    SystemSingleModuleInformation = 167,
+    SystemAllowedCpuSetsInformation = 168,
+    SystemVsmProtectionInformation = 169, //ex SystemDmaProtectionInformation
+    SystemInterruptCpuSetsInformation = 170,
+    SystemSecureBootPolicyFullInformation = 171,
+    SystemCodeIntegrityPolicyFullInformation = 172,
+    SystemAffinitizedInterruptProcessorInformation = 173,
+    SystemRootSiloInformation = 174,
+    SystemCpuSetInformation = 175,
+    SystemCpuSetTagInformation = 176,
+    SystemWin32WerStartCallout = 177,
+    SystemSecureKernelProfileInformation = 178,
+    SystemCodeIntegrityPlatformManifestInformation = 179,
+    SystemInterruptSteeringInformation = 180,
+    SystemSupportedProcessorArchitectures = 181,
+    SystemMemoryUsageInformation = 182,
+    SystemCodeIntegrityCertificateInformation = 183,
+    SystemPhysicalMemoryInformation = 184,
+    SystemControlFlowTransition = 185,
+    SystemKernelDebuggingAllowed = 186,
+    SystemActivityModerationExeState = 187,
+    SystemActivityModerationUserSettings = 188,
+    SystemCodeIntegrityPoliciesFullInformation = 189,
+    SystemCodeIntegrityUnlockInformation = 190,
+    SystemIntegrityQuotaInformation = 191,
+    SystemFlushInformation = 192,
+    SystemProcessorIdleMaskInformation = 193,
+    SystemSecureDumpEncryptionInformation = 194,
+    SystemWriteConstraintInformation = 195,
+    SystemKernelVaShadowInformation = 196,
+    SystemHypervisorSharedPageInformation = 197,
+    SystemFirmwareBootPerformanceInformation = 198,
+    SystemCodeIntegrityVerificationInformation = 199,
+    SystemFirmwarePartitionInformation = 200,
+    SystemSpeculationControlInformation = 201,
+    SystemDmaGuardPolicyInformation = 202,
+    SystemEnclaveLaunchControlInformation = 203,
+    SystemWorkloadAllowedCpuSetsInformation = 204,
+    SystemCodeIntegrityUnlockModeInformation = 205,
+    SystemLeapSecondInformation = 206,
+    SystemFlags2Information = 207,
+    SystemSecurityModelInformation = 208,
+    SystemCodeIntegritySyntheticCacheInformation = 209,
+    SystemFeatureConfigurationInformation = 210,
+    SystemFeatureConfigurationSectionInformation = 211,
+    SystemFeatureUsageSubscriptionInformation = 212,
+    SystemSecureSpeculationControlInformation = 213,
+    SystemSpacesBootInformation = 214,
+    SystemFwRamdiskInformation = 215,
+    SystemWheaIpmiHardwareInformation = 216,
+    SystemDifSetRuleClassInformation = 217,
+    SystemDifClearRuleClassInformation = 218,
+    SystemDifApplyPluginVerificationOnDriver = 219,
+    SystemDifRemovePluginVerificationOnDriver = 220,
+    SystemShadowStackInformation = 221,
+    SystemBuildVersionInformation = 222,
+    SystemPoolLimitInformation = 223,
+    SystemCodeIntegrityAddDynamicStore = 224,
+    SystemCodeIntegrityClearDynamicStores = 225,
+    SystemDifPoolTrackingInformation = 226,
+    SystemPoolZeroingInformation = 227,
+    SystemDpcWatchdogInformation = 228,
+    SystemDpcWatchdogInformation2 = 229,
+    SystemSupportedProcessorArchitectures2 = 230,
+    SystemSingleProcessorRelationshipInformation = 231,
+    SystemXfgCheckFailureInformation = 232,
+    SystemIommuStateInformation = 233,
+    SystemHypervisorMinrootInformation = 234,
+    SystemHypervisorBootPagesInformation = 235,
+    SystemPointerAuthInformation = 236,
+    SystemSecureKernelDebuggerInformation = 237,
+    SystemOriginalImageFeatureInformation = 238,
+    SystemMemoryNumaInformation = 239,
+    SystemMemoryNumaPerformanceInformation = 240,
+    SystemCodeIntegritySignedPoliciesFullInformation = 241,
+    SystemSecureSecretsInformation = 242,
+    SystemTrustedAppsRuntimeInformation = 243,
+    SystemBadPageInformationEx = 244,
+    SystemResourceDeadlockTimeout = 245,
+    SystemBreakOnContextUnwindFailureInformation = 246,
+    SystemOslRamdiskInformation = 247,
+    SystemCodeIntegrityPolicyManagementInformation = 248,
+    SystemMemoryNumaCacheInformation = 249,
+    SystemProcessorFeaturesBitMapInformation = 250,
+    SystemRefTraceInformationEx = 251,
+    SystemBasicProcessInformation = 252,
+    SystemHandleCountInformation = 253,
+    MaxSystemInfoClass
 } SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
 
 //
@@ -1709,9 +1866,7 @@ typedef enum _SYSTEM_INFORMATION_CLASS
 
 typedef LONG KPRIORITY;
 
-//
-// Information Structures for NtQuerySystemInformation
-//
+// SYSTEM_INFORMATION_CLASS::SystemBasicInformation = 0
 typedef struct _SYSTEM_BASIC_INFORMATION
 {
     ULONG Reserved;
@@ -1727,7 +1882,7 @@ typedef struct _SYSTEM_BASIC_INFORMATION
     CCHAR NumberOfProcessors;
 } SYSTEM_BASIC_INFORMATION, *PSYSTEM_BASIC_INFORMATION;
 
-// Class 1
+// SYSTEM_INFORMATION_CLASS::SystemProcessorInformation = 1
 typedef struct _SYSTEM_PROCESSOR_INFORMATION
 {
     USHORT ProcessorArchitecture;
@@ -1737,7 +1892,7 @@ typedef struct _SYSTEM_PROCESSOR_INFORMATION
     ULONG ProcessorFeatureBits;
 } SYSTEM_PROCESSOR_INFORMATION, *PSYSTEM_PROCESSOR_INFORMATION;
 
-// Class 2
+// SYSTEM_INFORMATION_CLASS::SystemPerformanceInformation = 2
 typedef struct _SYSTEM_PERFORMANCE_INFORMATION
 {
     LARGE_INTEGER IdleProcessTime;
@@ -1816,7 +1971,7 @@ typedef struct _SYSTEM_PERFORMANCE_INFORMATION
     ULONG SystemCalls;
 } SYSTEM_PERFORMANCE_INFORMATION, *PSYSTEM_PERFORMANCE_INFORMATION;
 
-// Class 3
+// SYSTEM_INFORMATION_CLASS::SystemTimeOfDayInformation = 3
 typedef struct _SYSTEM_TIMEOFDAY_INFORMATION
 {
     LARGE_INTEGER BootTime;
@@ -1828,10 +1983,10 @@ typedef struct _SYSTEM_TIMEOFDAY_INFORMATION
     LARGE_INTEGER SleepTimeBias;
 } SYSTEM_TIMEOFDAY_INFORMATION, *PSYSTEM_TIMEOFDAY_INFORMATION;
 
-// Class 4
+// SYSTEM_INFORMATION_CLASS::SystemPathInformation = 4
 // This class is obsolete, please use KUSER_SHARED_DATA instead
 
-// Class 5
+// SYSTEM_INFORMATION_CLASS::SystemPathInformation = 4
 typedef struct _SYSTEM_THREAD_INFORMATION
 {
     LARGE_INTEGER KernelTime;
@@ -1847,6 +2002,7 @@ typedef struct _SYSTEM_THREAD_INFORMATION
     ULONG WaitReason;
 } SYSTEM_THREAD_INFORMATION, *PSYSTEM_THREAD_INFORMATION;
 
+// SYSTEM_INFORMATION_CLASS::SystemProcessInformation = 5
 typedef struct _SYSTEM_PROCESS_INFORMATION
 {
     ULONG NextEntryOffset;
@@ -1895,14 +2051,14 @@ typedef struct _SYSTEM_PROCESS_INFORMATION
     //SYSTEM_THREAD_INFORMATION TH[1];
 } SYSTEM_PROCESS_INFORMATION, *PSYSTEM_PROCESS_INFORMATION;
 
-// Class 6
+// SYSTEM_INFORMATION_CLASS::SystemCallCountInformation = 6
 typedef struct _SYSTEM_CALL_COUNT_INFORMATION
 {
     ULONG Length;
     ULONG NumberOfTables;
 } SYSTEM_CALL_COUNT_INFORMATION, *PSYSTEM_CALL_COUNT_INFORMATION;
 
-// Class 7
+// SYSTEM_INFORMATION_CLASS::SystemDeviceInformation = 7
 typedef struct _SYSTEM_DEVICE_INFORMATION
 {
     ULONG NumberOfDisks;
@@ -1913,7 +2069,7 @@ typedef struct _SYSTEM_DEVICE_INFORMATION
     ULONG NumberOfParallelPorts;
 } SYSTEM_DEVICE_INFORMATION, *PSYSTEM_DEVICE_INFORMATION;
 
-// Class 8
+// SYSTEM_INFORMATION_CLASS::SystemProcessorPerformanceInformation = 8
 typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION
 {
     LARGE_INTEGER IdleTime;
@@ -1924,13 +2080,13 @@ typedef struct _SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION
     ULONG InterruptCount;
 } SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION, *PSYSTEM_PROCESSOR_PERFORMANCE_INFORMATION;
 
-// Class 9
+// SYSTEM_INFORMATION_CLASS::SystemFlagsInformation = 9
 typedef struct _SYSTEM_FLAGS_INFORMATION
 {
     ULONG Flags;
 } SYSTEM_FLAGS_INFORMATION, *PSYSTEM_FLAGS_INFORMATION;
 
-// Class 10
+// SYSTEM_INFORMATION_CLASS::SystemCallTimeInformation = 10
 typedef struct _SYSTEM_CALL_TIME_INFORMATION
 {
     ULONG Length;
@@ -1938,6 +2094,7 @@ typedef struct _SYSTEM_CALL_TIME_INFORMATION
     LARGE_INTEGER TimeOfCalls[1];
 } SYSTEM_CALL_TIME_INFORMATION, *PSYSTEM_CALL_TIME_INFORMATION;
 
+// SYSTEM_INFORMATION_CLASS::SystemModuleInformation = 11
 // Class 11 - See RTL_PROCESS_MODULES
 typedef struct _RTL_PROCESS_MODULE_INFORMATION
 {
@@ -1959,7 +2116,7 @@ typedef struct _RTL_PROCESS_MODULES
     RTL_PROCESS_MODULE_INFORMATION Modules[1];
 } RTL_PROCESS_MODULES, *PRTL_PROCESS_MODULES, SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
 
-// Class 12 - See RTL_PROCESS_LOCKS
+// SYSTEM_INFORMATION_CLASS::SystemLocksInformation = 12
 typedef struct _RTL_PROCESS_LOCK_INFORMATION
 {
     PVOID Address;
@@ -1980,7 +2137,8 @@ typedef struct _RTL_PROCESS_LOCKS
     RTL_PROCESS_LOCK_INFORMATION Locks[1];
 } RTL_PROCESS_LOCKS, *PRTL_PROCESS_LOCKS;
 
-// Class 13 - See RTL_PROCESS_BACKTRACES
+// SYSTEM_INFORMATION_CLASS::SystemStackTraceInformation = 13
+// - See RTL_PROCESS_BACKTRACES
 typedef struct _RTL_PROCESS_BACKTRACE_INFORMATION
 {
     PVOID SymbolicBackTrace;
@@ -1999,7 +2157,8 @@ typedef struct _RTL_PROCESS_BACKTRACES
     RTL_PROCESS_BACKTRACE_INFORMATION BackTraces[1];
 } RTL_PROCESS_BACKTRACES, *PRTL_PROCESS_BACKTRACES;
 
-// Class 14 - 15
+// SYSTEM_INFORMATION_CLASS::SystemPagedPoolInformation = 14
+// SYSTEM_INFORMATION_CLASS::SystemNonPagedPoolInformation = 15
 typedef struct _SYSTEM_POOL_ENTRY
 {
     BOOLEAN Allocated;
@@ -2025,7 +2184,7 @@ typedef struct _SYSTEM_POOL_INFORMATION
     SYSTEM_POOL_ENTRY Entries[1];
 } SYSTEM_POOL_INFORMATION, *PSYSTEM_POOL_INFORMATION;
 
-// Class 16
+// SYSTEM_INFORMATION_CLASS::SystemHandleInformation = 16
 typedef struct _SYSTEM_HANDLE_TABLE_ENTRY_INFO
 {
     ULONG UniqueProcessId;
@@ -2042,7 +2201,7 @@ typedef struct _SYSTEM_HANDLE_INFORMATION
     SYSTEM_HANDLE_TABLE_ENTRY_INFO Handles[1];
 } SYSTEM_HANDLE_INFORMATION, *PSYSTEM_HANDLE_INFORMATION;
 
-// Class 17
+// SYSTEM_INFORMATION_CLASS::SystemObjectInformation = 17
 typedef struct _SYSTEM_OBJECTTYPE_INFORMATION
 {
     ULONG NextEntryOffset;
@@ -2074,7 +2233,7 @@ typedef struct _SYSTEM_OBJECT_INFORMATION
     OBJECT_NAME_INFORMATION NameInfo;
 } SYSTEM_OBJECT_INFORMATION, *PSYSTEM_OBJECT_INFORMATION;
 
-// Class 18
+// SYSTEM_INFORMATION_CLASS::SystemPageFileInformation = 18
 typedef struct _SYSTEM_PAGEFILE_INFORMATION
 {
     ULONG NextEntryOffset;
@@ -2084,7 +2243,7 @@ typedef struct _SYSTEM_PAGEFILE_INFORMATION
     UNICODE_STRING PageFileName;
 } SYSTEM_PAGEFILE_INFORMATION, *PSYSTEM_PAGEFILE_INFORMATION;
 
-// Class 19
+// SYSTEM_INFORMATION_CLASS::SystemVdmInstemulInformation = 19
 typedef struct _SYSTEM_VDM_INSTEMUL_INFO
 {
     ULONG SegmentNotPresent;
@@ -2123,9 +2282,10 @@ typedef struct _SYSTEM_VDM_INSTEMUL_INFO
     ULONG BopCount;
 } SYSTEM_VDM_INSTEMUL_INFO, *PSYSTEM_VDM_INSTEMUL_INFO;
 
-// Class 20 - ULONG VDMBOPINFO
+// SYSTEM_INFORMATION_CLASS::SystemVdmBopInformation = 20
+// - ULONG VDMBOPINFO
 
-// Class 21
+// SYSTEM_INFORMATION_CLASS::SystemFileCacheInformation = 21
 typedef struct _SYSTEM_FILECACHE_INFORMATION
 {
     ULONG CurrentSize;
@@ -2139,7 +2299,7 @@ typedef struct _SYSTEM_FILECACHE_INFORMATION
     ULONG Flags;
 } SYSTEM_FILECACHE_INFORMATION, *PSYSTEM_FILECACHE_INFORMATION;
 
-// Class 22
+// SYSTEM_INFORMATION_CLASS::SystemPoolTagInformation = 22
 typedef struct _SYSTEM_POOLTAG
 {
     union
@@ -2160,7 +2320,7 @@ typedef struct _SYSTEM_POOLTAG_INFORMATION
     SYSTEM_POOLTAG TagInfo[1];
 } SYSTEM_POOLTAG_INFORMATION, *PSYSTEM_POOLTAG_INFORMATION;
 
-// Class 23
+// SYSTEM_INFORMATION_CLASS::SystemInterruptInformation = 23
 typedef struct _SYSTEM_INTERRUPT_INFORMATION
 {
     ULONG ContextSwitches;
@@ -2171,7 +2331,7 @@ typedef struct _SYSTEM_INTERRUPT_INFORMATION
     ULONG ApcBypassCount;
 } SYSTEM_INTERRUPT_INFORMATION, *PSYSTEM_INTERRUPT_INFORMATION;
 
-// Class 24
+// SYSTEM_INFORMATION_CLASS::SystemDpcBehaviorInformation = 24
 typedef struct _SYSTEM_DPC_BEHAVIOR_INFORMATION
 {
     ULONG Spare;
@@ -2181,7 +2341,7 @@ typedef struct _SYSTEM_DPC_BEHAVIOR_INFORMATION
     ULONG IdealDpcRate;
 } SYSTEM_DPC_BEHAVIOR_INFORMATION, *PSYSTEM_DPC_BEHAVIOR_INFORMATION;
 
-// Class 25
+// SYSTEM_INFORMATION_CLASS::SystemFullMemoryInformation = 25
 typedef struct _SYSTEM_MEMORY_INFO
 {
     PUCHAR StringOffset;
@@ -2198,7 +2358,7 @@ typedef struct _SYSTEM_MEMORY_INFORMATION
     SYSTEM_MEMORY_INFO Memory[1];
 } SYSTEM_MEMORY_INFORMATION, *PSYSTEM_MEMORY_INFORMATION;
 
-// Class 26
+// SYSTEM_INFORMATION_CLASS::SystemLoadGdiDriverInformation = 26
 typedef struct _SYSTEM_GDI_DRIVER_INFORMATION
 {
     UNICODE_STRING DriverName;
@@ -2209,10 +2369,10 @@ typedef struct _SYSTEM_GDI_DRIVER_INFORMATION
     ULONG ImageLength;
 } SYSTEM_GDI_DRIVER_INFORMATION, *PSYSTEM_GDI_DRIVER_INFORMATION;
 
-// Class 27
+// SYSTEM_INFORMATION_CLASS::SystemUnloadGdiDriverInformation = 27
 // Not an actually class, simply a PVOID to the ImageAddress
 
-// Class 28
+// SYSTEM_INFORMATION_CLASS::SystemTimeAdjustmentInformation = 28
 typedef struct _SYSTEM_QUERY_TIME_ADJUST_INFORMATION
 {
     ULONG TimeAdjustment;
@@ -2226,11 +2386,12 @@ typedef struct _SYSTEM_SET_TIME_ADJUST_INFORMATION
     BOOLEAN Enable;
 } SYSTEM_SET_TIME_ADJUST_INFORMATION, *PSYSTEM_SET_TIME_ADJUST_INFORMATION;
 
-// Class 29 - Same as 25
+// SYSTEM_INFORMATION_CLASS::SystemSummaryMemoryInformation = 29
+// - Same as 25
 
 // FIXME: Class 30
 
-// Class 31
+// SYSTEM_INFORMATION_CLASS::SystemPerformanceTraceInformation = 31
 typedef struct _SYSTEM_REF_TRACE_INFORMATION
 {
    UCHAR TraceEnable;
@@ -2239,9 +2400,7 @@ typedef struct _SYSTEM_REF_TRACE_INFORMATION
    UNICODE_STRING TracePoolTags;
 } SYSTEM_REF_TRACE_INFORMATION, *PSYSTEM_REF_TRACE_INFORMATION;
 
-// Class 32 - OBSOLETE
-
-// Class 33
+// SYSTEM_INFORMATION_CLASS::SystemExceptionInformation = 33
 typedef struct _SYSTEM_EXCEPTION_INFORMATION
 {
     ULONG AlignmentFixupCount;
@@ -2250,20 +2409,20 @@ typedef struct _SYSTEM_EXCEPTION_INFORMATION
     ULONG ByteWordEmulationCount;
 } SYSTEM_EXCEPTION_INFORMATION, *PSYSTEM_EXCEPTION_INFORMATION;
 
-// Class 34
+// SYSTEM_INFORMATION_CLASS::SystemCrashDumpStateInformation = 34
 typedef struct _SYSTEM_CRASH_STATE_INFORMATION
 {
     ULONG ValidCrashDump;
 } SYSTEM_CRASH_STATE_INFORMATION, *PSYSTEM_CRASH_STATE_INFORMATION;
 
-// Class 35
+// SYSTEM_INFORMATION_CLASS::SystemKernelDebuggerInformation = 35
 typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION
 {
     BOOLEAN KernelDebuggerEnabled;
     BOOLEAN KernelDebuggerNotPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION;
 
-// Class 36
+// SYSTEM_INFORMATION_CLASS::SystemContextSwitchInformation = 36
 typedef struct _SYSTEM_CONTEXT_SWITCH_INFORMATION
 {
     ULONG ContextSwitches;
@@ -2280,7 +2439,7 @@ typedef struct _SYSTEM_CONTEXT_SWITCH_INFORMATION
     ULONG SwitchToIdle;
 } SYSTEM_CONTEXT_SWITCH_INFORMATION, *PSYSTEM_CONTEXT_SWITCH_INFORMATION;
 
-// Class 37
+// SYSTEM_INFORMATION_CLASS::SystemRegistryQuotaInformation = 37
 typedef struct _SYSTEM_REGISTRY_QUOTA_INFORMATION
 {
     ULONG RegistryQuotaAllowed;
@@ -2288,20 +2447,20 @@ typedef struct _SYSTEM_REGISTRY_QUOTA_INFORMATION
     ULONG PagedPoolSize;
 } SYSTEM_REGISTRY_QUOTA_INFORMATION, *PSYSTEM_REGISTRY_QUOTA_INFORMATION;
 
-// Class 38
+// SYSTEM_INFORMATION_CLASS::SystemExtendServiceTableInformation = 38
 // Not a structure, simply send the UNICODE_STRING
 
-// Class 39
+// SYSTEM_INFORMATION_CLASS::SystemPrioritySeperation = 39
 // Not a structure, simply send a ULONG containing the new separation
 
-// Class 40
+// SYSTEM_INFORMATION_CLASS::SystemVerifierAddDriverInformation = 40
 typedef struct _SYSTEM_PLUGPLAY_BUS_INFORMATION
 {
     ULONG BusCount;
 //  PLUGPLAY_BUS_INSTANCE BusInstance[1];
 } SYSTEM_PLUGPLAY_BUS_INFORMATION, *PSYSTEM_PLUGPLAY_BUS_INFORMATION;
 
-// Class 41
+// SYSTEM_INFORMATION_CLASS::SystemVerifierRemoveDriverInformation = 41
 typedef enum _SYSTEM_DOCK_STATE
 {
     SystemDockStateUnknown,
@@ -2339,7 +2498,7 @@ typedef struct _SYSTEM_DOCK_INFORMATION
     ULONG SlotNumber;
 } SYSTEM_DOCK_INFORMATION, *PSYSTEM_DOCK_INFORMATION;
 
-// Class 42
+// SYSTEM_INFORMATION_CLASS::SystemProcessorIdleInformation = 42
 typedef struct _SYSTEM_POWER_INFORMATION_NATIVE
 {
     BOOLEAN SystemSuspendSupported;
@@ -2354,7 +2513,7 @@ typedef struct _SYSTEM_POWER_INFORMATION_NATIVE
     LARGE_INTEGER SpindownDrives;
 } SYSTEM_POWER_INFORMATION_NATIVE, *PSYSTEM_POWER_INFORMATION_NATIVE;
 
-// Class 43
+// SYSTEM_INFORMATION_CLASS::SystemLegacyDriverInformation = 43
 typedef struct _SYSTEM_LEGACY_DRIVER_INFORMATION
 {
 //  PNP_VETO_TYPE VetoType;
@@ -2362,10 +2521,10 @@ typedef struct _SYSTEM_LEGACY_DRIVER_INFORMATION
     // CHAR Buffer[0];
 } SYSTEM_LEGACY_DRIVER_INFORMATION, *PSYSTEM_LEGACY_DRIVER_INFORMATION;
 
-// Class 44
+// SYSTEM_INFORMATION_CLASS::SystemCurrentTimeZoneInformation = 44
 //typedef struct _TIME_ZONE_INFORMATION RTL_TIME_ZONE_INFORMATION;
 
-// Class 45
+// SYSTEM_INFORMATION_CLASS::SystemLookasideInformation = 45
 typedef struct _SYSTEM_LOOKASIDE_INFORMATION
 {
     USHORT CurrentDepth;
@@ -2379,21 +2538,21 @@ typedef struct _SYSTEM_LOOKASIDE_INFORMATION
     ULONG Size;
 } SYSTEM_LOOKASIDE_INFORMATION, *PSYSTEM_LOOKASIDE_INFORMATION;
 
-// Class 46
+// SYSTEM_INFORMATION_CLASS::SystemTimeSlipNotification = 46
 // Not a structure. Only a HANDLE for the SlipEvent;
 
-// Class 47
+// SYSTEM_INFORMATION_CLASS::SystemSessionCreate = 47
 // Not a structure. Only a ULONG for the SessionId;
 
-// Class 48
+// SYSTEM_INFORMATION_CLASS::SystemSessionDetach = 48
 // Not a structure. Only a ULONG for the SessionId;
 
 // FIXME: Class 49
 
-// Class 50
+// SYSTEM_INFORMATION_CLASS::SystemRangeStartInformation = 50
 // Not a structure. Only a ULONG_PTR for the SystemRangeStart
 
-// Class 51
+// SYSTEM_INFORMATION_CLASS::SystemVerifierInformation = 51
 typedef struct _SYSTEM_VERIFIER_INFORMATION
 {
    ULONG NextEntryOffset;
@@ -2425,7 +2584,7 @@ typedef struct _SYSTEM_VERIFIER_INFORMATION
 
 // FIXME: Class 52
 
-// Class 53
+// SYSTEM_INFORMATION_CLASS::SystemSessionProcessInformation = 53
 typedef struct _SYSTEM_SESSION_PROCESS_INFORMATION
 {
     ULONG SessionId;
@@ -2433,7 +2592,7 @@ typedef struct _SYSTEM_SESSION_PROCESS_INFORMATION
     PVOID Buffer; // Same format as in SystemProcessInformation
 } SYSTEM_SESSION_PROCESS_INFORMATION, *PSYSTEM_SESSION_PROCESS_INFORMATION;
 
-// FIXME: Class 54-97
+// FIXME: Classes 54-97
 
 //
 // Hotpatch flags
@@ -2445,7 +2604,7 @@ typedef struct _SYSTEM_SESSION_PROCESS_INFORMATION
 #define RTL_HOTPATCH_REMAP_SYSTEM_DLL       0x40 << 24
 #define RTL_HOTPATCH_PATCH_KERNEL_MODE      0x80 << 24
 
-// Class info 64
+// SYSTEM_INFORMATION_CLASS::SystemExtendedHandleInformation = 64
 typedef struct _SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX
 {
     PVOID Object;
@@ -2465,7 +2624,7 @@ typedef struct _SYSTEM_HANDLE_INFORMATION_EX
     SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX Handles[1];
 } SYSTEM_HANDLE_INFORMATION_EX, *PSYSTEM_HANDLE_INFORMATION_EX;
 
-// Class 69
+// SYSTEM_INFORMATION_CLASS::SystemHotpatchInformation = 69
 typedef struct _SYSTEM_HOTPATCH_CODE_INFORMATION
 {
     ULONG Flags;
@@ -2519,9 +2678,7 @@ typedef struct _SYSTEM_HOTPATCH_CODE_INFORMATION
     };
 } SYSTEM_HOTPATCH_CODE_INFORMATION, *PSYSTEM_HOTPATCH_CODE_INFORMATION;
 
-//
-// Class 75
-//
+// SYSTEM_INFORMATION_CLASS::SystemRegisterFirmwareTableInformationHandler = 75
 struct _SYSTEM_FIRMWARE_TABLE_INFORMATION;
 typedef NTSTATUS (_cdecl *PFNFTH)(
     IN struct _SYSTEM_FIRMWARE_TABLE_INFORMATION *FirmwareTableInformation
@@ -2541,9 +2698,7 @@ typedef struct _SYSTEM_FIRMWARE_TABLE_HANDLER
     PVOID DriverObject;
 } SYSTEM_FIRMWARE_TABLE_HANDLER, *PSYSTEM_FIRMWARE_TABLE_HANDLER;
 
-//
-// Class 76
-//
+// SYSTEM_INFORMATION_CLASS::SystemFirmwareTableInformation = 76
 typedef struct _SYSTEM_FIRMWARE_TABLE_INFORMATION
 {
     ULONG ProviderSignature;
@@ -2553,9 +2708,7 @@ typedef struct _SYSTEM_FIRMWARE_TABLE_INFORMATION
     UCHAR TableBuffer[1];
 } SYSTEM_FIRMWARE_TABLE_INFORMATION, *PSYSTEM_FIRMWARE_TABLE_INFORMATION;
 
-//
-// Class 81
-//
+// SYSTEM_INFORMATION_CLASS::SystemFileCacheInformationEx = 81
 typedef struct _SYSTEM_MEMORY_LIST_INFORMATION
 {
    SIZE_T ZeroPageCount;
@@ -2567,24 +2720,29 @@ typedef struct _SYSTEM_MEMORY_LIST_INFORMATION
    SIZE_T RepurposedPagesByPriority[8];
 } SYSTEM_MEMORY_LIST_INFORMATION, *PSYSTEM_MEMORY_LIST_INFORMATION;
 
-//
-// Class 88
-//
+// SYSTEM_INFORMATION_CLASS::SystemProcessIdInformation = 88
 typedef struct _SYSTEM_PROCESS_ID_INFORMATION
 {
     HANDLE UniqueProcessId;                         // On input, set this to Process ID
     UNICODE_STRING ImageName;                       // On input, initialize to an allocated buffer
 } SYSTEM_PROCESS_ID_INFORMATION, *PSYSTEM_PROCESS_ID_INFORMATION;
 
-//
-// Class 90
-//
+// SYSTEM_INFORMATION_CLASS::SystemBootEnvironmentInformation = 90
 typedef struct _SYSTEM_BOOT_ENVIRONMENT_INFORMATION
 {
     GUID  CurrentBootGuid;
     ULONG Unknown;
 } SYSTEM_BOOT_ENVIRONMENT_INFORMATION, *PSYSTEM_BOOT_ENVIRONMENT_INFORMATION;
 
+// SYSTEM_INFORMATION_CLASS::SystemBasicProcessInformation = 252
+typedef struct _SYSTEM_BASICPROCESS_INFORMATION
+{
+    ULONG NextEntryOffset;
+    HANDLE UniqueProcessId;
+    HANDLE InheritedFromUniqueProcessId;
+    ULONG64 SequenceNumber;
+    UNICODE_STRING ImageName;
+} SYSTEM_BASICPROCESS_INFORMATION, *PSYSTEM_BASICPROCESS_INFORMATION;
 
 typedef NTSTATUS (NTAPI * NTQUERYSYSTEMINFORMATION)(
     SYSTEM_INFORMATION_CLASS SystemInformationClass,
