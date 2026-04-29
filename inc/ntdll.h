@@ -162,7 +162,7 @@ typedef PSTRING PANSI_STRING;
 
 typedef STRING OEM_STRING;
 typedef PSTRING POEM_STRING;
-typedef CONST STRING* PCOEM_STRING;
+typedef CONST STRING *PCOEM_STRING;
 
 typedef const UNICODE_STRING *PCUNICODE_STRING;
 
@@ -284,7 +284,7 @@ typedef struct _XSTATE_FEATURE
 {
     DWORD Offset;
     DWORD Size;
-} XSTATE_FEATURE, * PXSTATE_FEATURE;
+} XSTATE_FEATURE, *PXSTATE_FEATURE;
 
 typedef struct _XSTATE_CONFIGURATION
 {
@@ -488,7 +488,7 @@ typedef struct _CURDIR
 {
     UNICODE_STRING DosPath;
     HANDLE Handle;
-} CURDIR, * PCURDIR;
+} CURDIR, *PCURDIR;
 
 typedef struct _RTL_DRIVE_LETTER_CURDIR
 {
@@ -511,7 +511,7 @@ typedef struct _PEB_LDR_DATA
     BOOLEAN    ShutdownInProgress;                  // Windows 10
     HANDLE     ShutdownThreadId;                    // Windows 10
 
-} PEB_LDR_DATA, * PPEB_LDR_DATA;
+} PEB_LDR_DATA, *PPEB_LDR_DATA;
 
 #define LDRP_PACKED_BINARY              0x00000001
 #define LDRP_MARKED_FOR_REMOVAL         0x00000002
@@ -716,7 +716,7 @@ typedef struct _LDR_DATA_TABLE_ENTRY
     PVOID ActivePatchImageBase;
     LDR_HOT_PATCH_STATE HotPatchState;
 
-} LDR_DATA_TABLE_ENTRY, * PLDR_DATA_TABLE_ENTRY;
+} LDR_DATA_TABLE_ENTRY, *PLDR_DATA_TABLE_ENTRY;
 
 typedef struct _RTL_USER_PROCESS_PARAMETERS
 {
@@ -926,7 +926,7 @@ typedef struct _PEB
     /* 0x254 */ LIST_ENTRY TppWorkerpList;
     /* 0x25C */ void * WaitOnAddressHashTable[128];
 
-} PEB, * PPEB;
+} PEB, *PPEB;
 #pragma pack(pop)
 
 
@@ -940,7 +940,7 @@ typedef struct _GDI_TEB_BATCH
     ULONG HasRenderingCommand : 1;
     HANDLE HDC;
     ULONG Buffer[310];
-} GDI_TEB_BATCH, * PGDI_TEB_BATCH;
+} GDI_TEB_BATCH, *PGDI_TEB_BATCH;
 
 typedef struct _ACTIVATION_CONTEXT_STACK
 {
@@ -949,7 +949,7 @@ typedef struct _ACTIVATION_CONTEXT_STACK
     ULONG Flags;
     ULONG NextCookieSequenceNumber;
     ULONG StackId;
-} ACTIVATION_CONTEXT_STACK, * PACTIVATION_CONTEXT_STACK;
+} ACTIVATION_CONTEXT_STACK, *PACTIVATION_CONTEXT_STACK;
 
 typedef struct _TEB
 {
@@ -1128,14 +1128,14 @@ typedef struct _TEB
     /* 0xfe8 */ ULONGLONG ReservedForCrt;
     /* 0xff0 */ GUID EffectiveContainerId;
 
-} TEB, * PTEB;
+} TEB, *PTEB;
 
 //
 // Image load config from Windows 10 build 19041
 //
 
 // Flags for IMAGE_LOAD_CONFIG_DIRECTORY32_WIN10::GuardFlags
-#ifndef NTDDI_WIN7
+#ifndef IMAGE_GUARD_CF_INSTRUMENTED
 #define IMAGE_GUARD_CF_INSTRUMENTED                    0x00000100 // Module performs control flow integrity checks using system-supplied support
 #define IMAGE_GUARD_CFW_INSTRUMENTED                   0x00000200 // Module performs control flow and write integrity checks
 #define IMAGE_GUARD_CF_FUNCTION_TABLE_PRESENT          0x00000400 // Module contains valid control flow target metadata
@@ -3540,10 +3540,10 @@ typedef struct _SYSTEM_EXCEPTION_INFORMATION
 } SYSTEM_EXCEPTION_INFORMATION, *PSYSTEM_EXCEPTION_INFORMATION;
 
 // SYSTEM_INFORMATION_CLASS::SystemCrashDumpStateInformation = 34
-typedef struct _SYSTEM_CRASH_STATE_INFORMATION
+typedef struct _SYSTEM_CRASH_DUMP_STATE_INFORMATION
 {
     ULONG ValidCrashDump;
-} SYSTEM_CRASH_STATE_INFORMATION, *PSYSTEM_CRASH_STATE_INFORMATION;
+} SYSTEM_CRASH_DUMP_STATE_INFORMATION, *PSYSTEM_CRASH_DUMP_STATE_INFORMATION;
 
 // SYSTEM_INFORMATION_CLASS::SystemKernelDebuggerInformation = 35
 typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION
@@ -4870,7 +4870,7 @@ typedef struct _FILE_CASE_SENSITIVE_INFORMATION
 } FILE_CASE_SENSITIVE_INFORMATION, *PFILE_CASE_SENSITIVE_INFORMATION;
 #endif
 
-#if !defined(NTDDI_WIN7) || defined(__MINGW32__) || defined(__MINGW64__)
+#if _MSC_VER <= 1400
 typedef enum _STORAGE_RESERVE_ID
 {
     StorageReserveIdNone = 0,
@@ -4878,13 +4878,13 @@ typedef enum _STORAGE_RESERVE_ID
     StorageReserveIdSoft,
     StorageReserveIdUpdateScratch,
     StorageReserveIdMax
-} STORAGE_RESERVE_ID, * PSTORAGE_RESERVE_ID;
-#endif
+} STORAGE_RESERVE_ID, *PSTORAGE_RESERVE_ID;
 
 typedef struct _FILE_SET_STORAGE_RESERVE_ID_INFORMATION
 {
     STORAGE_RESERVE_ID StorageReserveId;
 } FILE_SET_STORAGE_RESERVE_ID_INFORMATION, *PFILE_SET_STORAGE_RESERVE_ID_INFORMATION;
+#endif
 
 typedef enum _FILE_KNOWN_FOLDER_TYPE
 {
@@ -5028,7 +5028,7 @@ typedef struct _FILE_FS_SECTOR_SIZE_INFORMATION {
 typedef struct _FILE_FS_DATA_COPY_INFORMATION
 {
     ULONG NumberOfCopies;
-} FILE_FS_DATA_COPY_INFORMATION, * PFILE_FS_DATA_COPY_INFORMATION;
+} FILE_FS_DATA_COPY_INFORMATION, *PFILE_FS_DATA_COPY_INFORMATION;
 
 
 typedef struct _FILE_FS_METADATA_SIZE_INFORMATION
@@ -5036,7 +5036,7 @@ typedef struct _FILE_FS_METADATA_SIZE_INFORMATION
     LARGE_INTEGER TotalMetadataAllocationUnits;
     ULONG SectorsPerAllocationUnit;
     ULONG BytesPerSector;
-} FILE_FS_METADATA_SIZE_INFORMATION, * PFILE_FS_METADATA_SIZE_INFORMATION;
+} FILE_FS_METADATA_SIZE_INFORMATION, *PFILE_FS_METADATA_SIZE_INFORMATION;
 
 
 typedef struct _FILE_FS_FULL_SIZE_INFORMATION_EX
@@ -5054,7 +5054,7 @@ typedef struct _FILE_FS_FULL_SIZE_INFORMATION_EX
     LARGE_INTEGER PoolAvailableAllocationUnits;
     ULONG SectorsPerAllocationUnit;
     ULONG BytesPerSector;
-} FILE_FS_FULL_SIZE_INFORMATION_EX, * PFILE_FS_FULL_SIZE_INFORMATION_EX;
+} FILE_FS_FULL_SIZE_INFORMATION_EX, *PFILE_FS_FULL_SIZE_INFORMATION_EX;
 
 NTSYSAPI
 NTSTATUS
@@ -5916,7 +5916,7 @@ typedef struct _PROCESS_HANDLE_TABLE_ENTRY_INFO
     ULONG ObjectTypeIndex;
     ULONG HandleAttributes;
     ULONG Reserved;
-} PROCESS_HANDLE_TABLE_ENTRY_INFO, * PPROCESS_HANDLE_TABLE_ENTRY_INFO;
+} PROCESS_HANDLE_TABLE_ENTRY_INFO, *PPROCESS_HANDLE_TABLE_ENTRY_INFO;
 
 typedef struct _PROCESS_HANDLE_SNAPSHOT_INFORMATION
 {
@@ -6321,7 +6321,7 @@ typedef struct _WORKER_FACTORY_BASIC_INFORMATION
     SIZE_T StackReserve;
     SIZE_T StackCommit;
     NTSTATUS LastThreadCreationStatus;
-} WORKER_FACTORY_BASIC_INFORMATION, * PWORKER_FACTORY_BASIC_INFORMATION;
+} WORKER_FACTORY_BASIC_INFORMATION, *PWORKER_FACTORY_BASIC_INFORMATION;
 
 NTSYSAPI
 NTSTATUS
